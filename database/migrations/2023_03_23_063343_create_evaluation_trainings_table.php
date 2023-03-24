@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTrainingsTable extends Migration
+class CreateEvaluationTrainingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,12 @@ class CreateTrainingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('trainings', function (Blueprint $table) {
+        Schema::create('evaluation_trainings', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->softDeletes();
-            $table->integer('old_id')->nullable();
-            $table->string('title');
-            $table->string('venue');
-            $table->string('date_from', 20);
-            $table->string('date_to', 20);
-            $table->string('rso_number')->nullable();
-            $table->uuid('encoded_by');
+            $table->string('training_id');
+            $table->boolean('is_female');
+            $table->unsignedBigInteger('office_rep_id');
             $table->timestamps();
         });
     }
@@ -34,6 +30,6 @@ class CreateTrainingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('trainings');
+        Schema::dropIfExists('evaluation_trainings');
     }
 }

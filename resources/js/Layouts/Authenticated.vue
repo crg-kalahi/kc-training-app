@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-full">
+    <div class="min-h-full relative">
       <TransitionRoot as="template" :show="sidebarOpen">
         <Dialog as="div" class="relative z-40 lg:hidden" @close="sidebarOpen = false">
           <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
@@ -23,10 +23,10 @@
                 <div class="mt-5 h-0 flex-1 overflow-y-auto">
                   <nav class="px-2">
                     <div class="space-y-1">
-                      <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5']" :aria-current="item.current ? 'page' : undefined">
+                      <Link preserve-scroll v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5']" :aria-current="item.current ? 'page' : undefined">
                         <component :is="item.icon" :class="[item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-3 h-6 w-6 flex-shrink-0']" aria-hidden="true" />
                         {{ item.name }}
-                      </a>
+                      </Link>
                     </div>
                     <div class="mt-8">
                       <h3 class="px-3 text-sm font-medium text-gray-500" id="mobile-teams-headline">Teams</h3>
@@ -86,7 +86,7 @@
                 </div>
                 <div class="py-1">
                   <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Logout</a>
+                    <a href="#" @click="logoutWasClicked" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Logout</a>
                   </MenuItem>
                 </div>
               </MenuItems>
@@ -99,26 +99,26 @@
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3" aria-hidden="true">
                 <MagnifyingGlassIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
               </div>
-              <input type="text" name="search" id="search" class="block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Search" />
+              <input type="text" name="search" id="search" class="block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Search Training" />
             </div>
           </div>
           <!-- Navigation -->
           <nav class="mt-6 px-3">
             <div class="space-y-1">
-              <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">
+              <Link preserve-scroll v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">
                 <component :is="item.icon" :class="[item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-3 h-6 w-6 flex-shrink-0']" aria-hidden="true" />
                 {{ item.name }}
-              </a>
+              </Link>
             </div>
             <div class="mt-8">
               <!-- Secondary navigation -->
-              <h3 class="px-3 text-sm font-medium text-gray-500" id="desktop-teams-headline">Today's Event</h3>
+              <!-- <h3 class="px-3 text-sm font-medium text-gray-500" id="desktop-teams-headline">My Event Today</h3>
               <div class="mt-1 space-y-1" role="group" aria-labelledby="desktop-teams-headline">
                 <a v-for="person in currentEvent" :key="person.name" :href="person.href" class="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
                   <span :class="[person.bgColorClass, 'mr-4 h-2.5 w-2.5 rounded-full']" aria-hidden="true" />
                   <span class="truncate">{{ person.name }}</span>
                 </a>
-              </div>
+              </div> -->
             </div>
           </nav>
         </div>
@@ -168,7 +168,7 @@
                     
                     <div class="py-1">
                       <MenuItem v-slot="{ active }">
-                        <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Logout</a>
+                        <button @click="logoutWasClicked" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Logout</button>
                       </MenuItem>
                     </div>
                   </MenuItems>
@@ -186,6 +186,7 @@
   
 <script setup>
   import { ref } from 'vue'
+  import { Link } from '@inertiajs/inertia-vue3'
   import {
     Dialog,
     DialogPanel,
@@ -196,21 +197,12 @@
     TransitionChild,
     TransitionRoot,
   } from '@headlessui/vue'
-  import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+  import { Bars3CenterLeftIcon, Bars4Icon, Cog6ToothIcon, HomeIcon, XMarkIcon } from '@heroicons/vue/24/outline'
   import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
-  
-  const navigation = [
-    { name: 'Dashboard', href: '#', icon: HomeIcon, current: false },
-    { name: 'My tasks', href: '#', icon: Bars4Icon, current: false },
-    { name: 'Recent', href: '#', icon: ClockIcon, current: false },
-  ]
   const currentEvent = [
     { name: 'Crisis Communication Workshop - Batch 1', href: '#', bgColorClass: 'bg-green-500' },
-    { name: 'Crisis Communication Workshop - Batch 2', href: '#', bgColorClass: 'bg-red-500' },
-    { name: 'Crisis Communication Workshop - Batch 3', href: '#', bgColorClass: 'bg-blue-500' },
-    { name: 'Crisis Communication Workshop - Batch 1', href: '#', bgColorClass: 'bg-green-500' },
-    { name: 'Crisis Communication Workshop - Batch 2', href: '#', bgColorClass: 'bg-red-500' },
-    { name: 'Crisis Communication Workshop - Batch 3', href: '#', bgColorClass: 'bg-blue-500' },
+    { name: 'Crisis Communication Workshop - Batch 2', href: '#', bgColorClass: 'bg-green-500' },
+    { name: 'Crisis Communication Workshop - Batch 3', href: '#', bgColorClass: 'bg-green-500' },
   ]
   const sidebarOpen = ref(false)
 
@@ -220,7 +212,22 @@
         computed:{
             user(){
                 return this.$page.props.auth.user
+            },
+            navigation(){
+              const page = this.$page.url
+              return [
+                { name: 'Dashboard', href: route('dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
+                { name: 'Trainings', href: route('training.index'), icon: Bars4Icon, current: page.startsWith('/training') },
+                { name: 'Configurations', href: route('conf.index'), icon: Cog6ToothIcon, current: page.startsWith('/configuration') },
+              ]
             }
+        },
+        methods:{
+          logoutWasClicked(){
+            this.$inertia.visit(route('logout'), {
+              method: 'post'
+            })
+          }
         }
     }
 </script>
