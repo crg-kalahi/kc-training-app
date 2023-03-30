@@ -251,7 +251,7 @@ class TrainingController extends Controller
         return Inertia::render('Training/Participants', ['training' => $item, 'people' => $item->participants]);
     }
     public function GetEvaluations($id){
-        $item = Training::findOrFail($id);
+        $item = Training::where('id', $id)->firstOrFail();
         $totalMale = count(collect($item->evaluations)
             ->filter(function($key){
                 return $key->is_female ? false : true;
