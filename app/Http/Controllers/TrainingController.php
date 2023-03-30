@@ -145,9 +145,11 @@ class TrainingController extends Controller
      * @param  \App\Models\Training  $training
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Training $training)
+    public function destroy($id)
     {
-        //
+        $t = Training::findOrFail($id);
+        $t->delete();
+        return Redirect::route('training.index');
     }
 
     /**
@@ -245,7 +247,7 @@ class TrainingController extends Controller
     }
 
     public function GetParticipants($id){
-        $item = Training::findOrFail($id);
+        $item = Training::where('id', $id)->firstOrFail();
         return Inertia::render('Training/Participants', ['training' => $item, 'people' => $item->participants]);
     }
     public function GetEvaluations($id){
@@ -258,8 +260,8 @@ class TrainingController extends Controller
         return Inertia::render('Training/Evaluations', ['training' => $item,
             'officeRep' => OfficeRepresentative::get(),
             'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderBy('order', 'ASC')->get(),
-            'keyRP' => KeyTraining::whereIn('id', explode(',', $item->key_rp))->get(),
-            'keyLearning' => KeyTraining::whereIn('id', explode(',', $item->key_learnings))->get(),
+            'keyRP' => KeyResourcePerson::whereIn('id', explode(',', $item->key_rp))->get(),
+            'keyLearning' => Learning::whereIn('id', explode(',', $item->key_learnings))->get(),
             'resourcePerson' => $item->resourcePersons,
             'totalMale' => $totalMale,
             'totalFemale' => abs($totalMale - count($eval)),

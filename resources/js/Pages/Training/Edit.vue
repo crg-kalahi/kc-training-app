@@ -2,6 +2,7 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import UserSelection from '@/Components/UserSelection.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
+import DangerAlertDialog from '@/Components/DangerAlertDialog.vue';
 </script>
 
 <script>
@@ -27,7 +28,8 @@ export default {
             formFacilitators: useForm({
                 id: null,
                 id_numbers: []
-            })
+            }),
+            toggleAlert: false,
         };
     },
     methods: {
@@ -65,6 +67,10 @@ export default {
                     id
                 });
             }
+        },
+        deleteTraining(){
+          const { id } = this.formEvent
+          this.formEvent.delete(route('training.destroy', { id }))
         }
     },
     mounted() {
@@ -91,8 +97,8 @@ export default {
                 </ul>
             </div>
             <div>
-              <div class="flex gap-3">
-                <Link :href="route('training.participants', {id: training.id})" class="inline-flex items-center justify-center rounded-md bg-teal-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500">Participants<ArrowUpRightIcon class="ml-1 h-4 w-4"/></Link>
+              <div class="flex justify-between gap-3">
+                <Link :href="route('training.participants.index', {id: training.id})" class="inline-flex items-center justify-center rounded-md bg-teal-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500">Participants<ArrowUpRightIcon class="ml-1 h-4 w-4"/></Link>
                 <Link :href="route('training.evaluations', {id: training.id})" class="inline-flex items-center justify-center rounded-md bg-teal-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500">Evaluation<ArrowUpRightIcon class="ml-1 h-4 w-4"/></Link>
               </div>
             </div>
@@ -114,6 +120,8 @@ export default {
             </div>
         </div>
     </div> -->
+
+    <DangerAlertDialog  title="System Alert" subtitle="Proceed to delete training?" v-model="toggleAlert" @approved="deleteTraining"/> 
 
     <div class="mt-5 px-3 lg:px-6 lg:py-3">
     <div class="md:grid md:grid-cols-3 md:gap-6">
@@ -162,6 +170,8 @@ export default {
               </div>
             </div>
             <div class="bg-gray-50 flex gap-x-3 justify-end px-4 py-3 sm:px-6">
+                <button type="button" @click="toggleAlert = true" class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">Delete Training</button>
+                <div class="flex-1"></div>
                 <button type="button" @click="resetForm(1)" class="inline-flex justify-center rounded-md border border-yellow-600 py-2 px-3 text-sm font-semibold text-yellow-600 shadow-sm hover:bg-yellow-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500">Reset Form</button>
                 <button type="submit" class="inline-flex justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Update</button>
             </div>
@@ -195,7 +205,7 @@ export default {
                     <UserSelection class="mt-1" v-model:id_number="formFacilitators.id_numbers[index]" :items="users"/>
                   </div>
                   <div class="col-span-1 flex items-end justify-start">
-                    <button type="button" @click="removeFacilitator(index)" v-if="formFacilitators.id_numbers.length > 1" class="inline-flex justify-center rounded-md bg-red-600 lg:py-2 lg:px-3 py-2 px-1 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Remove</button>
+                    <button type="button" @click="removeFacilitator(index)" v-if="formFacilitators.id_numbers.length > 1" class="inline-flex justify-center rounded-md text-red-600 lg:py-2 lg:px-3 py-2 px-1 text-sm font-semibold hover:bg-red-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Remove</button>
                   </div>
               </div>
               <button type="button" :disabled="users.length == formFacilitators.id_numbers.length" @click="formFacilitators.id_numbers.push(null)" :class="[users.length == formFacilitators.id_numbers.length ? 'bg-gray-200' : 'bg-indigo-400', 'text-sm mt-2 px-2 py-1 rounded-md text-white border']">Add Row</button>

@@ -82,6 +82,10 @@ import {
       this.getParticipantList()
     },
     methods:{
+      knowGained(post, pre){
+        const tmp = post - pre
+        return `${(( tmp <= 0 ? 0 : tmp / post ) * 100).toFixed(2)} %`
+      },
       async getParticipantList(){
         try {
           const q = this.querySearch
@@ -190,6 +194,7 @@ import {
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Position</th>
                     <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Pre-Test</th>
                     <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Post-Test</th>
+                    <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">K.G.</th>
                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
                       <span class="sr-only">Edit</span>
                     </th>
@@ -206,6 +211,7 @@ import {
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ person.position }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">{{ person.pre_test }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">{{ person.post_test }}</td>
+                    <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">{{ knowGained(person.post_test, person.pre_test) }}</td>
                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                       <button @click="configItem(person, 'edit')" type="button" class="text-indigo-600 hover:text-indigo-900"
                         >Edit<span class="sr-only">, {{ person.full_name }}</span></button>
