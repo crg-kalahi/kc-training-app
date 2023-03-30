@@ -246,7 +246,7 @@ class TrainingController extends Controller
         return redirect()->back();
     }
 
-    public function GetParticipants($id){
+    public function TGetParticipants($id){
         $item = Training::where('id', $id)->firstOrFail();
         return Inertia::render('Training/Participants', ['training' => $item, 'people' => $item->participants]);
     }
