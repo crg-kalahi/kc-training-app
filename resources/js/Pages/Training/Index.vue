@@ -115,7 +115,7 @@ export default {
         </div>
     </div>
         <!-- Pinned projects -->
-        <div class="mt-2 mb-5 px-4 sm:px-6 lg:px-8" v-if="pinnedProjects.length">
+        <!-- <div class="mt-2 mb-5 px-4 sm:px-6 lg:px-8" v-if="pinnedProjects.length">
         <h2 class="text-sm font-medium text-gray-900">Today's Event</h2>
             <ul role="list" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
                 <li v-for="project in pinnedProjects" :key="project.id" class="relative col-span-1 flex rounded-md shadow-sm">
@@ -150,7 +150,7 @@ export default {
                 </div>
                 </li>
             </ul>
-        </div>
+        </div> -->
         <div class="mt-2 hidden sm:block">
         <div class="inline-block min-w-full border-b border-gray-200 align-middle">
             <table class="min-w-full">
