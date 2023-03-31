@@ -92,7 +92,8 @@ import {
           const res = await axios.get(route('training.participant.index', {q}))
           this.queryPeople = res.data
         } catch (error) {
-          location.reload(); 
+          // location.reload(); 
+          console.log(error)
         }
       },
       toggleForm(){

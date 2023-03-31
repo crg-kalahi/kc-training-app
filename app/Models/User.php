@@ -56,6 +56,6 @@ class User extends Authenticatable
     }
 
     public function getAvatarAttribute(){
-        return "https://ui-avatars.com/api/?background=random&color=fff&name=". $this->getFullNameAttribute();
+        return "https://ui-avatars.com/api/?background=random&color=fff&name=". $this->lname.'+'.$this->fname;
     }
 }

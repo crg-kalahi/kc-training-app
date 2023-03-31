@@ -8,7 +8,7 @@ import {
     MenuItem,
     MenuItems,
   } from '@headlessui/vue'
-import { ChevronRightIcon, EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
+import { ChevronRightIcon, EllipsisVerticalIcon, StarIcon } from '@heroicons/vue/20/solid'
 const projects = [
     {
       id: 1,
@@ -53,23 +53,48 @@ const projects = [
 
 <script>
 import moment from 'moment';
+import { QrCodeIcon } from '@heroicons/vue/24/outline';
+import Modal from '@/Components/Modal.vue';
 export default {
-    props: [ 'pagination' ],
-    computed:{
-        user(){
-            return this.$page.props.auth.user
-        },
-        events(){
-            const { id } = this.user
-            return this.pagination.data.map(function(obj){
-                const date_e = `${moment(obj.date_from, 'YYYY-MM-DD').format('MMM DD, YYYY')} - ${moment(obj.date_to, 'YYYY-MM-DD').format('MMM DD, YYYY')}`
-                const { facilitators } = obj
-                let bgColorClass = 'bg-red-500' // Green if included as facilitator sa event, Gray if not
-                if(facilitators.length){
-                    bgColorClass = facilitators.map(x => x.id).includes(id) ? 'bg-green-500' : 'bg-gray-500'
-                }
-                return {...obj, bgColorClass, totalMembers: 0, date_e }
+    props: ["pagination"],
+    computed: {
+        ratings(){
+            const rates = ['Poor', 'Fair', 'Satisfactory', 'Very Satisfactory', 'Excellent']
+            if(this.eventDetail == null) return rates.map(() => 'text-white')
+            const { evaluation_status } = this.eventDetail
+            if(evaluation_status == 'No Evaluation') return rates.map(() => 'text-white')
+            let flag = rates.findIndex(x => x == evaluation_status)
+            return rates.map(function(item, index){
+                return flag >= index ? 'text-yellow-500' : 'text-white'
             })
+        },
+        user() {
+            return this.$page.props.auth.user;
+        },
+        events() {
+            const { id } = this.user;
+            return this.pagination.data.map(function (obj) {
+                const date_e = `${moment(obj.date_from, "YYYY-MM-DD").format("MMM DD, YYYY")} - ${moment(obj.date_to, "YYYY-MM-DD").format("MMM DD, YYYY")}`;
+                const { facilitators } = obj;
+                let bgColorClass = "bg-red-500"; // Green if included as facilitator sa event, Gray if not
+                if (facilitators.length) {
+                    bgColorClass = facilitators.map(x => x.id).includes(id) ? "bg-green-500" : "bg-gray-500";
+                }
+                return { ...obj, bgColorClass, totalMembers: 0, date_e };
+            });
+        }
+    },
+    components: { QrCodeIcon, Modal, StarIcon },
+    data(){
+        return{
+            toggleTrainingDetails: false,
+            eventDetail: null,
+        }
+    },
+    methods:{
+        showTrainingDetails(event){
+            this.eventDetail = event
+            this.toggleTrainingDetails = true
         }
     }
 }
@@ -90,7 +115,7 @@ export default {
         </div>
     </div>
         <!-- Pinned projects -->
-        <!-- <div class="mt-2 mb-5 px-4 sm:px-6 lg:px-8" v-if="pinnedProjects.length">
+        <div class="mt-2 mb-5 px-4 sm:px-6 lg:px-8" v-if="pinnedProjects.length">
         <h2 class="text-sm font-medium text-gray-900">Today's Event</h2>
             <ul role="list" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
                 <li v-for="project in pinnedProjects" :key="project.id" class="relative col-span-1 flex rounded-md shadow-sm">
@@ -106,7 +131,7 @@ export default {
                         <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
                     </MenuButton>
                     <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                        <MenuItems class="absolute right-10 top-3 z-10 mx-3 mt-1 w-48 origin-top-right divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <MenuItems class="absolute right-10 top-3 z-10 mx-3 mt-1 w-52 origin-top-right divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="py-1">
                             <MenuItem v-slot="{ active }">
                             <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">View</a>
@@ -114,10 +139,9 @@ export default {
                         </div>
                         <div class="py-1">
                             <MenuItem v-slot="{ active }">
-                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Removed from pinned</a>
-                            </MenuItem>
-                            <MenuItem v-slot="{ active }">
-                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Share</a>
+                                <a href="#" target="_blank" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
+                                    <QrCodeIcon class="mr-2 h-5 w-5"/> Evaluate using QR
+                                </a>
                             </MenuItem>
                         </div>
                         </MenuItems>
@@ -126,31 +150,7 @@ export default {
                 </div>
                 </li>
             </ul>
-        </div> -->
-
-        <!-- Projects list (only on smallest breakpoint) -->
-        <div class="mt-2 sm:hidden">
-        <div class="px-4 sm:px-6">
-            <h2 class="text-sm font-medium text-gray-900">Trainings</h2>
         </div>
-        <ul role="list" class="mt-3 divide-y divide-gray-100 border-t border-gray-200">
-            <li v-for="project in projects" :key="project.id">
-            <a href="#" class="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6">
-                <span class="flex items-center space-x-3 truncate">
-                <span :class="[project.bgColorClass, 'h-2.5 w-2.5 flex-shrink-0 rounded-full']" aria-hidden="true" />
-                <span class="truncate text-sm font-medium leading-6">
-                    {{ project.title }}
-                    {{ ' ' }}
-                    <span class="truncate font-normal text-gray-500">in {{ project.venue }}</span>
-                </span>
-                </span>
-                <ChevronRightIcon class="ml-4 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
-            </a>
-            </li>
-        </ul>
-        </div>
-
-        <!-- Projects table (small breakpoint and up) -->
         <div class="mt-2 hidden sm:block">
         <div class="inline-block min-w-full border-b border-gray-200 align-middle">
             <table class="min-w-full">
@@ -166,50 +166,24 @@ export default {
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 bg-white">
-                <!-- <tr v-for="project in projects" :key="project.id">
-                <td class="w-full max-w-0 whitespace-nowrap px-6 py-3 text-sm font-medium text-gray-900">
-                    <div class="flex items-center space-x-3 lg:pl-2">
-                    <div :class="[project.bgColorClass, 'h-2.5 w-2.5 flex-shrink-0 rounded-full']" aria-hidden="true" />
-                    <a href="#" class="truncate hover:text-gray-600">
-                        <span>
-                        {{ project.title }}
-                        {{ ' ' }}
-                        <span class="font-normal text-gray-500">at {{ project.venue }}</span>
-                        </span>
-                    </a>
-                    </div>
-                </td>
-                <td class="px-6 py-3 text-sm font-medium text-gray-500">
-                    <div class="flex items-center space-x-2">
-                    <div class="flex flex-shrink-0 -space-x-1">
-                        <img v-for="member in project.members" :key="member.handle" class="h-6 w-6 max-w-none rounded-full ring-2 ring-white" :src="member.imageUrl" :alt="member.name" />
-                    </div>
-                    <span v-if="project.totalMembers > project.members.length" class="flex-shrink-0 text-xs font-medium leading-5">+{{ project.totalMembers - project.members.length }}</span>
-                    </div>
-                </td>
-                <td class="hidden whitespace-nowrap px-6 py-3 text-right text-sm text-gray-500 md:table-cell">{{ project.lastUpdated }}</td>
-                <td class="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
-                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                </td>
-                </tr> -->
                 <tr v-for="event in events" :key="event.id">
                     <td class="w-full max-w-0 whitespace-nowrap px-6 py-3 text-sm font-medium text-gray-900">
                         <div class="flex items-center space-x-3 lg:pl-2">
                         <div :class="[event.bgColorClass, 'h-2.5 w-2.5 flex-shrink-0 rounded-full']" aria-hidden="true" />
-                        <a href="#" class="truncate hover:text-gray-600">
-                            <span>
+                        <div type="button" @click="showTrainingDetails(event)" class="truncate hover:text-gray-600 cursor-pointer">
+                            <p class="truncate">
                             {{ event.title }}
                             {{ ' ' }}
-                            <span class="font-normal text-gray-500">at {{ event.venue }}</span>
-                            </span>
-                        </a>
+                            </p>
+                            <span class="font-normal text-gray-500">@ {{ event.venue }}</span>
+                        </div>
                         </div>
                     </td>
                     <td class="whitespace-nowrap px-6 py-3 text-left text-sm text-gray-500 md:table-cell">{{ event.evaluation_status }}</td>
                     <td class="px-6 py-3 text-sm font-medium text-gray-500">
-                        <div class="flex items-center space-x-2">
+                        <div class="flex justify-center items-center space-x-2">
                         <div class="flex flex-shrink-0 -space-x-1">
-                            <img v-for="member in event.facilitators" :key="member.handle" class="h-6 w-6 max-w-none rounded-full ring-2 ring-white" :src="member.avatar" :alt="member.name" />
+                            <img v-for="member in event.facilitators" :key="member.handle" :class="['h-6 w-6 max-w-none rounded-full ring-2 ring-white', member.id == user.id ? 'ring ring-green-500' : ''] " :src="member.avatar" :alt="member.name" />
                         </div>
                         <span v-if="event.totalMembers > event.facilitators.length" class="flex-shrink-0 text-xs font-medium leading-5">+{{ project.totalMembers - project.members.length }}</span>
                         </div>
@@ -223,6 +197,25 @@ export default {
             </table>
         </div>
         <Pagination :links="pagination.links" :from="pagination.from" :to="pagination.to" :total="pagination.total"/>
+        <Modal v-model="toggleTrainingDetails">
+            <div v-if="eventDetail != null">
+                <div class="bg-yellow-100 pt-5 pb-3">
+                    <div class="flex justify-center items-center gap-1">
+                        <StarIcon v-for="rate in ratings" :key="rate" :class="['h-10 w-10', rate]"/>
+                    </div>
+                    <p class="max-w-2xl text-sm text-gray-700 text-center mt-1">{{ `${eventDetail.evaluation_status}` }}</p>
+                </div>
+                <div class="px-4 py-5 border-b border-gray-300">
+                    <p class="mb-3 max-w-2xl text-sm text-gray-700">{{ `${eventDetail.date_e}` }}</p>
+                    <h3 class="text-base font-bold leading-6 text-gray-900">{{ eventDetail.title }}</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ `@ ${eventDetail.venue}` }}</p>
+                </div>
+                <div class="px-4 py-3">
+                    <p class="my-1 max-w-2xl text-sm text-gray-500">Facilitated By</p>
+                    <h3 v-for="member in eventDetail.facilitators" :key="`${member.handle}-show`" class="text-base font-semibold leading-6 text-gray-900">{{ member.full_name }}</h3>
+                </div>
+            </div>
+        </Modal>
         </div>
     </BreezeAuthenticatedLayout>
 </template>

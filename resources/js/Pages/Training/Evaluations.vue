@@ -6,75 +6,81 @@ import QRCodeVue3 from "qrcode-vue3";
 import { QrCodeIcon, DocumentIcon } from '@heroicons/vue/24/outline';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import moment from 'moment'
+import { StarIcon } from '@heroicons/vue/20/solid';
 </script>
 <script>
   export default {
-    props: ['training', 'officeRep', 'keyTraining','keyRP', 'keyLearning', 'resourcePerson', 'totalMale', 'totalFemale', 'overallRating'],
-    computed:{
-      ratings(){
-        return ["Poor", "Fair", "Satisfactory", "V-Satisfactory", "Excellent"]
-      },
-      stats(){
-        const ratings = this.ratings
-        return [
-          { name: 'Male', stat: this.totalMale },
-          { name: 'Female', stat: this.totalFemale },
-          { name: 'Total', stat: this.totalMale + this.totalFemale },
-          { name: 'Overall Rating', stat: this.overallRating},
-        ]
-      },
-      trainingDate(){
-        const { date_from, date_to } = this.training
-        return `${moment(date_from, 'YYYY-MM-DD').format('MMM DD, YYYY')} - ${moment(date_to, 'YYYY-MM-DD').format('MMM DD, YYYY')}`
-      },
+    props: ["training", "officeRep", "keyTraining", "keyRP", "keyLearning", "resourcePerson", "totalMale", "totalFemale", "overallRating"],
+    computed: {
+        ratings() {
+            return ["Poor", "Fair", "Satisfactory", "V-Satisfactory", "Excellent"];
+        },
+        stats() {
+            const ratings = this.ratings;
+            return [
+                { name: "Male", stat: this.totalMale },
+                { name: "Female", stat: this.totalFemale },
+                { name: "Total", stat: this.totalMale + this.totalFemale },
+                { name: "Overall Rating", stat: this.overallRating },
+            ];
+        },
+        trainingDate() {
+            const { date_from, date_to } = this.training;
+            return `${moment(date_from, "YYYY-MM-DD").format("MMM DD, YYYY")} - ${moment(date_to, "YYYY-MM-DD").format("MMM DD, YYYY")}`;
+        },
     },
-    data(){
-      return {
-        toggleAlert: false,
-        showQrCode: false,
-        form: useForm({
-          key_training: [],
-          key_RP: [],
-          key_learning: [],
-          is_female: 0,
-          training_id: null,
-          office_rep: null,
-        })
-      }
+    data() {
+        return {
+            toggleAlert: false,
+            showQrCode: false,
+            form: useForm({
+                key_training: [],
+                key_RP: [],
+                key_learning: [],
+                is_female: 0,
+                training_id: null,
+                office_rep: null,
+            }),
+        };
     },
-    mounted(){
-      this.form.training_id = this.training.id
-      this.resetForm()
+    mounted() {
+        this.form.training_id = this.training.id;
+        this.resetForm();
     },
-    methods:{
-      resetForm(){
-        this.form.key_training = this.keyTraining.map(function({id, title}){
-          return { id, title, stat: 3 }
-        })
-        
-        this.form.key_learning = this.keyLearning.map(function({id, title}){
-          return { id, title, answer: "" }
-        })
-
-        const key_rp = this.keyRP.map(function({id, title}){
-          return { id, title, stat: 3 }
-        })
-        
-        this.form.key_RP = this.resourcePerson.map(function({id, full_name, topic}){
-          return { id, full_name, topic, key_rp }
-        })
-
-        this.form.is_female = 0;
-        this.form.office_rep = this.officeRep.length ? 1 : null;
-      },
-      submitForm(){
-        this.form.post(route('training.evaluation.post'), {
-          preserveScroll: true,
-          onSuccess: () => { this.resetForm(); this.toggleAlert = false; }
-        })
-      }
-    }
-  }
+    methods: {
+        updateRpArea(indexRp, indexKey, item) {
+            console.log(indexRp, indexKey, item);
+            // let { key_RP } = this.form
+            const { key_rp } = this.form.key_RP[indexRp];
+            this.form.key_RP[indexRp].key_rp = key_rp.map(function (obj, index) {
+                return { ...obj, stat: index == indexKey ? item : obj.stat };
+            });
+        },
+        resetForm() {
+            this.form.key_training = this.keyTraining.map(function ({ id, title }) {
+                return { id, title, stat: 3 };
+            });
+            this.form.key_learning = this.keyLearning.map(function ({ id, title }) {
+                return { id, title, answer: "" };
+            });
+            const key_rps = this.keyRP.map(function ({ id, title }) {
+                return { id, title, stat: 3 };
+            });
+            this.form.key_RP = this.resourcePerson.map(function ({ id, full_name, topic }) {
+                return { id, full_name, topic, key_rp: key_rps };
+            });
+            this.form.is_female = 0;
+            this.form.office_rep = this.officeRep.length ? 1 : null;
+        },
+        submitForm() {
+            this.form.post(route("training.evaluation.post"), {
+                preserveScroll: true,
+                onSuccess: () => { this.resetForm(); this.toggleAlert = false; }
+            });
+        }
+    },
+    components: { StarIcon }
+}
 </script>
 
 <template>
@@ -202,8 +208,8 @@ import moment from 'moment'
           </tbody>
         </table>
       </div>
-      
-      <div class="mt-5" v-for="rp, rpIndex in form.key_RP" :key="rp.id">
+
+      <div class="mt-5" v-for="rp,indexRp in form.key_RP" :key="rp.id">
         <div class="rounded-t-md py-1">
           <h3 class="text-base font-semibold leading-6 text-gray-900">{{ `"${rp.topic}"` }}</h3>
           <p class="max-w-4xl text-sm text-gray-500">{{ `By: ${rp.full_name}` }}</p>
@@ -220,10 +226,13 @@ import moment from 'moment'
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
-            <tr v-for="area,index in rp.key_rp" :key="area.title" :class="[index % 2 === 0 ? 'bg-gray-50' : '', 'divide-x divide-gray-200']">
+            <tr v-for="area,indexKey in rp.key_rp" :key="area.title" :class="[indexKey % 2 === 0 ? 'bg-gray-50' : '', 'divide-x divide-gray-200']">
               <td class="whitespace-nowrap py-1 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ area.title }}</td>
-              <td v-for="item in 5" class="whitespace-nowrap px-2 text-center text-gray-500">
-                <input :id="index" @input="form.key_RP[rpIndex].key_rp[index].stat = item" type="radio" :checked="area.stat == item" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+              <td v-for="item in 5" :key="`${rp.id}-${area.title}-${item}`" class="whitespace-nowrap px-2 text-center text-gray-500">
+                <!-- <input v-model="area.stat" type="radio" :value="item" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" /> -->
+                <button type="button" @click="updateRpArea(indexRp, indexKey, item)">
+                  <StarIcon :class="['h-6 w-6', area.stat == item ? 'text-yellow-500' : 'text-gray-200']"/>
+                </button>
               </td>
             </tr>
           </tbody>
