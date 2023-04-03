@@ -44,6 +44,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::delete('training-resource-person', [TrainingController::class, 'RemoveResourcePerson'])->name('training.resource-person.destroy');
     Route::get('training/{id}/participants', [TrainingController::class, 'TGetParticipants'])->name('training.participants.index');
     Route::get('training/{id}/evaluations', [TrainingController::class, 'GetEvaluations'])->name('training.evaluations');
+    Route::get('training/{id}/export-report', [TrainingController::class, 'ExportTrainingReport'])->name('training.export-report');
     Route::apiResource('training-participant', TrainingParticipantController::class)->names('training.participant');
     Route::resource('training', TrainingController::class)->names('training');
 

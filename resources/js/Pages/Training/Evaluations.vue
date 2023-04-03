@@ -77,6 +77,15 @@ import { StarIcon } from '@heroicons/vue/20/solid';
                 preserveScroll: true,
                 onSuccess: () => { this.resetForm(); this.toggleAlert = false; }
             });
+        },
+        async downloadExcel(){
+          try {
+            const { id } = this.training
+            window.open(route('training.export-report', {id}), "_blank")
+            // await axios.get(route('training.export-report', {id}))
+          } catch (error) {
+            console.log(error)
+          }
         }
     },
     components: { StarIcon }
@@ -139,8 +148,8 @@ import { StarIcon } from '@heroicons/vue/20/solid';
         <p class="mt-2 text-sm text-gray-700">{{ `${trainingDate} @ ${training.venue}` }}</p>
       </div>
       <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-        <button @click="showQrCode = true" type="button" class="inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-          <QrCodeIcon class="h-5 w-5 mr-2"/>Generate QR
+        <button @click="downloadExcel" type="button" class="inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          Generate Report
         </button>
         <!-- <Dropdown>
           <template #trigger>

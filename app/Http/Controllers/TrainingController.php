@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EvaluationExport;
 use App\Models\Conf\KeyResourcePerson;
 use App\Models\Conf\KeyTraining;
 use App\Models\Conf\Learning;
@@ -318,5 +319,10 @@ class TrainingController extends Controller
 
         $eval->keyLearning()->saveMany($keyLearning);
         return redirect()->back();
+    }
+
+    public function ExportTrainingReport($id){
+        $training = Training::where('id', $id)->firstOrFail();
+        return (new EvaluationExport($training->id))->download($training->id.'.xlsx');
     }
 }
