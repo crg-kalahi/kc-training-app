@@ -238,12 +238,11 @@ import { StarIcon } from '@heroicons/vue/20/solid';
           </tbody>
         </table>
       </div>
-      
       <div class="mt-10">
         <div class="mt-3" v-for="item, index in form.key_learning" :key="item.title">
           <label :for="`${item.id}-key-learning`" class="block text-sm font-medium leading-6 text-gray-900">{{ `${index+1}.) ${item.title}` }}</label>
           <div class="mt-2">
-            <textarea :id="`${item.id}-key-learning`" :name="`${item.id}-key-learning`" rows="2" class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
+            <textarea :id="`${item.id}-key-learning`" :name="`${item.id}-key-learning`" v-model="item.answer" rows="2" class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6" />
           </div>
           <!-- <p class="mt-2 text-sm text-gray-500">Write a few sentences about yourself.</p> -->
         </div>

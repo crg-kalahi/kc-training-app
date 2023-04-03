@@ -114,43 +114,6 @@ export default {
             <Link :href="route('training.create')" class="order-0 inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 sm:order-1 sm:ml-3">Create</Link>
         </div>
     </div>
-        <!-- Pinned projects -->
-        <!-- <div class="mt-2 mb-5 px-4 sm:px-6 lg:px-8" v-if="pinnedProjects.length">
-        <h2 class="text-sm font-medium text-gray-900">Today's Event</h2>
-            <ul role="list" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
-                <li v-for="project in pinnedProjects" :key="project.id" class="relative col-span-1 flex rounded-md shadow-sm">
-                <div :class="[project.bgColorClass, 'flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white']">{{ project.initials }}</div>
-                <div class="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white">
-                    <div class="flex-1 truncate px-4 py-2 text-sm">
-                    <a href="#" class="font-medium text-gray-900 hover:text-gray-600">{{ project.title }}</a>
-                    <p class="text-gray-500">{{ project.totalMembers }} Participants</p>
-                    </div>
-                    <Menu as="div" class="flex-shrink-0 pr-2">
-                    <MenuButton class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                        <span class="sr-only">Open options</span>
-                        <EllipsisVerticalIcon class="h-5 w-5" aria-hidden="true" />
-                    </MenuButton>
-                    <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                        <MenuItems class="absolute right-10 top-3 z-10 mx-3 mt-1 w-52 origin-top-right divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div class="py-1">
-                            <MenuItem v-slot="{ active }">
-                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">View</a>
-                            </MenuItem>
-                        </div>
-                        <div class="py-1">
-                            <MenuItem v-slot="{ active }">
-                                <a href="#" target="_blank" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
-                                    <QrCodeIcon class="mr-2 h-5 w-5"/> Evaluate using QR
-                                </a>
-                            </MenuItem>
-                        </div>
-                        </MenuItems>
-                    </transition>
-                    </Menu>
-                </div>
-                </li>
-            </ul>
-        </div> -->
         <div class="mt-2 hidden sm:block">
         <div class="inline-block min-w-full border-b border-gray-200 align-middle">
             <table class="min-w-full">
