@@ -54,7 +54,7 @@ class Training extends Model
         $highestPercent = 0;
         $evalStatFinal = null;
         $keyAreas = $this->evaluationKeyTrainings;
-        $status = ['Poor', 'Fair', 'Satisfactory', 'Very Satisfactory', 'Excellent'];
+        $status = ['Poor', 'Fair', 'Satisfactory', 'V-Satisfactory', 'Excellent'];
         
         if(count($eval)){
             $aveStat = [0,0,0,0,0];
@@ -84,5 +84,9 @@ class Training extends Model
         }
         
         return $evalStatFinal != null ? $status[$evalStatFinal] : 'No Evaluation';
+    }
+
+    public function getEvaluationLearningsAttribute(){
+        
     }
 }
