@@ -19,6 +19,7 @@ class EvaluationExport implements WithMultipleSheets
     public function sheets(): array
     {
         $sheets = [];
+        $sheets[] = new EvaluationTraining($this->trainingId);
         $sheets[] = new EvaluationResourcePerson($this->trainingId);
         $sheets[] = new EvaluationLearnings($this->trainingId);
         return $sheets;
