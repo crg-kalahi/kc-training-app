@@ -2,7 +2,7 @@
   <Head title="Evaluation Report" />
   <div class="px-4 py-10 sm:px-6 lg:px-8 bg-blue-200 min-h-screen">
     <!-- We've used 3xl here, but feel free to try other max-widths based on your needs -->
-    <div class="mx-auto pt-5 rounded-md max-w-3xl bg-white shadow-md">
+    <div id="section-to-print" class="mx-auto pt-5 rounded-md max-w-3xl bg-white">
       <div class="flex items-center justify-between px-3 py-8 border-b-2 border-gray-700">
         <div class="flex gap-x-1 px-5">
           <img src="/storage/assets/dswd-logo.png" class=" w-40 h-auto"/>
@@ -196,3 +196,19 @@ export default {
 <script setup>
 import { Head } from '@inertiajs/inertia-vue3';
 </script>
+
+<style>
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #section-to-print, #section-to-print * {
+    visibility: visible;
+  }
+  #section-to-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+</style>
