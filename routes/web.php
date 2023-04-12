@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('training/{id}/participants', [TrainingController::class, 'TGetParticipants'])->name('training.participants.index');
     Route::get('training/{id}/evaluations', [TrainingController::class, 'GetEvaluations'])->name('training.evaluations');
     Route::get('training/{id}/export-report', [TrainingController::class, 'ExportTrainingReport'])->name('training.export-report');
+    Route::get('training/{id}/preview-report', [TrainingController::class, 'PreviewTrainingReport'])->name('training.preview-report');
     Route::apiResource('training-participant', TrainingParticipantController::class)->names('training.participant');
     Route::resource('training', TrainingController::class)->names('training');
 

@@ -258,6 +258,7 @@ class TrainingController extends Controller
                 return $key->is_female ? false : true;
             }));
         $eval = $item->evaluations;
+        // $item->load('evaluation_status')
         return Inertia::render('Training/Evaluations', ['training' => $item,
             'officeRep' => OfficeRepresentative::get(),
             'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderBy('order', 'ASC')->get(),
@@ -324,5 +325,19 @@ class TrainingController extends Controller
     public function ExportTrainingReport($id){
         $training = Training::where('id', $id)->firstOrFail();
         return (new EvaluationExport($training->id))->download($training->id.'.xlsx');
+    }
+    
+    public function PreviewTrainingReport($id){
+        $training = Training::where('id', $id)->firstOrFail();
+        $training->load('facilitators');
+        return Inertia::render('Training/PreviewEvaluationReport', [
+            'key_rp' => KeyResourcePerson::whereIn('id', explode(',', $training->key_rp))->orderBy('order')->get(),
+            'key_training' => KeyTraining::whereIn('id', explode(',', $training->key_trainings))->orderBy('order')->get(),
+            'key_learning' => Learning::whereIn('id', explode(',', $training->key_learnings))->orderBy('order')->get(),
+            'items_rp' => DB::table('evaluation_resource_person_view')->where('training_id', $training->id)->orderBy('stat', 'desc')->orderBy('area_rp_id', 'desc')->get(),
+            'items_learning' => DB::table('evaluation_learning_view')->whereNotNull('answer')->where('training_id', $training->id)->orderBy('learning_id')->get(),
+            'item_training' => DB::table('evaluation_training_view')->where('training_id', $training->id)->orderBy('stat', 'desc')->get(),
+            'training' => $training,
+        ]);
     }
 }
