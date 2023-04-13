@@ -2,100 +2,103 @@
   <Head title="Evaluation Report" />
   <div class="px-4 py-10 sm:px-6 lg:px-8 bg-blue-200 min-h-screen">
     <!-- We've used 3xl here, but feel free to try other max-widths based on your needs -->
-    <div id="section-to-print" class="mx-auto pt-5 rounded-md max-w-3xl bg-white">
-      <div class="flex items-center justify-between px-3 py-8 border-b-2 border-gray-700">
-        <div class="flex gap-x-1 px-5">
-          <img src="/storage/assets/dswd-logo.png" class=" w-40 h-auto"/>
-          <img src="/storage/assets/fo-caraga-insignia.png" class=" w-40 h-auto"/>
-        </div>
-        <div class="text-center w-80">
-          <h3 class="font-bold text-base">KALAHI-CIDSS</h3>
-          <h3 class="font-bold text-base">DSWD / FIELD OFFICE CARAGA</h3>
-          <input type="text" class="border-none h-4 text-xs w-full text-center overflow-visible px-0" :value="'DSWD-SWIDB-GF-016 | REV -- | DD MMMM YYYY'" />
-        </div>
-      </div>
-      <div class="px-3 py-3 text-center">
-        <h3 class="text-lg font-bold leading-6 text-gray-900">
-          Training Evaluation Summary
-        </h3>
-        <h3 class="mt-4 text-base font-bold leading-6 text-gray-900">{{ training.title }}</h3>
-        <p class="mt-3 max-w-4xl text-sm text-gray-800">{{ dateConvert(training) }}</p>
-        <p class="max-w-4xl text-sm text-gray-800">{{ `Venue: ${training.venue}` }}</p>
-      </div>
-      <div class="px-3 py-3 border-b border-gray-200">
-        <table class="mb-10 min-w-full border-collapse border border-slate-500">
-          <thead>
-            <tr class="bg-blue-50 border border-gray-400">
-              <th colspan="2" scope="col" class="py-2 pl-2 pr-3 text-left text-sm font-semibold border border-slate-600 text-gray-900 sm:pl-2 capitalize">Training Content and Design</th>
-              <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Rating</th>
-              <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Adjective Rating</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in keyTraining" :key="`training-${item.id}`">
-              <td scope="col" class="text-center px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{ item.order }}</td>
-              <td :class="[item.class, 'whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-sm text-gray-900 sm:pl-2']">{{ item.title }}</td>
-              <td class="whitespace-nowrap border border-slate-700 text-center w-14 px-3 py-1 text-sm text-gray-900">{{ item.rating }}</td>
-              <td class="whitespace-nowrap border border-slate-700 text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(item.rating) }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <table class="min-w-full mb-1 border-collapse border border-slate-500">
-          <thead>
-            <tr class="bg-blue-50 border border-gray-400">
-              <th scope="col" class="text-left px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{`Resource ${resourcePersons.length > 1 ? 'Persons' : 'Person'}:`}}</th>
-            </tr>
-          </thead>
-        </table>
-        <div v-for="item,index in resourcePersons" :key="item.id" class="mb-1">
-          <table class="min-w-full border-collapse border border-slate-500">
-              <thead>
-                <tr class="bg-blue-50 border border-gray-400">
-                  <th scope="col" class="text-center px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{ index+1 }}</th>
-                  <th scope="col" class="py-2 pl-4 pr-3 text-left text-sm font-semibold border border-slate-600 text-gray-900 sm:pl-2 capitalize">{{ item.full_name }}</th>
-                  <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Rating</th>
-                  <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Adjective Rating</th>
-                </tr>
-              </thead>
-              <tbody class="">
-                <tr v-for="rp_item in key_rp" :key="`${rp_item.id}-${item.id}`">
-                  <td class="whitespace-nowrap border border-slate-700 text-center text-sm text-gray-900">{{ rp_item.order }}</td>
-                  <td class="whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-2">{{ rp_item.title }}</td>
-                  <td class="whitespace-nowrap border border-slate-700 text-center w-14 px-3 py-1 text-sm text-gray-900">{{ rp_per_key(item.rp_id, rp_item.id)[5] }}</td>
-                  <td class="whitespace-nowrap border border-slate-700 text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(rp_per_key(item.rp_id, rp_item.id)[5]) }}</td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-right text-sm font-bold uppercase text-gray-500 sm:pl-2">Total Rating</td>
-                  <td class="whitespace-nowrap border border-slate-700 font-semibold text-center w-14 px-3 py-1 text-sm text-gray-900">{{ rp_overall(item.rp_id)[5] }}</td>
-                  <td class="whitespace-nowrap border border-slate-700 font-semibold text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(rp_overall(item.rp_id)[5]) }}</td>
-                </tr>
-              </tbody>
-            </table>
-        </div>
-        <div class="mt-6 flow-root">
-          <ul role="list" class="-my-5 divide-y divide-gray-200">
-            <li v-for="learning in key_learning" :key="learning.id" class="py-5">
-              <div class="relative focus-within:ring-2 focus-within:ring-indigo-500">
-                <h3 class="text-sm font-semibold text-gray-800">
-                    <!-- Extend touch target to entire panel -->
-                    <span class="absolute inset-0" aria-hidden="true" />
-                    {{ `${learning.order}. ${learning.title}` }}
-                </h3>
-                <p v-for="item in filterLearning(learning.id)" class="mt-1 ml-2 line-clamp-2 text-sm text-gray-700">{{ `* ${item.answer}` }}</p>
+    <div id="section-to-print" class="px-1 mx-auto pt-5 rounded-md max-w-3xl bg-white">
+      <table class="min-w-full border-collapse">
+        <tbody>
+          <tr class="border-b-4 border-gray-600">
+            <td colspan="2">
+              <div class="flex gap-x-1 px-5">
+                <img src="/storage/assets/dswd-logo.png" class=" w-40 h-auto"/>
+                <img src="/storage/assets/fo-caraga-insignia.png" class=" w-40 h-auto"/>
               </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <!-- <div v-if="training.facilitators.length" class="px-4 py-3">
-        <p class="mb-2 max-w-4xl text-sm text-gray-500 uppercase">Facilitated By:</p>
-        <div class="flex gap-2">
-          <section v-for="people in training.facilitators" :key="people.id" class="inline-flex items-center gap-x-3 pl-2">
-            <img class="h-6 w-6 rounded-full" :src="people.avatar" alt="" />
-            <p class="max-w-4xl text-sm text-gray-700 uppercase">{{ people.full_name }}</p>
-          </section>
-        </div>
-      </div> -->
+            </td>
+            <td colspan="2" class="">
+              <div class="text-center w-80">
+                <h3 class="font-bold text-base">KALAHI-CIDSS</h3>
+                <h3 class="font-bold text-base">DSWD / FIELD OFFICE CARAGA</h3>
+                <input type="text" class="border-none h-4 text-xs w-full text-center overflow-visible px-0" :value="'DSWD-SWIDB-GF-016 | REV -- | DD MMMM YYYY'" />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4">
+              <h3 class="py-3 text-center text-lg font-bold leading-6 text-gray-900">
+                Training Evaluation Summary
+              </h3>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-center">
+              <h3 class="text-base font-bold leading-6 text-gray-900">{{ training.title }}</h3>
+              <p class="mt-2 max-w-4xl text-sm text-gray-800">{{ dateConvert(training) }}</p>
+              <p class="max-w-4xl text-sm text-gray-800">{{ `Venue: ${training.venue}` }}</p>
+            </td>
+          </tr>
+          <tr class="bg-blue-50 border border-gray-400">
+            <th colspan="2" scope="col" class="py-2 pl-2 pr-3 text-left text-sm font-semibold border border-slate-600 text-gray-900 sm:pl-2 capitalize">Training Content and Design</th>
+            <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Rating</th>
+            <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Adjective Rating</th>
+          </tr>
+          <tr v-for="item in keyTraining" :key="`training-${item.id}`">
+            <td scope="col" class="text-center w-10 px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{ item.order }}</td>
+            <td :class="[item.class, 'whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-sm text-gray-900 sm:pl-2']">{{ item.title }}</td>
+            <td class="whitespace-nowrap border border-slate-700 text-center w-14 px-3 py-1 text-sm text-gray-900">{{ item.rating }}</td>
+            <td class="whitespace-nowrap border border-slate-700 text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(item.rating) }}</td>
+          </tr>
+          <tr class="bg-blue-50 border border-gray-400">
+            <th colspan="4" scope="col" class="text-left px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{`Resource ${resourcePersons.length > 1 ? 'Persons' : 'Person'}:`}}</th>
+          </tr>
+        </tbody>
+        <tbody v-for="item, index in resourcePersons" :key="item.id">
+          <tr class="bg-blue-50 border border-gray-400">
+            <th scope="col" class="text-center px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{ index+1 }}</th>
+            <th scope="col" class="py-2 pl-4 pr-3 text-left text-sm font-semibold border border-slate-600 text-gray-900 sm:pl-2 capitalize">{{ item.full_name }}</th>
+            <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Rating</th>
+            <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Adjective Rating</th>
+          </tr>
+          <tr v-for="rp_item in key_rp" :key="`${rp_item.id}-${item.id}`">
+            <td class="whitespace-nowrap border border-slate-700 text-center text-sm text-gray-900">{{ rp_item.order }}</td>
+            <td class="whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-2">{{ rp_item.title }}</td>
+            <td class="whitespace-nowrap border border-slate-700 text-center w-14 px-3 py-1 text-sm text-gray-900">{{ rp_per_key(item.rp_id, rp_item.id)[5] }}</td>
+            <td class="whitespace-nowrap border border-slate-700 text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(rp_per_key(item.rp_id, rp_item.id)[5]) }}</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-right text-sm font-bold uppercase text-gray-500 sm:pl-2">Total Rating</td>
+            <td class="whitespace-nowrap border border-slate-700 font-semibold text-center w-14 px-3 py-1 text-sm text-gray-900">{{ rp_overall(item.rp_id)[5] }}</td>
+            <td class="whitespace-nowrap border border-slate-700 font-semibold text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(rp_overall(item.rp_id)[5]) }}</td>
+          </tr>
+        </tbody>
+        <tbody v-for="learning in key_learning" :key="learning.id">
+          <tr>
+            <td colspan="4">
+              <h3 class="text-sm font-semibold text-gray-800">
+                  <!-- Extend touch target to entire panel -->
+                  <!-- <span class="absolute inset-0" aria-hidden="true" /> -->
+                  {{ `${learning.order}. ${learning.title}` }}
+              </h3>
+            </td>
+          </tr>
+          <tr v-for="item in filterLearning(learning.id)">
+            <td colspan="4">
+              <p class="ml-2 line-clamp-2 text-sm text-gray-700">{{ `* ${item.answer}` }}</p>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot class="border-none">
+          <tr>
+            <td colspan="4" class="text-center pt-4">
+              <!-- <h4 class="text-xs">Page ___ of ___</h4> -->
+              <div class="flex items-center">
+                <div class="border-t-4 border-gray-600 grow">
+                  <h4 class="text-xs">DSWD Field Office Caraga, R. Palma St. Butuan City, Philippines 8600</h4>
+                  <h4 class="text-xs">Website: <span class="text-blue-700 underline">http://www.dswd.gov.ph</span> Tel Nos.: (085) 342-5619 to 20  Telefax: (085) 815-9173</h4>
+                </div>
+                <img src="/storage/assets/iso-logo.jpg" class=" w-24 h-auto"/>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   </div>
 </template>
