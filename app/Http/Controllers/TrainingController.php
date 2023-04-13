@@ -331,9 +331,9 @@ class TrainingController extends Controller
         $training = Training::where('id', $id)->firstOrFail();
         $training->load('facilitators');
         return Inertia::render('Training/PreviewEvaluationReport', [
-            'key_rp' => KeyResourcePerson::whereIn('id', explode(',', $training->key_rp))->orderBy('order')->get(),
-            'key_training' => KeyTraining::whereIn('id', explode(',', $training->key_trainings))->orderBy('order')->get(),
-            'key_learning' => Learning::whereIn('id', explode(',', $training->key_learnings))->orderBy('order')->get(),
+            'key_rp' => KeyResourcePerson::whereIn('id', explode(',', $training->key_rp))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'key_training' => KeyTraining::whereIn('id', explode(',', $training->key_trainings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'key_learning' => Learning::whereIn('id', explode(',', $training->key_learnings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
             'items_rp' => DB::table('evaluation_resource_person_view')->where('training_id', $training->id)->orderBy('stat', 'desc')->orderBy('area_rp_id', 'desc')->get(),
             'items_learning' => DB::table('evaluation_learning_view')->whereNotNull('answer')->where('training_id', $training->id)->orderBy('learning_id')->get(),
             'item_training' => DB::table('evaluation_training_view')->where('training_id', $training->id)->orderBy('stat', 'desc')->get(),
