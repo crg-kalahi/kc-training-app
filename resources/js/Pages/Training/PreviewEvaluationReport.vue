@@ -128,7 +128,7 @@ export default {
         return { id, title, order, class: 'text-left font-semibold', rating: (total_count_participant_stat / total_count_participant).toFixed(2) }
       })
       items.push({
-        title: 'Total Rating', order: '*', rating: (_.mean(items.map(x=> parseFloat(x.rating)))).toFixed(2), class: 'text-left font-bold'
+        title: 'Total Rating', order: '*', rating: (_.mean(items.map(x=> parseFloat(x.rating)))).toFixed(2), class: 'text-right font-bold'
       })
       return items
     }
