@@ -16,7 +16,7 @@
               <div class="text-center w-80">
                 <h3 class="font-bold text-base">KALAHI-CIDSS</h3>
                 <h3 class="font-bold text-base">DSWD / FIELD OFFICE CARAGA</h3>
-                <input type="text" autofocus class="border-none h-4 text-xs w-full text-center overflow-visible px-0" :value="'DSWD-SWIDB-GF-016 | REV -- | DD MMMM YYYY'" />
+                <input type="text" autofocus class="border-none rounded-md h-4 text-xs w-full text-center overflow-visible px-0 focus:bg-green-300" :value="'DSWD-SWIDB-GF-016 | REV -- | DD MMMM YYYY'" />
               </div>
             </td>
           </tr>
@@ -66,6 +66,21 @@
             <td colspan="2" class="whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-right text-sm font-bold uppercase text-gray-500 sm:pl-2">Total Rating</td>
             <td class="whitespace-nowrap border border-slate-700 font-semibold text-center w-14 px-3 py-1 text-sm text-gray-900">{{ rp_overall(item.rp_id)[5] }}</td>
             <td class="whitespace-nowrap border border-slate-700 font-semibold text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(rp_overall(item.rp_id)[5]) }}</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <td colspan="3"></td>
+            <td class="flex justify-end pt-3">
+              <div class="border border-gray-600 rounded-sm px-2 py-1">
+                <h5 class="italic text-xs font-bold">Rating</h5>
+                <p class="text-xs font-semibold">1.00 - 1.49 - Poor</p>
+                <p class="text-xs font-semibold">1.50 - 2.49 - Fair</p>
+                <p class="text-xs font-semibold">2.50 - 3.49 - Satisfactory</p>
+                <p class="text-xs font-semibold">3.50 - 4.49 - Very Satisfactory</p>
+                <p class="text-xs font-semibold">4.50 - 5.00 - Outstanding</p>
+              </div>
+            </td>
           </tr>
         </tbody>
         <tbody v-for="learning, index in key_learning" :key="learning.id">
@@ -151,7 +166,7 @@ export default {
       if(v <= 1.49) return 'Poor'
       if(v <= 2.49) return 'Fair'
       if(v <= 3.49) return 'Very Satisfactory'
-      if(v <= 5.00) return 'Excellent'
+      if(v <= 5.00) return 'Outstanding'
     },
     rp_per_key(id, key_id){
       let items = [0, 0, 0, 0, 0]
