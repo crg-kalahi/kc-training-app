@@ -16,7 +16,7 @@
               <div class="text-center w-80">
                 <h3 class="font-bold text-base">KALAHI-CIDSS</h3>
                 <h3 class="font-bold text-base">DSWD / FIELD OFFICE CARAGA</h3>
-                <input type="text" class="border-none h-4 text-xs w-full text-center overflow-visible px-0" :value="'DSWD-SWIDB-GF-016 | REV -- | DD MMMM YYYY'" />
+                <input type="text" autofocus class="border-none h-4 text-xs w-full text-center overflow-visible px-0" :value="'DSWD-SWIDB-GF-016 | REV -- | DD MMMM YYYY'" />
               </div>
             </td>
           </tr>
@@ -39,8 +39,8 @@
             <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Rating</th>
             <th scope="col" class="px-3 py-2 text-center text-sm font-semibold border border-slate-600 text-gray-900">Adjective Rating</th>
           </tr>
-          <tr v-for="item in keyTraining" :key="`training-${item.id}`">
-            <td scope="col" class="text-center w-10 px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{ item.order }}</td>
+          <tr v-for="item, index in keyTraining" :key="`training-${item.id}`">
+            <td scope="col" class="text-center w-10 px-2 text-sm font-semibold border border-slate-600 text-gray-900">{{ item.order != '*' ? index + 1 : '*'   }}</td>
             <td :class="[item.class, 'whitespace-nowrap border border-slate-700 py-1 pl-4 pr-3 text-sm text-gray-900 sm:pl-2']">{{ item.title }}</td>
             <td class="whitespace-nowrap border border-slate-700 text-center w-14 px-3 py-1 text-sm text-gray-900">{{ item.rating }}</td>
             <td class="whitespace-nowrap border border-slate-700 text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(item.rating) }}</td>
@@ -68,13 +68,13 @@
             <td class="whitespace-nowrap border border-slate-700 font-semibold text-center px-3 py-1 text-sm text-gray-900">{{ adjRating(rp_overall(item.rp_id)[5]) }}</td>
           </tr>
         </tbody>
-        <tbody v-for="learning in key_learning" :key="learning.id">
+        <tbody v-for="learning, index in key_learning" :key="learning.id">
           <tr>
             <td colspan="4">
               <h3 class="text-sm font-semibold text-gray-800">
                   <!-- Extend touch target to entire panel -->
                   <!-- <span class="absolute inset-0" aria-hidden="true" /> -->
-                  {{ `${learning.order}. ${learning.title}` }}
+                  {{ `${index + 1}. ${learning.title}` }}
               </h3>
             </td>
           </tr>
