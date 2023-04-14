@@ -138,6 +138,8 @@ import {
           this.openEditForm = true
         }else if(type == 'delete'){
           this.toggleAlert = true
+        }else if(type == 'changeTest'){
+          this.submitEditForm()
         }
       }
     }
@@ -210,8 +212,12 @@ import {
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ person.email || '' }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ person.is_female ? 'Female' : 'Male' }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ person.position }}</td>
-                    <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">{{ person.pre_test }}</td>
-                    <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">{{ person.post_test }}</td>
+                    <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">
+                      <input type="number" :min="0" class="border-none w-14 px-0 py-0" @change="configItem(person, 'changeTest')" v-model="person.pre_test"/>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">
+                      <input type="number" :min="0" class="border-none w-14 px-0 py-0" @change="configItem(person, 'changeTest')" v-model="person.post_test"/>
+                    </td>
                     <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">{{ knowGained(person.post_test, person.pre_test) }}</td>
                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                       <button @click="configItem(person, 'edit')" type="button" class="text-indigo-600 hover:text-indigo-900"
