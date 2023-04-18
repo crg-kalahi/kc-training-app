@@ -283,7 +283,7 @@ class TrainingController extends Controller
         $eval = EvaluationTraining::create([
             'training_id' => $request->training_id,
             'is_female' => $request->is_female,
-            'office_rep' => $request->office_rep,
+            'office_rep_id' => $request->office_rep,
         ]);
 
         $keyTraining = [];
