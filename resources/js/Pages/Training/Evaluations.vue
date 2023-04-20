@@ -138,6 +138,9 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
               </ul>
           </div>
         </div>
+        <Link :href="route('training.evaluation-response', {id: training.id})" type="button" class="inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          Preview Response
+        </Link>
     </div>
     <div class="px-4 lg:px-8 sm:px-6 mt-4 sm:flex sm:items-center">
       <div class="sm:flex-auto">
@@ -145,10 +148,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
         <p class="mt-2 text-sm text-gray-700">{{ `${trainingDate} @ ${training.venue}` }}</p>
       </div>
       <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-        <!-- <button @click="downloadExcel" type="button" class="inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-          Generate Report
-        </button> -->
-
+        
         <Menu as="div" class="relative inline-block text-left">
           <div>
             <MenuButton class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">

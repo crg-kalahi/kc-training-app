@@ -18,4 +18,8 @@ class EvaluationKeyResourcePerson extends Model
     public function evaluation(){
         return $this->belongsTo(EvaluationTraining::class, 'evaluation_id', 'id');
     }
+
+    public function person(){
+        return $this->hasOne(TrainingResourcePerson::class, 'id', 'rp_id');
+    }
 }

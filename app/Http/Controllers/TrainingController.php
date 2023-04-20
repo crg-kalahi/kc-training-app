@@ -261,14 +261,75 @@ class TrainingController extends Controller
         // $item->load('evaluation_status')
         return Inertia::render('Training/Evaluations', ['training' => $item,
             'officeRep' => OfficeRepresentative::get(),
-            'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderBy('order', 'ASC')->get(),
-            'keyRP' => KeyResourcePerson::whereIn('id', explode(',', $item->key_rp))->get(),
-            'keyLearning' => Learning::whereIn('id', explode(',', $item->key_learnings))->get(),
+            'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyRP' => KeyResourcePerson::whereIn('id', explode(',', $item->key_rp))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyLearning' => Learning::whereIn('id', explode(',', $item->key_learnings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
             'resourcePerson' => $item->resourcePersons,
             'totalMale' => $totalMale,
             'totalFemale' => abs($totalMale - count($eval)),
-            'overallRating' => $item->evaluation_status
+            'overallRating' => $item->evaluation_status,
         ]);
+    }
+
+    public function GetEvaluationResponse($id){
+        $item = Training::where('id', $id)->firstOrFail();
+        
+        return Inertia::render('Training/EvaluationResponse', [
+            'training' => $item,
+            'officeRep' => OfficeRepresentative::get(),
+            'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyRP' => KeyResourcePerson::whereIn('id', explode(',', $item->key_rp))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyLearning' => Learning::whereIn('id', explode(',', $item->key_learnings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'evaluations' => $item->evaluations,
+            'resourcePerson' => $item->resourcePersons,
+        ]);
+    }
+
+    public function ShowEvaluationResponse($id){
+        $item = EvaluationTraining::where('id', $id)->firstOrFail();
+        
+        return response()->json([
+            'e_key_areas' => $item->keyTraining,
+            'e_key_learning' => $item->keyLearning,
+            'e_key_rp' => $item->keyResourcePerson,
+        ]);
+    }
+
+    public function UpdateEvaluationResponse($id, Request $request){
+        $item = EvaluationTraining::where('id', $id)->firstOrFail();
+        $item->is_female = $request->is_female;
+        $item->office_rep_id = $request->office_rep_id;
+        if($item->isDirty()){
+            $item->save();
+        }
+
+        foreach($request->areas as $area){
+            DB::table('evaluation_key_areas')
+                ->where('id', $area['id'])
+                ->update(['stat' => $area['stat']]);
+        }
+        foreach($request->learnings as $learning){
+            DB::table('evaluation_key_learnings')
+                ->where('id', $learning['id'])
+                ->update(['answer' => $learning['answer']]);
+        }
+        foreach($request->rp as $rp){
+            DB::table('evaluation_key_resource_people')
+                ->where('id', $rp['id'])
+                ->update(['stat' => $rp['stat']]);
+        }
+        
+        return response()->json(['message' => 'successfully updated!']);
+    }
+    
+    public function RemoveEvaluationResponse($id){
+        $item = EvaluationTraining::where('id', $id)->firstOrFail();
+        $item->keyTraining()->delete();
+        $item->keyLearning()->delete();
+        $item->keyResourcePerson()->delete();
+        $item->delete();
+        
+        return response()->json(['message' => 'successfully removed!']);
     }
 
     public function StoreEvaluation(Request $request){

@@ -38,7 +38,7 @@ class Training extends Model
     }
 
     public function evaluations(){
-        return $this->hasMany(EvaluationTraining::class, 'training_id', 'id');
+        return $this->hasMany(EvaluationTraining::class, 'training_id', 'id')->orderBy('created_at', 'DESC');
     }
 
     public function evaluationKeyTrainings(){
