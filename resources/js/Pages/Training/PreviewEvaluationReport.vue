@@ -125,8 +125,8 @@ export default {
   computed:{
     resourcePersons(){
       const items = this.items_rp
-      return (_.uniqBy(items, 'rp_id')).map(function({rp_id, area_rp_id, stat, total_count, is_female, is_internal, position, lname, fname, mname, ext_name}){
-        return { rp_id, area_rp_id, stat, total_count, is_female, is_internal, position, full_name: `${lname}, ${fname}${mname ? ` ${mname[0]}.` : ''} ${ext_name}` }
+      return (_.uniqBy(items, 'rp_id')).map(function({rp_id, area_rp_id, stat, total_count, sex, is_internal, position, lname, fname, mname, ext_name}){
+        return { rp_id, area_rp_id, stat, total_count, sex, is_internal, position, full_name: `${lname}, ${fname}${mname ? ` ${mname[0]}.` : ''} ${ext_name}` }
       })
     },
     keyTraining(){

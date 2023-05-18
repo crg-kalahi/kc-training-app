@@ -82,7 +82,7 @@ import Button from '@/Components/Button.vue';
             method: 'PUT',
             url: route('training.evaluation-response.update', {id: evaluation.id}),
             data: {
-              is_female: evaluation.is_female, office_rep_id: evaluation.office_rep_id, areas, learnings, rp
+              sex: evaluation.sex, office_rep_id: evaluation.office_rep_id, areas, learnings, rp
             }
           })
           this.toggleInfoAlert = false
@@ -193,10 +193,10 @@ import Button from '@/Components/Button.vue';
         </div>
         <ul role="list" class="divide-y divide-gray-200">
           <li v-for="person in evaluations" :key="person.id" :class="['flex py-4 cursor-pointer px-2', person.id == selectedRespondent?.id ? 'bg-yellow-300 hover:bg-yellow-300': 'hover:bg-blue-50']" @click="respondentWasSelected(person)">
-            <UserIcon :class="['h-10 w-10', person.is_female ? 'text-pink-500' : 'text-blue-500']"/>
+            <UserIcon :class="['h-10 w-10', person.sex == 'female' ? 'text-pink-500' : 'text-blue-500', person.sex == '0' ? 'text-gray-500':'']"/>
             <!-- <img class="h-10 w-10 rounded-full" :src="person.id" alt="" /> -->
             <div class="ml-3">
-              <p class="text-sm font-medium text-gray-900">{{ person.is_female ? 'Female' : 'Male' }}</p>
+              <p class="text-sm font-medium text-gray-900 capitalize">{{ person.sex == '0' ? "Prefer Not to say" : person.sex }}</p>
               <p class="text-xs text-gray-500">{{ moment(person.created_at).format('MMM-DD-YYYY, hh:mm A') }}</p>
             </div>
           </li>
@@ -235,10 +235,11 @@ import Button from '@/Components/Button.vue';
           <div class="px-6 pb-10 pt-5 bg-yellow-100">
             <div class="flex gap-x-3">
               <div>
-                <label for="gender" class="pl-1 block text-sm font-bold leading-6 text-gray-900">Gender</label>
-                <select v-model="selectedRespondent.is_female" id="gender" name="gender" class="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                  <option :value="0">Male</option>
-                  <option :value="1">Female</option>
+                <label for="Sex" class="pl-1 block text-sm font-bold leading-6 text-gray-900">Sex</label>
+                <select v-model="selectedRespondent.sex" id="Sex" name="Sex" class="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                  <option :value="'0'">Prefer not to say</option>
+                  <option :value="'male'">Male</option>
+                  <option :value="'female'">Female</option>
                 </select>
               </div>
               <div>

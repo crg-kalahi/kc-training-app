@@ -32,6 +32,8 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('training/{id}/evaluation-response/public', [TrainingController::class, 'PublicEvaluationForm'])->name('public.training.evaluation-response');
+
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');

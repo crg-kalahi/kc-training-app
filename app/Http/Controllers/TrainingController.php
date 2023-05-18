@@ -13,7 +13,6 @@ use App\Models\EvaluationKeyResourcePerson;
 use App\Models\EvaluationTraining;
 use App\Models\EventFacilitator;
 use App\Models\Training;
-use App\Models\TrainingParticipant;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -25,6 +24,19 @@ use Inertia\Inertia;
 
 class TrainingController extends Controller
 {
+   
+    public function PublicEvaluationForm($id){
+        $item = Training::where('id', $id)->firstOrFail();
+        return Inertia::render('Training/EvaluationPublic', [
+            'training' => $item,
+            'officeRep' => OfficeRepresentative::get(),
+            'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyRP' => KeyResourcePerson::whereIn('id', explode(',', $item->key_rp))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyLearning' => Learning::whereIn('id', explode(',', $item->key_learnings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'resourcePerson' => $item->resourcePersons,
+        ]);
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -255,7 +267,7 @@ class TrainingController extends Controller
         $item = Training::where('id', $id)->firstOrFail();
         $totalMale = count(collect($item->evaluations)
             ->filter(function($key){
-                return $key->is_female ? false : true;
+                return $key->sex == 'male' ? false : true;
             }));
         $eval = $item->evaluations;
         // $item->load('evaluation_status')
@@ -297,7 +309,7 @@ class TrainingController extends Controller
 
     public function UpdateEvaluationResponse($id, Request $request){
         $item = EvaluationTraining::where('id', $id)->firstOrFail();
-        $item->is_female = $request->is_female;
+        $item->sex = $request->sex;
         $item->office_rep_id = $request->office_rep_id;
         if($item->isDirty()){
             $item->save();
@@ -338,12 +350,12 @@ class TrainingController extends Controller
             'key_RP' => 'required|array',
             'training_id' => 'required|string',
             'office_rep' => 'required|integer',
-            'is_female' => 'required|boolean'
+            'sex' => 'required|string'
         ]);
 
         $eval = EvaluationTraining::create([
             'training_id' => $request->training_id,
-            'is_female' => $request->is_female,
+            'sex' => $request->sex,
             'office_rep_id' => $request->office_rep,
         ]);
 

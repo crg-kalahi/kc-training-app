@@ -12,7 +12,7 @@ class EvaluationTraining extends Model
     use HasFactory, SoftDeletes, UUID;
     
     protected $fillable = [
-        'training_id', 'is_female', 'office_rep_id'
+        'training_id', 'sex', 'office_rep_id'
     ];
 
     public function keyTraining(){

@@ -1,9 +1,8 @@
 <script setup>
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
-import Dropdown from '@/Components/Dropdown.vue';
 import Modal from '@/Components/Modal.vue';
 import QRCodeVue3 from "qrcode-vue3";
-import { QrCodeIcon, DocumentIcon, DocumentArrowDownIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
+import { QrCodeIcon, EyeIcon, DocumentArrowDownIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import moment from 'moment'
 import { StarIcon, ChevronDownIcon  } from '@heroicons/vue/20/solid';
@@ -38,9 +37,9 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
                 key_training: [],
                 key_RP: [],
                 key_learning: [],
-                is_female: 0,
+                sex: '0',
                 training_id: null,
-                office_rep: null,
+                office_rep: 1,
             }),
         };
     },
@@ -70,8 +69,8 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
             this.form.key_RP = this.resourcePerson.map(function ({ id, full_name, topic }) {
                 return { id, full_name, topic, key_rp: key_rps };
             });
-            this.form.is_female = 0;
-            this.form.office_rep = this.officeRep.length ? 1 : null;
+            this.form.sex = '0';
+            this.form.office_rep = this.officeRep.length ? 1 : 1;
         },
         submitForm() {
             this.form.post(route("training.evaluation.post"), {
@@ -95,7 +94,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     <BreezeAuthenticatedLayout>
       <Modal v-model="showQrCode">
         <div class="py-5">
-          <QRCodeVue3 value="https://github.com/soldair/node-qrcode"
+          <QRCodeVue3 :value="route('public.training.evaluation-response', {id: training.id})"
             :dotsOptions="{
               type: 'extra-rounded',
               color: '#26249a',
@@ -129,7 +128,6 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
         <!-- Page title & actions -->
     <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div class="min-w-0 flex-1">
-            <!-- <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">Trainings</h1> -->
           <div class="text-xs md:text-sm font-medium breadcrumbs">
               <ul>
                   <li><Link :href="route('training.index')">Training</Link></li>
@@ -138,9 +136,6 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
               </ul>
           </div>
         </div>
-        <Link :href="route('training.evaluation-response', {id: training.id})" type="button" class="inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-          Preview Response
-        </Link>
     </div>
     <div class="px-4 lg:px-8 sm:px-6 mt-4 sm:flex sm:items-center">
       <div class="sm:flex-auto">
@@ -152,7 +147,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
         <Menu as="div" class="relative inline-block text-left">
           <div>
             <MenuButton class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-              Generate Report
+              Options
               <ChevronDownIcon class="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
             </MenuButton>
           </div>
@@ -161,6 +156,16 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
             <MenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div class="py-1 divide-y divide-gray-300">
                 <MenuItem v-slot="{ active }">
+                  <button type="button" @click="showQrCode = true" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
+                  <QrCodeIcon class="h-6 w-6 mr-3" />
+                  QR Code</button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                  <Link :href="route('training.evaluation-response', {id: training.id})" type="button" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
+                  <EyeIcon class="h-6 w-6 mr-3" />
+                  Preview Response</Link>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
                   <button type="button" @click="previewReport(true)" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
                   <DocumentTextIcon class="h-6 w-6 mr-3" />
                   Preview Page</button>
@@ -168,23 +173,12 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
                 <MenuItem v-slot="{ active }">
                   <button type="button" @click="previewReport(false)" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
                   <DocumentArrowDownIcon class="h-6 w-6 mr-3" />
-                  Raw Excel</button>
+                  Download Excel</button>
                 </MenuItem>
               </div>
             </MenuItems>
           </transition>
         </Menu>
-        <!-- <Dropdown>
-          <template #trigger>
-            <button type="button" class="block rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Evaluation</button>
-          </template>
-          <template #content>
-            <ul class=" divide-y divide-gray-300">
-              <li @click="showQrCode = true" class="p-2 text-gray-600 text-sm inline-flex w-full hover:bg-gray-50 cursor-pointer"><QrCodeIcon class="h-5 w-5 mr-2"/>Generate QR</li>
-              <li class="p-2 text-gray-600 text-sm inline-flex w-full hover:bg-gray-50 cursor-pointer"><DocumentIcon class="h-5 w-5 mr-2"/>Proceed to Form</li>
-            </ul>
-          </template>
-        </Dropdown> -->
       </div>
     </div>
     <div class="px-6">
@@ -205,10 +199,11 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     <div class="px-6 pb-10 pt-5 bg-yellow-100">
       <div class="flex gap-x-3">
         <div>
-          <label for="gender" class="pl-1 block text-sm font-bold leading-6 text-gray-900">Gender</label>
-          <select v-model="form.is_female" id="gender" name="gender" class="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-            <option :value="0">Male</option>
-            <option :value="1">Female</option>
+          <label for="Sex" class="pl-1 block text-sm font-bold leading-6 text-gray-900">Sex</label>
+          <select v-model="form.sex" id="Sex" name="Sex" class="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <option :value="'0'">Prefer not to say</option>
+            <option :value="'male'">Male</option>
+            <option :value="'female'">Female</option>
           </select>
         </div>
         <div>

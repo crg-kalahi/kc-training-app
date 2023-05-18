@@ -49,7 +49,7 @@
       </TransitionRoot>
   
       <!-- Static sidebar for desktop -->
-      <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-gray-100 lg:pt-5 lg:pb-4">
+      <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-purple-800 lg:pt-5 lg:pb-4">
         <!-- <div class="mb-5 flex flex-shrink-0 items-center px-6">
           <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500" alt="Your Company" />
         </div> -->
@@ -58,7 +58,7 @@
           <!-- User account dropdown -->
           <Menu as="div" class="relative inline-block px-3 text-left">
             <div>
-              <MenuButton class="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+              <MenuButton class="group w-full rounded-md bg-white px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
                 <span class="flex w-full items-center justify-between">
                   <span class="flex min-w-0 items-center justify-between space-x-3">
                     <img class="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300" :src="user.avatar" alt="" />
@@ -99,14 +99,14 @@
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3" aria-hidden="true">
                 <MagnifyingGlassIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
               </div>
-              <input type="text" name="search" id="search" class="block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Search Training" />
+              <input type="text" name="search" id="search" class="block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6" placeholder="Search Training" />
             </div>
           </div>
           <!-- Navigation -->
           <nav class="mt-6 px-3">
             <div class="space-y-1">
-              <Link preserve-scroll v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">
-                <component :is="item.icon" :class="[item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-3 h-6 w-6 flex-shrink-0']" aria-hidden="true" />
+              <Link preserve-scroll v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-yellow-400 text-gray-900' : 'text-white hover:bg-yellow-100 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-sm font-bold tracking-wider']" :aria-current="item.current ? 'page' : undefined">
+                <component :is="item.icon" :class="[item.current ? 'text-gray-500' : 'text-white group-hover:text-gray-500', 'mr-3 h-6 w-6 flex-shrink-0']" aria-hidden="true" />
                 {{ item.name }}
               </Link>
             </div>
@@ -208,26 +208,26 @@
 
 </script>
 <script>
-    export default{
-        computed:{
-            user(){
-                return this.$page.props.auth.user
-            },
-            navigation(){
-              const page = this.$page.url
-              return [
-                { name: 'Dashboard', href: route('dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
-                { name: 'Trainings', href: route('training.index'), icon: Bars4Icon, current: page.startsWith('/training') },
-                { name: 'Configurations', href: route('conf.index'), icon: Cog6ToothIcon, current: page.startsWith('/configuration') },
-              ]
-            }
-        },
-        methods:{
-          logoutWasClicked(){
-            this.$inertia.visit(route('logout'), {
-              method: 'post'
-            })
+  export default{
+      computed:{
+          user(){
+              return this.$page.props.auth.user
+          },
+          navigation(){
+            const page = this.$page.url
+            return [
+              { name: 'Dashboard', href: route('dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
+              { name: 'Trainings', href: route('training.index'), icon: Bars4Icon, current: page.startsWith('/training') },
+              { name: 'Configurations', href: route('conf.index'), icon: Cog6ToothIcon, current: page.startsWith('/configuration') },
+            ]
           }
+      },
+      methods:{
+        logoutWasClicked(){
+          this.$inertia.visit(route('logout'), {
+            method: 'post'
+          })
         }
-    }
+      }
+  }
 </script>
