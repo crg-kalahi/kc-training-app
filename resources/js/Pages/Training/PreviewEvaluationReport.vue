@@ -165,7 +165,8 @@ export default {
       const v = parseFloat(value)
       if(v <= 1.49) return 'Poor'
       if(v <= 2.49) return 'Fair'
-      if(v <= 3.49) return 'Very Satisfactory'
+      if(v <= 3.49) return 'Satisfactory'
+      if(v <= 4.49) return 'Very Satisfactory'
       if(v <= 5.00) return 'Outstanding'
     },
     rp_per_key(id, key_id){
