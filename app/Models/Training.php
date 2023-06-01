@@ -79,7 +79,12 @@ class Training extends Model
         }
         // Log::info($arrAve);
         $avg = collect( $arrAve )->avg();
-        return $avg ? $status[intval($avg) - 1] : 'No Evaluation';
+        if($avg <= 1.49) return 'Poor';
+        if($avg <= 2.49) return 'Fair';
+        if($avg <= 3.49) return 'Satisfactory';
+        if($avg <= 4.49) return 'Very Satisfactory';
+        if($avg <= 5.00) return 'Outstanding';
+        return 'No Evaluation';
     }
 
     public function getEvaluationLearningsAttribute(){
