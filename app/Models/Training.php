@@ -6,6 +6,7 @@ use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class Training extends Model
 {
@@ -49,41 +50,36 @@ class Training extends Model
 
     public function getEvaluationStatusAttribute(){
         $eval = $this->evaluations;
-        $evaluationStats = [1,2,3,4,5];
         $trainingKeyId = explode(",",$this->key_trainings);
-        $highestPercent = 0;
-        $evalStatFinal = null;
         $keyAreas = $this->evaluationKeyTrainings;
         $status = ['Poor', 'Fair', 'Satisfactory', 'V-Satisfactory', 'Excellent'];
+        $evaluationStats = [1,2,3,4,5];
         
+        $arrAve = [];
         if(count($eval)){
-            $aveStat = [0,0,0,0,0];
             foreach($trainingKeyId as $key){
                 $filt_by_area = collect($keyAreas)->filter(function($obj) use ($key){
                     return $obj['area_training_id'] == $key;
                 });
-                $statCollect = [0,0,0,0,0];
+                $totalCountParticipant = 0;
+                $totalCountParticipantStat = 0;
+                $arr = [0,0,0,0,0];
                 foreach($evaluationStats as $index => $stat){
-                    $count = count($filt_by_area->filter(function($obj) use ($stat){
+                    $filterByStat = $filt_by_area->filter(function($obj) use ($stat){
                         return $obj['stat'] == $stat;
-                    }));
-                    $ave = ($count / count($eval)) * 100;
-                    $statCollect[$index] = $ave;
+                    });
+                    $count = collect(count($filterByStat))->reduce(function($t, $c){ return $t+$c;}, 0);
+                    $totalCountParticipant += $count;
+                    $totalCountParticipantStat += $count * $stat;
+                    $arr[$index] = $totalCountParticipant ? $totalCountParticipantStat / $totalCountParticipant : 0;
                 }
-                foreach($statCollect as $i=>$stat1){
-                    $aveStat[$i] += $stat1;
-                }
-            }
-            foreach($aveStat as $index => $stat){
-                $tmp = ($stat / count($trainingKeyId));
-                if($tmp >= $highestPercent){
-                    $highestPercent = $tmp;
-                    $evalStatFinal = $index;
-                }
+                $arrAve[] = collect($arr)->max();
+                // Log::info($arr);
             }
         }
-        
-        return $evalStatFinal != null ? $status[$evalStatFinal] : 'No Evaluation';
+        // Log::info($arrAve);
+        $avg = collect( $arrAve )->avg();
+        return $avg ? $status[intval($avg) - 1] : 'No Evaluation';
     }
 
     public function getEvaluationLearningsAttribute(){
