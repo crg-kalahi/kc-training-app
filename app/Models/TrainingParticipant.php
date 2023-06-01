@@ -30,6 +30,6 @@ class TrainingParticipant extends Model
     }
 
     public function getAvatarAttribute(){
-        return "https://ui-avatars.com/api/?background=random&color=fff&name=". $this->lname.'+'.$this->fname;
+        return "https://ui-avatars.com/api/?background=E53D00&color=fff&name=". $this->lname.'+'.$this->fname;
     }
 }

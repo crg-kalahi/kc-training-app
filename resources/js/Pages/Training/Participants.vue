@@ -82,6 +82,12 @@ import {
       this.getParticipantList()
     },
     methods:{
+      proceedToExcel(){
+        const { id } = this.training
+        if(confirm(`Proceed to export excel sheet of participants?`)){
+          window.open(route('training.export-participants', {id}), '_blank')
+        }
+      },
       knowGained(post, pre){
         const tmp = post - pre
         return `${(( tmp <= 0 ? 0 : tmp / post ) * 100).toFixed(2)} %`
@@ -168,7 +174,8 @@ import {
         <h1 class="text-base font-semibold leading-6 text-gray-900">{{ `${training.title}` }}</h1>
         <p class="mt-2 text-sm text-gray-700">{{ `${trainingDate} @ ${training.venue}` }}</p>
       </div>
-      <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none flex gap-x-2">
+        <button v-if="people.length" @click="proceedToExcel" type="button" class="block rounded-md bg-green-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Export Participants</button>
         <button v-if="people.length" @click="toggleForm" type="button" class="block rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Participant</button>
       </div>
     </div>

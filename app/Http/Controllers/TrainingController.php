@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EvaluationExport;
+use App\Exports\TrainingParticipantExport;
 use App\Models\Conf\KeyResourcePerson;
 use App\Models\Conf\KeyTraining;
 use App\Models\Conf\Learning;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TrainingController extends Controller
 {
@@ -398,6 +400,13 @@ class TrainingController extends Controller
     public function ExportTrainingReport($id){
         $training = Training::where('id', $id)->firstOrFail();
         return (new EvaluationExport($training->id))->download($training->id.'.xlsx');
+    }
+
+    public function ExportTrainingParticipants($id){
+        $training = Training::where('id', $id)->firstOrFail();
+        // return (new TrainingParticipantExport($training->id))->download($training->id.'.xlsx');
+        return Excel::download(new TrainingParticipantExport($training->id), $training->id.'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+
     }
     
     public function PreviewTrainingReport($id){
