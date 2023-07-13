@@ -22,7 +22,7 @@ class TrainingParticipantExport implements FromQuery, WithHeadings, WithMapping
     public function query()
     {
         return DB::table('training_participants')
-            ->select('lname', 'fname', 'mname', 'ext_name', 'pre_test', 'post_test', 'is_female', 'is_internal')
+            ->select('lname', 'fname', 'mname', 'ext_name', 'pre_test', 'post_test', 'is_female', 'is_internal', 'email')
             ->where('training_id', $this->id)
             ->whereNull('deleted_at')
             ->orderBy('lname'); 
@@ -35,6 +35,7 @@ class TrainingParticipantExport implements FromQuery, WithHeadings, WithMapping
             'First Name',
             'Middle Name',
             'Ext Name',
+            'email',
             'Pre-Test',
             'Post-Test',
             'SEX',
@@ -49,10 +50,11 @@ class TrainingParticipantExport implements FromQuery, WithHeadings, WithMapping
             $row->fname,
             $row->mname,
             $row->ext_name,
+            $row->email,
             $row->pre_test,
             $row->post_test,
             $row->is_female ? 'Female' : 'Male',
-            $row->is_internal ? 'Internal' : 'External'
+            $row->is_internal ? 'Internal' : 'External',
         ];
     }
 }
