@@ -10,7 +10,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 </script>
 <script>
   export default {
-    props: ["training", "officeRep", "keyTraining", "keyRP", "keyLearning", "resourcePerson", "totalMale", "totalFemale", "overallRating"],
+    props: ["training", "officeRep", "keyTraining", "keyRP", "keyLearning", "resourcePerson", "totalMale", "totalFemale", "overallRating", "totalPreferNotToSay"],
     computed: {
         ratings() {
             return ["Poor", "Fair", "Satisfactory", "V-Satisfactory", "Excellent"];
@@ -20,8 +20,9 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
             return [
                 { name: "Male", stat: this.totalMale },
                 { name: "Female", stat: this.totalFemale },
-                { name: "Total", stat: this.totalMale + this.totalFemale },
-                { name: "Overall Rating", stat: this.overallRating },
+                { name: "Prefer Not To Say", stat: this.totalPreferNotToSay },
+                { name: "Total", stat: this.totalMale + this.totalFemale + this.totalPreferNotToSay},
+                // { name: "Overall Rating", stat:  },
             ];
         },
         trainingDate() {
@@ -186,6 +187,10 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
         <div v-for="item in stats" :key="item.name" class="overflow-hidden rounded-lg bg-white px-4 py-3 shadow sm:p-6">
           <dt class="truncate text-sm font-medium text-gray-500">{{ item.name }}</dt>
           <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ item.stat }}</dd>
+        </div>
+        <div class="col-span-4 overflow-hidden rounded-lg bg-white px-4 py-3 shadow sm:p-6">
+          <dt class="truncate text-sm font-medium text-gray-500">{{ `Overall Rating` }}</dt>
+          <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ overallRating }}</dd>
         </div>
       </dl>
     </div>
