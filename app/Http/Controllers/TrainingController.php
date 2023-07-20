@@ -267,9 +267,10 @@ class TrainingController extends Controller
     }
     public function GetEvaluations($id){
         $item = Training::where('id', $id)->firstOrFail();
-        $totalMale = count(collect($item->evaluations)
+        $participants = collect($item->evaluations);
+        $totalMale = count($participants
             ->filter(function($key){
-                return $key->sex == 'male' ? false : true;
+                return $key->sex != '0' && $key->sex == 'male' ? true : false;
             }));
         $eval = $item->evaluations;
         // $item->load('evaluation_status')
@@ -281,6 +282,7 @@ class TrainingController extends Controller
             'resourcePerson' => $item->resourcePersons,
             'totalMale' => $totalMale,
             'totalFemale' => abs($totalMale - count($eval)),
+            'totalPreferNotToSay' => count($participants->filter(function($key){ return $key->sex == '0'; })),
             'overallRating' => $item->evaluation_status,
         ]);
     }
