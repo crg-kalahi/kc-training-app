@@ -49,7 +49,7 @@
       </TransitionRoot>
   
       <!-- Static sidebar for desktop -->
-      <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-purple-800 lg:pt-5 lg:pb-4">
+      <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-20 lg:pt-5 lg:pb-4">
         <!-- <div class="mb-5 flex flex-shrink-0 items-center px-6">
           <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500" alt="Your Company" />
         </div> -->
@@ -58,7 +58,7 @@
           <!-- User account dropdown -->
           <Menu as="div" class="relative inline-block px-3 text-left">
             <div>
-              <MenuButton class="group w-full rounded-md bg-white px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+              <MenuButton class="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
                 <span class="flex w-full items-center justify-between">
                   <span class="flex min-w-0 items-center justify-between space-x-3">
                     <img class="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300" :src="user.avatar" alt="" />
@@ -105,8 +105,8 @@
           <!-- Navigation -->
           <nav class="mt-6 px-3">
             <div class="space-y-1">
-              <Link preserve-scroll v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-yellow-400 text-gray-900' : 'text-white hover:bg-yellow-100 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-sm font-bold tracking-wider']" :aria-current="item.current ? 'page' : undefined">
-                <component :is="item.icon" :class="[item.current ? 'text-gray-500' : 'text-white group-hover:text-gray-500', 'mr-3 h-6 w-6 flex-shrink-0']" aria-hidden="true" />
+              <Link preserve-scroll v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-yellow-300 text-gray-900' : 'text-gray-700 hover:bg-yellow-100 hover:text-gray-900', 'group flex items-center rounded-md px-2 py-2 text-sm font-bold tracking-wider']" :aria-current="item.current ? 'page' : undefined">
+                <component :is="item.icon" :class="[item.current ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-500', 'mr-3 h-6 w-6 flex-shrink-0']" aria-hidden="true" />
                 {{ item.name }}
               </Link>
             </div>

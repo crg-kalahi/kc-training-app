@@ -8,6 +8,7 @@ use App\Http\Controllers\OfficeRepresentativeController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingParticipantController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -36,7 +37,10 @@ Route::get('training/{id}/evaluation-response/public', [TrainingController::clas
 
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
+        return Inertia::render('Dashboard', [
+            'participants' => DB::table('participant_lists_view')->groupBy('full_name', 'is_internal')->get(),
+            // 'earliest_day_training' => DB::table('event')
+        ]);
     })->name('dashboard');
 
     Route::post('training/evaluation', [TrainingController::class, 'StoreEvaluation'])->name('training.evaluation.post');
