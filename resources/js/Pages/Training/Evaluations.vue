@@ -233,7 +233,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
           <tbody class="divide-y divide-gray-200 bg-white">
             <tr v-for="area,index in form.key_training" :key="area.title" :class="[index % 2 === 0 ? 'bg-gray-50' : '', 'divide-x divide-gray-200']">
               <td class="whitespace-nowrap py-1 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-2">{{ area.title }}</td>
-              <td v-for="item in 5" class="whitespace-nowrap px-2 text-center text-gray-500">
+              <td v-for="item in 5" :key="`${item}-key`" class="whitespace-nowrap px-2 text-center text-gray-500">
                 <input :id="index" @input="form.key_training[index].stat = item" type="radio" :checked="area.stat == item" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600" />
               </td>
             </tr>

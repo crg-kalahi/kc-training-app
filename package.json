@@ -18,6 +18,7 @@
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
         "axios": "^0.21",
+        "daisyui": "^3.2.1",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "moment": "^2.29.4",
@@ -30,7 +31,6 @@
         "@headlessui/vue": "^1.7.12",
         "@heroicons/vue": "^2.0.16",
         "chart.js": "^3.9.1",
-        "daisyui": "^2.51.3",
         "helper-js": "^3.1.5",
         "qrcode-vue3": "^1.4.17",
         "vue-chart-3": "^3.1.8"

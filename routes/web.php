@@ -33,13 +33,14 @@ Route::get('/', function () {
     ]);
 });
 
+Route::post('training/evaluation/public', [TrainingController::class, 'PublicEvaluationFormStore'])->name('public.training.evaluation.post');
 Route::get('training/{id}/evaluation-response/public', [TrainingController::class, 'PublicEvaluationForm'])->name('public.training.evaluation-response');
 
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard', [
             'participants' => DB::table('participant_lists_view')->groupBy('full_name', 'is_internal')->get(),
-            // 'earliest_day_training' => DB::table('event')
+            'earliest_day_training' => DB::table('event')
         ]);
     })->name('dashboard');
 

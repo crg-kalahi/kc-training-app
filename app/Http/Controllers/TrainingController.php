@@ -38,6 +38,57 @@ class TrainingController extends Controller
             'resourcePerson' => $item->resourcePersons,
         ]);
     }
+
+    public function PublicEvaluationFormStore(Request $request){
+        $request->validate([
+            'key_training' => 'required|array',
+            'key_RP' => 'required|array',
+            'training_id' => 'required|string',
+            'office_rep' => 'required|integer',
+            'sex' => 'required|string'
+        ]);
+
+        $eval = EvaluationTraining::create([
+            'training_id' => $request->training_id,
+            'sex' => $request->sex,
+            'office_rep_id' => $request->office_rep,
+        ]);
+
+        $keyTraining = [];
+        foreach($request->key_training as $key){
+            $item = new EvaluationKeyArea([
+                'stat' => $key['stat'],
+                'area_training_id' => $key['id']
+            ]);
+            $keyTraining[] = $item;
+        }
+        $eval->keyTraining()->saveMany($keyTraining);
+
+        $keyRP = [];
+        foreach($request->key_RP as $rp){
+            foreach($rp['key_rp'] as $key){
+                $item = new EvaluationKeyResourcePerson([
+                    'stat' => $key['stat'],
+                    'area_rp_id' => $key['id'],
+                    'rp_id' => $rp['id']
+                ]);
+                $keyRP[] = $item;
+            }
+        }
+        $eval->keyResourcePerson()->saveMany($keyRP);
+        
+        $keyLearning = [];
+        foreach($request->key_learning as $key){
+            $item = new EvaluationKeyLearning([
+                'answer' => $key['answer'],
+                'learning_id' => $key['id']
+            ]);
+            $keyLearning[] = $item;
+        }
+
+        $eval->keyLearning()->saveMany($keyLearning);
+        return redirect()->back();
+    }
     
     /**
      * Display a listing of the resource.
