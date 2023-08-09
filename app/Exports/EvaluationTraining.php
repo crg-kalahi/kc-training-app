@@ -46,6 +46,7 @@ class EvaluationTraining implements FromQuery, WithTitle, WithHeadings, WithMapp
     public function map($row): array
     {
         $adj = "Poor";
+        $row->stat = round($row->stat, 2);
         if($row->stat <= 1.49){ $adj = 'Poor';}
         elseif($row->stat <= 2.49){ $adj = 'Fair';}
         elseif($row->stat <= 3.49){ $adj = 'Satisfactory';}
