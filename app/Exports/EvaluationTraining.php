@@ -19,7 +19,7 @@ class EvaluationTraining implements FromQuery, WithTitle, WithHeadings, WithMapp
 
     public function query()
     {
-        return DB::table('evaluation_training_view')->where('training_id', $this->id)->orderBy('order');
+        return DB::table('v2_evaluation_training_view')->where('training_id', $this->id)->orderBy('area_training_id');
     }
 
     public function title(): string
@@ -33,17 +33,25 @@ class EvaluationTraining implements FromQuery, WithTitle, WithHeadings, WithMapp
             'ID',
             'Key: ID',
             'Key: Title',
-            'Score'
+            'Score',
+            'Adj Rating'
         ];
     }
 
     public function map($row): array
     {
+        $adj = "Poor";
+        if($row->stat <= 1.49){ $adj = 'Poor';}
+        elseif($row->stat <= 2.49){ $adj = 'Fair';}
+        elseif($row->stat <= 3.49){ $adj = 'Satisfactory';}
+        elseif($row->stat <= 4.49){ $adj = 'Very Satisfactory';}
+        elseif($row->stat <= 5.00){ $adj = 'Outstanding';}
         return [
             $row->id,
             $row->area_training_id,
             $row->title,
-            $row->stat
+            $row->stat,
+            $adj,
         ];
     }
 }

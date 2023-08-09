@@ -19,7 +19,7 @@ class EvaluationResourcePerson implements FromQuery, WithTitle, WithHeadings, Wi
 
     public function query()
     {
-        return DB::table('evaluation_resource_person_view')->where('training_id', $this->id)->orderBy('stat', 'desc')->orderBy('area_rp_id', 'desc');
+        return DB::table('v2_evaluation_resource_person_view')->where('training_id', $this->id)->orderBy('area_rp_id');
     }
 
     public function title(): string
@@ -40,13 +40,20 @@ class EvaluationResourcePerson implements FromQuery, WithTitle, WithHeadings, Wi
             'Ext Name',
             'Position',
             'Evaluation Value',
-            'Evaluation Total Count',
-            'Evaluation Title'
+            'Adj Rating',
+            // 'Evaluation Total Count',
+            'Evaluation Title',
         ];
     }
 
     public function map($row): array
     {
+        $adj = "Poor";
+        if($row->stat <= 1.49){ $adj = 'Poor';}
+        elseif($row->stat <= 2.49){ $adj = 'Fair';}
+        elseif($row->stat <= 3.49){ $adj = 'Satisfactory';}
+        elseif($row->stat <= 4.49){ $adj = 'Very Satisfactory';}
+        elseif($row->stat <= 5.00){ $adj = 'Outstanding';}
         $v = DB::table('key_resource_people')->where('id', $row->area_rp_id)->first();
         return [
             $row->id,
@@ -59,7 +66,8 @@ class EvaluationResourcePerson implements FromQuery, WithTitle, WithHeadings, Wi
             $row->ext_name,
             $row->position,
             $row->stat,
-            $row->total_count,
+            $adj,
+            // $row->total_count,
             $v->title,
         ];
     }
