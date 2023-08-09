@@ -33,6 +33,11 @@ class EvaluationTraining implements FromQuery, WithTitle, WithHeadings, WithMapp
             'ID',
             'Key: ID',
             'Key: Title',
+            'Poor',
+            'Fair',
+            'Satisfactory',
+            'Very Satisfactory',
+            'Outstanding',
             'Score',
             'Adj Rating'
         ];
@@ -50,6 +55,11 @@ class EvaluationTraining implements FromQuery, WithTitle, WithHeadings, WithMapp
             $row->id,
             $row->area_training_id,
             $row->title,
+            $row->poor,
+            $row->fair,
+            $row->satisfactory,
+            $row->very_satisfactory,
+            $row->outstanding,
             $row->stat,
             $adj,
         ];
