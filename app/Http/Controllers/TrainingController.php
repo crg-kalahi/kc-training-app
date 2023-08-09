@@ -97,7 +97,7 @@ class TrainingController extends Controller
      */
     public function index()
     {
-        $pagination = Training::with('facilitators')->paginate(20);
+        $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(20);
         return Inertia::render('Training/Index', ['pagination' => $pagination]);
     }
 
@@ -332,7 +332,7 @@ class TrainingController extends Controller
             'keyLearning' => Learning::whereIn('id', explode(',', $item->key_learnings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
             'resourcePerson' => $item->resourcePersons,
             'totalMale' => $totalMale,
-            'totalFemale' => abs($totalMale - count($eval)),
+            'totalFemale' => abs($totalMale - count($eval->filter(function($key){ return $key->sex != '0'; }))),
             'totalPreferNotToSay' => count($participants->filter(function($key){ return $key->sex == '0'; })),
             'overallRating' => $item->evaluation_status,
         ]);

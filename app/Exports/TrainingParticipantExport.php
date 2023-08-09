@@ -47,16 +47,16 @@ class TrainingParticipantExport implements FromQuery, WithHeadings, WithMapping
     public function map($row): array
     {
         return [
-            $row->lname,
-            $row->fname,
-            $row->mname,
+            strtoupper($row->lname),
+            strtoupper($row->fname),
+            $row->mname ? strtoupper($row->mname) : "",
             $row->ext_name,
             $row->position,
             $row->email,
             $row->pre_test,
             $row->post_test,
             $row->is_female ? 'Female' : 'Male',
-            $row->is_internal ? 'Internal' : 'External',
+            $row->is_internal ? 'Internal' : 'External'
         ];
     }
 }
