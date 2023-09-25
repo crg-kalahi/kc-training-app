@@ -14,7 +14,8 @@ class TrainingParticipant extends Model
     protected $fillable = [
         'lname', 'fname', 'mname', 'ext_name', 'email',
         'encoded_by', 'training_id', 'is_internal',
-        'position', 'is_female', 'pre_test', 'post_test'
+        'position', 'is_female', 'pre_test', 'post_test',
+        'municipality', 'brgy'
     ];
 
     public function training(){

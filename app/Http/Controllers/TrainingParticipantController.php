@@ -51,6 +51,8 @@ class TrainingParticipantController extends Controller
             'is_female' => $request->is_female,
             'pre_test' => $request->pre_test,
             'post_test' => $request->post_test,
+            'municipality' => $request->municipality,
+            'brgy' => $request->brgy,
             'encoded_by' => Auth::id()
         ]);
 
@@ -98,9 +100,11 @@ class TrainingParticipantController extends Controller
         $p->is_female = $request->is_female;
         $p->pre_test = $request->pre_test;
         $p->post_test = $request->post_test;
+        $p->municipality = $request->municipality;
+        $p->brgy = $request->brgy;
 
         $p->save();
-        return redirect()->back();
+        return response()->json(['msg' => 'success']);
     }
 
     /**

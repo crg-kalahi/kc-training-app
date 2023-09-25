@@ -66,7 +66,9 @@ import {
             is_female: false,
             position: "",
             pre_test: 0,
-            post_test: 0
+            post_test: 0,
+            municipality: "",
+            brgy: "",
         }),
         querySearch: "",
         queryPeople: []
@@ -74,8 +76,13 @@ import {
     },
     watch:{
       querySearch(){
-        this.getParticipantList()
-      }
+        let timer;
+        clearTimeout(timer);
+        timer = setTimeout(() => { 
+          this.getParticipantList()
+          // console.log('yawa')
+          }, 1000)
+        }
     },
     mounted(){
       this.form.training_id = this.training.id
@@ -110,9 +117,9 @@ import {
         this.form.reset('id','lname', 'fname', 'mname', 'ext_name', 'email', 'is_internal', 'is_female', 'position', 'pre_test', 'post_test')
       },
       fillTheFields(){
-        const { lname, fname, mname, ext_name, email, is_internal, is_female, position } = this.selectedInternalPerson
+        const { lname, fname, mname, ext_name, email, is_internal, is_female, position, municipality, brgy } = this.selectedInternalPerson
         this.form = Object.assign({}, this.form, {
-          lname, fname, mname, ext_name, email, is_internal, is_female, position
+          lname, fname, mname, ext_name, email, is_internal, is_female, position, municipality, brgy
         })
         this.selectedInternalPerson = null
       },
@@ -123,9 +130,15 @@ import {
         })
       },
       submitEditForm(){
-        const { id } = this.form
-        this.form.put(route('training.participant.update', {id}), {
-          preserveScroll: true
+        const { id, lname, fname, mname, ext_name, email, training_id,
+            is_internal, is_female, position, pre_test, post_test, municipality, brgy } = this.form
+        axios({
+          method: 'PUT',
+          url: route('training.participant.update', {id}),
+          data: {
+            id, lname, fname, mname, ext_name, email, training_id,
+            is_internal, is_female, position, pre_test, post_test, municipality, brgy
+          }
         })
       },
       removeItem(){
@@ -136,9 +149,9 @@ import {
         })
       },
       configItem(person, type){
-        const { id, lname, fname, mname, ext_name, email, is_internal, is_female, position, pre_test, post_test } = person
+        const { id, lname, fname, mname, ext_name, email, is_internal, is_female, position, pre_test, post_test, municipality, brgy } = person
         this.form = Object.assign({}, this.form, {
-          id, lname, fname, mname, ext_name, email, is_internal: is_internal ? true : false, is_female, position, pre_test, post_test
+          id, lname, fname, mname, ext_name, email, is_internal: is_internal ? true : false, is_female, position, pre_test, post_test, municipality, brgy
         })
         if(type == 'edit'){
           this.openEditForm = true
@@ -199,6 +212,8 @@ import {
                 <thead class="bg-gray-50">
                   <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Munis</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Brgy</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Type</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Gender</th>
@@ -217,6 +232,12 @@ import {
                 <tbody class="bg-white">
                   <tr v-for="(person, personIdx) in filteredPeople" :key="person.email" :class="personIdx % 2 === 0 ? undefined : 'bg-gray-50'">
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">{{ person.full_name }}</td>
+                    <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">
+                      <input class="w-28 px-0 py-0" @change="configItem(person, 'changeTest')" v-model="person.municipality"/>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">
+                      <input class="w-28 px-0 py-0" @change="configItem(person, 'changeTest')" v-model="person.brgy"/>
+                    </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ person.is_internal ?  'Internal' : 'External' }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ person.email || '' }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ person.is_female ? 'Female' : 'Male' }}</td>
@@ -266,7 +287,7 @@ import {
               <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
             </ComboboxButton>
             <ComboboxOptions v-if="filteredQuery.length > 0" class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              <ComboboxOption v-for="person in filteredQuery" :key="person.full_name" :value="person" as="template" v-slot="{ active, selected }">
+              <ComboboxOption v-for="person, index in filteredQuery" :key="`${index+'-'+person.full_name}`" :value="person" as="template" v-slot="{ active, selected }">
                 <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-indigo-100 text-white' : 'text-gray-900']">
                   <div class="flex">
                     <span :class="[person.is_female ? 'text-purple-500' : 'text-green-500', 'mr-2']">
@@ -356,6 +377,30 @@ import {
             </div>
             <p class="mt-2 text-sm text-red-500" v-if="form.errors.ext_name">{{
               form.errors.ext_name }}</p>
+          </div>
+          <div class="sm:col-span-6">
+            <label for="create-item-municipality"
+              class="block text-sm font-medium leading-6 text-gray-900">Municipality</label>
+            <div class="mt-2">
+              <input v-model="form.municipality" type="text"
+                name="create-item-municipality" id="create-item-municipality"
+                placeholder=""
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            </div>
+            <p class="mt-2 text-sm text-red-500" v-if="form.errors.municipality">{{
+              form.errors.municipality }}</p>
+          </div>
+          <div class="sm:col-span-6">
+            <label for="create-item-brgy"
+              class="block text-sm font-medium leading-6 text-gray-900">Barangay</label>
+            <div class="mt-2">
+              <input v-model="form.brgy" type="text"
+                name="create-item-brgy" id="create-item-brgy"
+                placeholder=""
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            </div>
+            <p class="mt-2 text-sm text-red-500" v-if="form.errors.brgy">{{
+              form.errors.brgy }}</p>
           </div>
           <div class="sm:col-span-6 relative flex items-start pt-4">
             <fieldset class="pb-3">
@@ -460,6 +505,30 @@ import {
             </div>
             <p class="mt-2 text-sm text-red-500" v-if="form.errors.ext_name">{{
               form.errors.ext_name }}</p>
+          </div>
+          <div class="sm:col-span-3">
+            <label for="create-item-municipality"
+              class="block text-sm font-medium leading-6 text-gray-900">Municipality</label>
+            <div class="mt-2">
+              <input v-model="form.municipality" type="text"
+                name="create-item-municipality" id="create-item-municipality"
+                placeholder=""
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            </div>
+            <p class="mt-2 text-sm text-red-500" v-if="form.errors.municipality">{{
+              form.errors.municipality }}</p>
+          </div>
+          <div class="sm:col-span-3">
+            <label for="create-item-brgy"
+              class="block text-sm font-medium leading-6 text-gray-900">Barangay</label>
+            <div class="mt-2">
+              <input v-model="form.brgy" type="text"
+                name="create-item-brgy" id="create-item-brgy"
+                placeholder=""
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            </div>
+            <p class="mt-2 text-sm text-red-500" v-if="form.errors.brgy">{{
+              form.errors.brgy }}</p>
           </div>
           <div class="sm:col-span-6 relative flex items-start pt-4">
             <fieldset class="pb-3">
