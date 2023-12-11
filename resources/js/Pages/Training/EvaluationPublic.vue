@@ -27,7 +27,12 @@
       </div>
       <div class="pt-5 mb-3 border-t-2 border-dotted border-gray-500">
         <section clas="">
-          <h3 class="font-bold mb-3">Training Evaluation</h3>
+          <h3 class="font-bold">Training Evaluation</h3>
+          <div class="grid grid-cols-5 rounded-md">
+            <div v-for="item in 5" :key="`${item}-key-wa`" class="text-center font-bold">
+              {{ item }}
+            </div>
+          </div>
           <div v-for="area,index in form.key_training" :key="area.title" :class="['mt-1']">
             <h3 class="mx-1">{{ area.title }}</h3>
             <div class="grid grid-cols-5 bg-white rounded-md">
@@ -43,6 +48,11 @@
             <div class="rounded-t-md py-1">
               <h3 class="text-base font-semibold leading-6 text-gray-900">{{ `"${rp.topic}"` }}</h3>
               <p class="max-w-4xl text-sm text-gray-500">{{ `By: ${rp.full_name}` }}</p>
+            </div>
+            <div class="grid grid-cols-5 rounded-md">
+              <div v-for="item in 5" :key="`${item}-key-wa`" class="text-center font-bold">
+                {{ item }}
+              </div>
             </div>
 
             <div v-for="area,indexKey in rp.key_rp" :key="area.title" :class="['mt-1']">
