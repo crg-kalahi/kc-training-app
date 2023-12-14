@@ -20,7 +20,7 @@ class CertificateController extends Controller
             abort(403, "Training was already finished and can't evaluate today.");
         }
         
-        $mname = $request->m_name ? " ".$request->m_name."." : "";
+        $mname = $request->m_name ? " ".$request->m_name[0]."." : "";
         $extname = $request->ext_name ? ", ".$request->ext_name:"";
         $fullname = $request->f_name.$mname." ".$request->l_name.$extname;
 
