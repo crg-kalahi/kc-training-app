@@ -90,10 +90,11 @@ class TrainingController extends Controller
             $keyLearning[] = $item;
         }
 
+        $training = Training::find($request->training_id);
         //Email Notification
         $project = [
             'greeting' => 'Hi '.$request->f_name.',',
-            'body' => 'This is the certificate of participation.',
+            'body' => 'This is the certificate of participation on '. $training->title,
             'thanks' => 'Thank you this is from Capacity Building Web Application',
             'actionText' => 'Download Certificate',
             'actionURL' => route('public.cert.participant', [
