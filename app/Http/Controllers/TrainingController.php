@@ -18,6 +18,7 @@ use App\Models\Training;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
 use App\Notifications\SendEmail as NotificationsSendEmail;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +52,14 @@ class TrainingController extends Controller
             'office_rep' => 'required|integer',
             'sex' => 'required|string'
         ]);
+
+        $training = Training::findOrFail($request->training_id);
+
+        $givenDateTime = new DateTime($training->date_to);
+        $currentDateTime = new DateTime();
+        if($givenDateTime < $currentDateTime){
+            abort(403, "Training was already finished and can't evaluate today.");
+        }
 
         $eval = EvaluationTraining::create([
             'training_id' => $request->training_id,

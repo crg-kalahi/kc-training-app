@@ -11,6 +11,12 @@ class CertificateController extends Controller
 {
     public function participation(Request $request){
         $training = Training::findOrFail($request->training_id);
+
+        $givenDateTime = new DateTime($training->date_to);
+        $currentDateTime = new DateTime();
+        if($givenDateTime < $currentDateTime){
+            abort(403, 'The Evaluation are unable to download');
+        }
         
         $mname = $request->m_name ? " ".$request->m_name."." : "";
         $extname = $request->ext_name ? ", ".$request->ext_name:"";
