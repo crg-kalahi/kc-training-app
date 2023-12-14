@@ -52,7 +52,7 @@ class CertificateController extends Controller
                     }
             
                     .participant-name {
-                        font-size: 40px;
+                        font-size: 42px;
                         font-weight: bold;
                         margin-top: 25px;
                         text-decoration: underline;
@@ -63,7 +63,7 @@ class CertificateController extends Controller
                     .cert-of-part {
                         font-family: 'Dancing Script', cursive;
                         font-size: 40px;
-                        color: #B766A3;
+                        color: #2B50AA;
                         font-weight: bold;
                         letter-spacing: 2px;
                     }
@@ -87,10 +87,10 @@ class CertificateController extends Controller
                 </div>
                 <div class='certificate'>
                     <div class='participant-name'>".strtoupper($data['fullname'])."</div>
-                    <i>for having successfully participated during the</i><br/><br/><br/>
+                    <i>for having successfully participated during the</i><br/><br/>
                     <span style='text-align:center;font-size:28px;font-weight:bold;font-family:Montserrat;'>".strtoupper($data['title'])."</span>
                     <br/><br/>
-                    <span style='text-align:center;'>held on ".$date." at <br> ".$data['venue']." <br><br> Given this ".$d_to->format('jS')." of ".$d_to->format('F, Y')."<br>
+                    <span style='text-align:center;'>held on ".$date." at <br> ".$data['venue']." <br><br> Given this ".$d_to->format('jS')." day of ".$d_to->format('F, Y')."<br>
                 </div>
                 <div style='position: fixed; width: 100%; bottom: 0; text-align: center; padding-bottom: 30px;'>
                     <img src='".asset('/storage/images/e-sig.png')."' width='80px'>
