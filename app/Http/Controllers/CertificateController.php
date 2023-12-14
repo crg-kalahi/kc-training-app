@@ -62,7 +62,7 @@ class CertificateController extends Controller
 
                     .cert-of-part {
                         font-family: 'Dancing Script', cursive;
-                        font-size: 40px;
+                        font-size: 42px;
                         color: #2B50AA;
                         font-weight: bold;
                         letter-spacing: 2px;
@@ -88,7 +88,7 @@ class CertificateController extends Controller
                 <div class='certificate'>
                     <div class='participant-name'>".strtoupper($data['fullname'])."</div>
                     <i>for having successfully participated during the</i><br/><br/>
-                    <span style='text-align:center;font-size:28px;font-weight:bold;font-family:Montserrat;'>".strtoupper($data['title'])."</span>
+                    <span style='text-align:center;font-size:39px;font-weight:bold;font-family:Montserrat;'>".strtoupper($data['title'])."</span>
                     <br/><br/>
                     <span style='text-align:center;'>held on ".$date." at <br> ".$data['venue']." <br><br> Given this ".$d_to->format('jS')." day of ".$d_to->format('F, Y')."<br>
                 </div>
