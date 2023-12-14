@@ -95,7 +95,7 @@ class TrainingController extends Controller
             'greeting' => 'Hi '.$request->f_name.',',
             'body' => 'This is the certificate of participation.',
             'thanks' => 'Thank you this is from Capacity Building Web Application',
-            'actionText' => 'View Certificate',
+            'actionText' => 'Download Certificate',
             'actionURL' => route('public.cert.participant', [
                 'l_name' => $request->l_name,
                 'f_name' => $request->f_name,
@@ -109,8 +109,8 @@ class TrainingController extends Controller
         Notification::route('mail', $request->email)->notify(new NotificationsSendEmail($project));
 
         $eval->keyLearning()->saveMany($keyLearning);
-        // return redirect()->back();
-        return view('thanks');
+        return redirect()->back();
+        // return view('thanks');
     }
     
     /**
