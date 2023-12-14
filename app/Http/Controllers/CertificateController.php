@@ -14,8 +14,10 @@ class CertificateController extends Controller
 
         $givenDateTime = new DateTime($training->date_to);
         $currentDateTime = new DateTime();
-        if($givenDateTime < $currentDateTime){
-            abort(403, 'The Evaluation are unable to download');
+        $givenDateTime->setTime(0, 0, 0);
+        $currentDateTime->setTime(0, 0, 0);
+        if($givenDateTime != $currentDateTime){
+            abort(403, "Training was already finished and can't evaluate today.");
         }
         
         $mname = $request->m_name ? " ".$request->m_name."." : "";
