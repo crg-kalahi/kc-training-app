@@ -66,6 +66,7 @@ class CertificateController extends Controller
                         text-decoration: underline;
                         font-family: Montserrat;
                         letter-spacing: 2px;
+                        text-transform: uppercase;
                     }
 
                     .cert-of-part {
@@ -94,7 +95,7 @@ class CertificateController extends Controller
                     <span>is given to</span>
                 </div>
                 <div class='certificate'>
-                    <div class='participant-name'>".strtoupper($data['fullname'])."</div>
+                    <div class='participant-name'>".$data['fullname']."</div>
                     <i>for having successfully participated during the</i><br/><br/>
                     <span style='text-align:center;font-size:39px;font-weight:bold;font-family:Montserrat;'>".strtoupper($data['title'])."</span>
                     <br/><br/>
