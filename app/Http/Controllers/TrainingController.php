@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\EvaluationExport;
 use App\Exports\TrainingParticipantExport;
+use App\Mail\SendEmail;
 use App\Models\Conf\KeyResourcePerson;
 use App\Models\Conf\KeyTraining;
 use App\Models\Conf\Learning;
@@ -16,10 +17,13 @@ use App\Models\EventFacilitator;
 use App\Models\Training;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
+use App\Notifications\SendEmail as NotificationsSendEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -86,8 +90,27 @@ class TrainingController extends Controller
             $keyLearning[] = $item;
         }
 
+        //Email Notification
+        $project = [
+            'greeting' => 'Hi '.$request->f_name.',',
+            'body' => 'This is the certificate of participation.',
+            'thanks' => 'Thank you this is from Capacity Building Web Application',
+            'actionText' => 'View Certificate',
+            'actionURL' => route('public.cert.participant', [
+                'l_name' => $request->l_name,
+                'f_name' => $request->f_name,
+                'm_name' => $request->m_name,
+                'ext_name' => $request->ext_name,
+                'training_id' => $request->training_id,
+            ]),
+        ];
+
+        // Mail::to('jolan.owang@gmail.com')->send(new SendEmail($project));
+        Notification::route('mail', $request->email)->notify(new NotificationsSendEmail($project));
+
         $eval->keyLearning()->saveMany($keyLearning);
-        return redirect()->back();
+        // return redirect()->back();
+        return view('thanks');
     }
     
     /**

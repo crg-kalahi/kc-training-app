@@ -76,7 +76,10 @@
             <!-- <p class="mt-2 text-sm text-gray-500">Write a few sentences about yourself.</p> -->
           </div>
         </div>
-        <div class="flex justify-end mt-5">
+        <div class="flex justify-between mt-5">
+          <button @click="toggleGetName = true" type="button" class="tracking-wider inline-flex uppercase rounded-md bg-yellow-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+            Preview Credential
+          </button>
           <button @click="toggleAlert = true" type="button" class="tracking-wider inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Submit Evaluation
           </button>
@@ -107,6 +110,52 @@
         </button>
       </div>
     </Modal>
+    <Modal v-model="toggleGetName" :closable="false">
+      <div class="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
+        <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
+          <div class="ml-4 mt-4">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">Participant's Name</h3>
+            <p class="mt-1 text-sm text-gray-500">This credentials will be used to send the certificate via Email</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-3 py-2 grid grid-cols-2 gap-x-1 border-b border-gray-200">
+        <div class="mb-2 col-span-2">
+          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+          <div class="mt-1">
+            <input type="email" v-model="form.email" name="email" id="email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="your@email.com" />
+          </div>
+        </div>
+        <div class="mb-2">
+          <label for="l_name" class="block text-sm font-medium leading-6 text-gray-900">Last Name</label>
+          <div class="mt-1">
+            <input type="text" v-model="form.l_name" name="l_name" id="l_name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
+        </div>
+        <div class="mb-2">
+          <label for="f_name" class="block text-sm font-medium leading-6 text-gray-900">First Name</label>
+          <div class="mt-1">
+            <input type="text" v-model="form.f_name" name="f_name" id="f_name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
+        </div>
+        <div class="mb-2">
+          <label for="m_name" class="block text-sm font-medium leading-6 text-gray-900">Middle Initial</label>
+          <div class="mt-1">
+            <input type="text" v-model="form.m_name" name="m_name" id="m_name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
+        </div>
+        <div class="mb-2">
+          <label for="ext_name" class="block text-sm font-medium leading-6 text-gray-900">Name Extension</label>
+          <div class="mt-1">
+            <input type="text" v-model="form.ext_name" name="ext_name" id="ext_name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Jr., Sr..." />
+          </div>
+        </div>
+      </div>
+      <!-- {{ canProceed }} -->
+      <div class="my-3 mx-2">
+        <button type="button" :disabled="!canProceed" :class="[canProceed ? 'bg-yellow-600 focus:bg-yellow-500': 'bg-gray-400','inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm']" @click="toggleGetName = false">Proceed Evaluating</button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script setup>
@@ -122,6 +171,8 @@ const props = defineProps([
 
 const toggleAlert = ref(false);
 
+const toggleGetName = ref(true);
+
 const form  = useForm({
   key_training: [],
   key_RP: [],
@@ -129,6 +180,16 @@ const form  = useForm({
   sex: '0',
   training_id: null,
   office_rep: 1,
+  l_name: "",
+  f_name: "",
+  m_name: "",
+  ext_name: "",
+  email: "",
+})
+
+const canProceed = computed(() => {
+  const { l_name, f_name, email } = form
+  return l_name && f_name && email ? true : false 
 })
 
 const trainingDate = computed(() => {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ConfigurationsController;
 use App\Http\Controllers\KeyResourcePersonController;
 use App\Http\Controllers\KeyTrainingController;
@@ -33,6 +34,13 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/test', function(){ return view('emails.cert_participation', [
+    'title' => 'test',
+    'fullname' => 'test',
+    'venue' => 'test',
+]); });
+Route::get('/thank-you-response', function(){ return view('thanks'); })->name('thanks.response');
+Route::get('training/certificate/participation', [CertificateController::class, 'participation'])->name('public.cert.participant');
 Route::post('training/evaluation/public', [TrainingController::class, 'PublicEvaluationFormStore'])->name('public.training.evaluation.post');
 Route::get('training/{id}/evaluation-response/public', [TrainingController::class, 'PublicEvaluationForm'])->name('public.training.evaluation-response');
 
