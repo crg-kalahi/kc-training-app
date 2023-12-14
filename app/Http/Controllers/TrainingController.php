@@ -34,6 +34,15 @@ class TrainingController extends Controller
    
     public function PublicEvaluationForm($id){
         $item = Training::where('id', $id)->firstOrFail();
+
+        $givenDateTime = new DateTime($item->date_to);
+        $currentDateTime = new DateTime();
+
+        $givenDateTime->setTime(0, 0, 0);
+        $currentDateTime->setTime(0, 0, 0);
+        if($givenDateTime != $currentDateTime){
+            abort(403, "Training was already finished and can't evaluate today.");
+        }
         return Inertia::render('Training/EvaluationPublic', [
             'training' => $item,
             'officeRep' => OfficeRepresentative::get(),
@@ -57,7 +66,9 @@ class TrainingController extends Controller
 
         $givenDateTime = new DateTime($training->date_to);
         $currentDateTime = new DateTime();
-        if($givenDateTime < $currentDateTime){
+        $givenDateTime->setTime(0, 0, 0);
+        $currentDateTime->setTime(0, 0, 0);
+        if($givenDateTime != $currentDateTime){
             abort(403, "Training was already finished and can't evaluate today.");
         }
 
