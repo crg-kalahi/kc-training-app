@@ -11,7 +11,12 @@
 								</div>
 								<div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
 									<div>
-										<p class="truncate text-sm font-bold tracking-wide text-indigo-600">{{ item.full_name }}</p>
+										<p class="truncate text-sm font-bold tracking-wide text-indigo-600">{{ item.full_name }} </p>
+									
+										<p class="mt-2 flex items-center text-sm text-gray-500">
+											<!-- <UserIcon :class="[item.is_female ? 'text-pink-600' : 'text-teal-600' ,'h-5 w-5 mr-1']"/> -->
+											<span class="truncate">{{ item.email }}</span>
+										</p>
 										<p class="mt-2 flex items-center text-sm text-gray-500">
 											<!-- <UserIcon :class="[item.is_female ? 'text-pink-600' : 'text-teal-600' ,'h-5 w-5 mr-1']"/> -->
 											<span class="truncate">{{ `${item.position || 'None'}, ${item.is_internal ? 'Internal RP' : 'External RP'}` }}</span>
@@ -50,6 +55,12 @@
 										<label for="rp-ext-name" class="block text-xs font-medium leading-6 text-gray-900">Extension Name</label>
 										<div class="mt-1">
 											<input v-model="form.ext_name" type="rp-ext-name" name="rp-ext-name" id="rp-ext-name" class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+										</div>
+									</div>
+									<div>
+										<label for="rp-email" class="block text-xs font-medium leading-6 text-gray-900">Email</label>
+										<div class="mt-1">
+											<input v-model="form.email" type="rp-email" name="rp-email" id="rp-email" class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
 										</div>
 									</div>
 									<div class="w-full md:w-32">
@@ -192,6 +203,20 @@
 														<p class="mt-2 text-sm text-red-500" v-if="form.errors.ext_name">{{
 															form.errors.ext_name }}</p>
 													</div>
+
+													<div class="sm:col-span-6">
+														<label for="create-item-email"
+															class="block text-sm font-medium leading-6 text-gray-900">Email
+															<span class="text-red-600">*</span></label>
+														<div class="mt-2">
+															<input v-model="form.email" type="text"
+																name="create-item-email" id="create-item-email"
+																class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+														<p class="mt-2 text-sm text-red-500" v-if="form.errors.email">{{
+															form.errors.email }}</p>
+													</div>
+
 													<div class="sm:col-span-6 relative flex items-start pt-4">
 														<fieldset class="pb-5">
 															<legend class="sr-only">Gender</legend>
@@ -324,6 +349,7 @@ import {
                 fname: "",
                 mname: "",
                 ext_name: "",
+				email: "",
                 topic: "",
                 training_id: "",
                 is_internal: true,
@@ -338,7 +364,7 @@ import {
             this.openForm = true;
         },
         resetForm() {
-            this.form.reset("id", "lname", "fname", "topic", "ext_name", "is_internal", "mname", "position", "is_female");
+            this.form.reset("id", "lname", "fname", "topic", "ext_name","email", "is_internal", "mname", "position", "is_female");
         },
         submitform() {
             this.form.put(route("training.resource-person"), {
@@ -347,7 +373,7 @@ import {
             });
         },
         editItem(item, index) {
-            const { id, lname, fname, topic, ext_name, is_internal, mname, position, is_female } = item;
+            const { id, lname, fname, topic, ext_name,email, is_internal, mname, position, is_female } = item;
             this.indexToEdit = index;
             this.form = Object.assign({}, this.form, {
                 id,
@@ -355,6 +381,7 @@ import {
                 fname,
                 topic,
                 ext_name,
+				email,
                 is_internal,
                 mname,
                 position,
@@ -362,11 +389,12 @@ import {
             });
         },
         removeItemInit(item) {
-            const { id, lname, fname, topic, ext_name, is_internal, mname } = item;
+            const { id, lname, fname, topic, ext_name,email, is_internal, mname } = item;
             this.form = Object.assign({}, this.form, {
                 id,
                 lname,
                 fname,
+				email,
                 topic,
                 ext_name,
                 is_internal,

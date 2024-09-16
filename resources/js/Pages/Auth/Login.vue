@@ -72,7 +72,10 @@ const submit = () => {
     <section class="py-10 bg-gray-50 h-screen">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="max-w-2xl mx-auto text-center">
-            <h2 class="text-3xl font-bold leading-tight text-black sm:text-4xl lg:text-5xl">KC - Capacity Building Web Application</h2>
+            <div >
+                <img src="/images/train-logo2.png" alt="T.R.A.I.N Logo" class="inline-block w-28 h-28 rounded-full" />
+            </div>
+            <h2 class="text-3xl font-bold leading-tight text-black sm:text-1xl lg:text-2xl">Training Resources and Information Network </h2>
             <p class="max-w-xl mx-auto mt-4 text-base leading-relaxed text-gray-600">Login to your account</p>
         </div>
 

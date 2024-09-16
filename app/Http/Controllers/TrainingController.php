@@ -18,6 +18,7 @@ use App\Models\Training;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
 use App\Notifications\SendEmail as NotificationsSendEmail;
+use App\Notifications\SendEmailRPResult as NotificationsSendEmailRP;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -313,6 +314,7 @@ class TrainingController extends Controller
             'training_id' => 'required|string',
             'lname' => 'required|string|max:50',
             'fname' => 'required|string|max:50',
+            'email' => 'required|email|max:50|unique:users,email',
             'is_internal' => 'required|boolean',
             'topic' => 'required|string',
         ]);
@@ -324,6 +326,7 @@ class TrainingController extends Controller
                 'mname' => strtolower($request->mname),
                 'fname' => strtolower($request->fname),
                 'ext_name' => strtolower($request->ext_name),
+                'email' => strtolower($request->email),
                 'is_internal' => $request->is_internal,
                 'position' => $request->position,
                 'is_female' => $request->is_female,
@@ -339,6 +342,7 @@ class TrainingController extends Controller
         $rp->mname = strtolower($request->mname);
         $rp->fname = strtolower($request->fname);
         $rp->ext_name = strtolower($request->ext_name);
+        $rp->email = strtolower($request->email);
         $rp->is_internal = $request->is_internal;
         $rp->is_female = $request->is_female;
         $rp->topic = $request->topic;
@@ -518,5 +522,96 @@ class TrainingController extends Controller
             'item_training' => DB::table('evaluation_training_view')->where('training_id', $training->id)->orderBy('stat', 'desc')->get(),
             'training' => $training,
         ]);
+    }
+
+    public function SendRPRating(Request $request){
+        $results = DB::table(DB::raw('(
+            SELECT
+                trp.fname,
+                trp.mname,
+                trp.lname,
+                trp.email,
+                trp.topic,
+                t.title AS "t_title",
+                t.venue AS "t_venue",
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        "topic", trp.topic,
+                        "area_rp_id", ekrp.area_rp_id,
+                        "title", krp.title,
+                        "stat", stat
+                    )
+                ) AS details
+            FROM
+                evaluation_key_resource_people ekrp
+                JOIN evaluation_trainings et ON ekrp.evaluation_id = et.id
+                JOIN training_resource_people trp ON ekrp.rp_id = trp.id
+                JOIN key_resource_people krp ON ekrp.area_rp_id = krp.id
+                JOIN trainings t ON trp.training_id = t.id
+            WHERE
+                trp.training_id = "7f3e1ef1-07c0-4cb2-91b7-8d2deb71f426"
+            GROUP BY
+                trp.fname, trp.mname, trp.lname, trp.email, trp.topic
+            ORDER BY
+                trp.lname, trp.fname
+        ) AS subquery'))->get();
+
+        $htmlData = [];
+        foreach ($results as $result) {
+
+        $htmlContent = '<!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                *{
+                font-family: "Dancing Script", cursive;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>'.$result->topic.'</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Key Areas</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                    $details = json_decode($result->details);
+                    foreach ($details as $index => $detail) {
+                        $htmlContent .= '<tr><td>' . htmlspecialchars($detail->title) . '</td>';
+                        $htmlContent .= '<td>' . htmlspecialchars($detail->stat) . '</td></tr>';
+                    }
+                $htmlContent .= '</tbody>
+            </table>
+        </body>
+        </html>';
+
+
+        $RPContent =  'Hi '.$result->fname.','
+        .'<br><br>'.'This is the result of your performance as the resource speaker during '
+        .$result->t_title.' at '.$result->t_venue
+        .'<br>'.$htmlContent.'<br>'
+        ."<br>Thank you, this is from Capacity Building Web Application";
+
+        Notification::route('mail', $result->email)->notify(new NotificationsSendEmailRP($RPContent));
+
+        } // end foreach results
+
+        
+        
     }
 }

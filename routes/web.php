@@ -52,6 +52,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::put('training-facilitators', [TrainingController::class, 'facilitateFacilitator'])->name('training.facilitators');
     Route::put('training-key-factors/{id}', [TrainingController::class, 'UpdateKeyFactors'])->name('training.key_factors');
     Route::put('training-resource-person', [TrainingController::class, 'UpdateResourcePerson'])->name('training.resource-person');
+    Route::put('training-resource-person-rating', [TrainingController::class, 'SendRPRating'])->name('training.resource-person.rating');
     Route::delete('training-resource-person', [TrainingController::class, 'RemoveResourcePerson'])->name('training.resource-person.destroy');
     Route::get('training/{id}/participants', [TrainingController::class, 'TGetParticipants'])->name('training.participants.index');
     Route::get('training/{id}/evaluations', [TrainingController::class, 'GetEvaluations'])->name('training.evaluations');

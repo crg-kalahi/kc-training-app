@@ -12,7 +12,7 @@ class TrainingResourcePerson extends Model
     use HasFactory, SoftDeletes, UUID;
 
     protected $fillable = [
-        'lname', 'fname', 'mname', 'ext_name',
+        'lname', 'fname', 'mname', 'ext_name','email',
         'topic', 'encoded_by', 'training_id', 'is_internal',
         'position', 'is_female'
     ];
