@@ -526,37 +526,48 @@ class TrainingController extends Controller
 
     public function SendRPRating(Request $request){
 
+
+        
+
+
         try {
-            $results = DB::table(DB::raw('(
+            $results = DB::select('SELECT
+            trp.fname,
+            trp.mname,
+            trp.lname,
+            trp.email,
+            trp.topic,
+            t.title AS "t_title",
+            t.venue AS "t_venue",
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    "title", avg_stats.title,
+                    "stat", format(avg_stats.avg_stat,2)
+                )
+            ) AS details
+        FROM
+            training_resource_people trp
+            JOIN (
                 SELECT
-                    trp.fname,
-                    trp.mname,
-                    trp.lname,
-                    trp.email,
-                    trp.topic,
-                    t.title AS "t_title",
-                    t.venue AS "t_venue",
-                    JSON_ARRAYAGG(
-                        JSON_OBJECT(
-                            "topic", trp.topic,
-                            "area_rp_id", ekrp.area_rp_id,
-                            "title", krp.title,
-                            "stat", stat
-                        )
-                    ) AS details
+                    ekrp.rp_id,
+                    krp.title,
+                    AVG(ekrp.stat) AS avg_stat
                 FROM
                     evaluation_key_resource_people ekrp
-                    JOIN evaluation_trainings et ON ekrp.evaluation_id = et.id
-                    JOIN training_resource_people trp ON ekrp.rp_id = trp.id
                     JOIN key_resource_people krp ON ekrp.area_rp_id = krp.id
-                    JOIN trainings t ON trp.training_id = t.id
-                WHERE
-                    trp.training_id = "7f3e1ef1-07c0-4cb2-91b7-8d2deb71f426"
                 GROUP BY
-                    trp.fname, trp.mname, trp.lname, trp.email, trp.topic
-                ORDER BY
-                    trp.lname, trp.fname
-            ) AS subquery'))->get();
+                    ekrp.rp_id, krp.title
+            ) AS avg_stats ON trp.id = avg_stats.rp_id
+            JOIN trainings t ON trp.training_id = t.id
+        WHERE
+            t.id = "'.$request->training_id.'"
+        GROUP BY
+            trp.fname, trp.mname, trp.lname, trp.email, trp.topic, t.title, t.venue
+        ORDER BY
+            trp.lname, trp.fname, t.title
+        ');
+
+
 
             $htmlData = [];
             foreach ($results as $result) {
