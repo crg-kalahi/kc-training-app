@@ -71,7 +71,7 @@ class PermissionSeeder extends Seeder
         if(!$perm) {
             $perm = Permission::create([
                 'name' => $name,
-                'guard_name' => 'users',
+                'guard_name' => 'web',
             ]);
         }
 

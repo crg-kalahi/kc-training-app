@@ -2,5 +2,5 @@
 
 return [
     'Login',
-    'Profile' => ['Read', 'Update - Password'],
+    'Training' => ['View'],
 ];

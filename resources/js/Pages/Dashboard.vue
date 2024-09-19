@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'; 
+import { ref,computed } from 'vue'; 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
+import BreezeAuthenticatedGuestLayout from '@/Layouts/AuthenticatedGuest.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import { UserIcon } from '@heroicons/vue/20/solid'
 import { Chart, registerables } from "chart.js";
@@ -13,7 +14,8 @@ Chart.register(...registerables);
 const props = defineProps({
   participants: Array,
   plByMonth: Array,
-  events: Array
+  events: Array,
+  permissions: Array
 })
 
 const stats = [
@@ -39,12 +41,21 @@ const config=  {
       showCurrentTime: true,
 }
 
+
+const hasPermission = (permission) => {
+  return props.permissions.includes(permission);
+}
+
+const currentLayout = computed(() => {
+  return hasPermission('GUEST - Login') ? BreezeAuthenticatedGuestLayout : BreezeAuthenticatedLayout;
+});
+
 </script>
 
 <template>
     <Head title="Dashboard" />
 
-    <BreezeAuthenticatedLayout>
+    <component :is="currentLayout">
         <!-- Page title & actions -->
     <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div class="min-w-0 flex-1">
@@ -108,7 +119,7 @@ const config=  {
     <section>
       <br>
     </section>
-    </BreezeAuthenticatedLayout>
+  </component>
 </template>
 
 

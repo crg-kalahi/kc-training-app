@@ -59,4 +59,15 @@ class User extends Authenticatable
     public function getAvatarAttribute(){
         return "https://ui-avatars.com/api/?background=3066BE&color=fff&name=". $this->lname.'+'.$this->fname;
     }
+
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'model_has_permissions', 'model_id', 'permission_id');
+    }
 }

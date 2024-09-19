@@ -197,7 +197,7 @@
     TransitionChild,
     TransitionRoot,
   } from '@headlessui/vue'
-  import { Bars3CenterLeftIcon, Bars4Icon, Cog6ToothIcon, HomeIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+  import { Bars3CenterLeftIcon, Bars4Icon, Cog6ToothIcon, HomeIcon, XMarkIcon,FolderIcon  } from '@heroicons/vue/24/outline'
   import { ChevronUpDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
   const currentEvent = [
     { name: 'Crisis Communication Workshop - Batch 1', href: '#', bgColorClass: 'bg-green-500' },
@@ -218,7 +218,8 @@
             return [
               { name: 'Dashboard', href: route('dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
               { name: 'Trainings', href: route('training.index'), icon: Bars4Icon, current: page.startsWith('/training') },
-              { name: 'Configurations', href: route('conf.index'), icon: Cog6ToothIcon, current: page.startsWith('/configuration') },
+              { name: 'Training Configurations', href: route('conf.index'), icon: FolderIcon, current: page.startsWith('/configuration') },
+              { name: 'Settings', href: route('settings.index'), icon: Cog6ToothIcon, current: page.startsWith('/settings') },
             ]
           }
       },

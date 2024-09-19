@@ -21,11 +21,11 @@ class RoleSeeder extends Seeder
         $roles = [
             [
                 'name' => 'guest',
-                'guard_name' => 'users',
+                'guard_name' => 'web',
             ],
             [
                 'name' => 'staff-admin',
-                'guard_name' => 'users',
+                'guard_name' => 'web',
             ],
         ];
         foreach ($roles as $role) {

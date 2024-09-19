@@ -314,7 +314,7 @@ class TrainingController extends Controller
             'training_id' => 'required|string',
             'lname' => 'required|string|max:50',
             'fname' => 'required|string|max:50',
-            'email' => 'required|email|max:50|unique:users,email',
+            'email' => 'required|email',
             'is_internal' => 'required|boolean',
             'topic' => 'required|string',
         ]);

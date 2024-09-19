@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
-            'id_number' => 'required|string|max:255|unique:users',
+            // 'id_number' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -51,6 +51,8 @@ class RegisteredUserController extends Controller
             'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
         ]);
+
+        $user->givePermissionTo('GUEST - Login');
 
         event(new Registered($user));
 

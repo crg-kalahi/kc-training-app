@@ -44,11 +44,14 @@ class DashboardController extends Controller
                     ORDER BY date_from DESC;");
         $formattedTrainings = array_map(fn($row) => json_decode($row->result, true), $trainings);
 
+        $permissions = auth()->user()->getAllPermissions()->pluck('name');
+
         return Inertia::render('Dashboard', [
-        'participants' => DB::table('participant_lists_view')->groupBy('full_name', 'is_internal')->get(),
-        'earliest_day_training' => DB::table('event'),
-        'plByMonth' => $results,
-        'events' => $formattedTrainings
+            'participants' => DB::table('participant_lists_view')->groupBy('full_name', 'is_internal')->get(),
+            'earliest_day_training' => DB::table('event'),
+            'plByMonth' => $results,
+            'events' => $formattedTrainings,
+            'permissions' => $permissions
         ]);
     }
 }
