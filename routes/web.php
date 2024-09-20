@@ -48,18 +48,16 @@ Route::get('training/certificate/participation', [CertificateController::class, 
 Route::post('training/evaluation/public', [TrainingController::class, 'PublicEvaluationFormStore'])->name('public.training.evaluation.post');
 Route::get('training/{id}/evaluation-response/public', [TrainingController::class, 'PublicEvaluationForm'])->name('public.training.evaluation-response');
 
-
 Route::get('training/{id}/participants/registration', [TrainingParticipantRegistrationController::class, 'index'])->name('training.participants.registration.index');
 Route::post('training/participants/register', [TrainingParticipantRegistrationController::class, 'register'])->name('training.participants.register');
 Route::get('training/participants/register/sent', [TrainingParticipantRegistrationController::class, 'registrationSent'])->name('training.participants.registration.sent');
 
 
 Route::group(['middleware' => ['auth', 'verified']], function(){
-    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard')->middleware('check.external');
 
-
-    // can manage training
-    // Route::group(['middleware' => ['permission:STAFF - Training - Manage']], function() {
+    // CAN MANAGE TRAINING
+    Route::group(['middleware' => ['permission:STAFF - Training - Manage']], function() {
         Route::post('training/evaluation', [TrainingController::class, 'StoreEvaluation'])->name('training.evaluation.post');
         Route::put('training-facilitators', [TrainingController::class, 'facilitateFacilitator'])->name('training.facilitators');
         Route::put('training-key-factors/{id}', [TrainingController::class, 'UpdateKeyFactors'])->name('training.key_factors');
@@ -91,19 +89,24 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
             Route::apiResource('resource-person', KeyResourcePersonController::class)->names('resource-person');
             Route::apiResource('office-representative', OfficeRepresentativeController::class)->names('office-representative');
         });
-    // });
-  
-    //Settings
-    Route::group(['prefix' => 'settings'], function(){
-        Route::get('/', [SettingsController::class, 'Index'])->name('settings.index');
     });
 
-    //User management
-    Route::group(['prefix' => 'user-management'], function(){
-        Route::get('/', [UserManagementController::class, 'Index'])->name('user-management');
-        Route::post('/user-management/permissions', [UserManagementController::class, 'userManagementPermissions'])->name('user-management.permissions');
-    });
+    // CAN USER MANAGE
+    Route::group(['middleware' => ['permission:STAFF - User - Manage']], function() {
+
+        //Settings
+        Route::group(['prefix' => 'settings'], function(){
+            Route::get('/', [SettingsController::class, 'Index'])->name('settings.index');
+        });
+
+         //User management
+        Route::group(['prefix' => 'user-management'], function(){
+            Route::get('/', [UserManagementController::class, 'Index'])->name('user-management');
+            Route::post('/user-management/permissions', [UserManagementController::class, 'userManagementPermissions'])->name('user-management.permissions');
+        });
+    });   
     
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/external-users.php';

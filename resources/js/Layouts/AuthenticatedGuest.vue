@@ -216,7 +216,7 @@
           navigation(){
             const page = this.$page.url
             return [
-              { name: 'Dashboard', href: route('dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
+              { name: 'Dashboard', href: route('external.dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
             ]
           }
       },
