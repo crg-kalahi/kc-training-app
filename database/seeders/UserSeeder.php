@@ -28,13 +28,23 @@ class UserSeeder extends Seeder
                 'lname' => 'admin',
                 'id_number' => '16-0000',
                 'email' => 'admin@admin.com',
-                'password' => Hash::make('password')
-
+                'password' => Hash::make('password'),
+                'role' => 'staff-admin'
+            ],
+            [
+                'id' => Str::uuid(),
+                'fname' => 'user',
+                'mname' => 'user',
+                'lname' => 'user',
+                'id_number' => '16-0001',
+                'email' => 'user@user.com',
+                'password' => Hash::make('password'),
+                 'role' => 'guest'
             ]
         ];  
 
         foreach($initUsers as $user){
-            $user = User::create([
+            $createdUser = User::create([
                 "id" =>  $user['id'],
                 'email' => $user['email'],
                 'password' => $user['password'], // You may adjust this as needed
@@ -44,7 +54,8 @@ class UserSeeder extends Seeder
                 "id_number" =>  $user['id_number'],
                 "password" =>  $user['password'],
             ]);
-            $user->assignRole('staff-admin');
+            $createdUser->assignRole($user['role']);
+            
         }
         
     }

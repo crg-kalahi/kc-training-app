@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\RequestCertificate;
 
 class TrainingController extends Controller
 {
@@ -39,9 +40,11 @@ class TrainingController extends Controller
         $givenDateTime = new DateTime($item->date_to);
         $currentDateTime = new DateTime();
 
+    
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        if($givenDateTime != $currentDateTime){
+
+        if($currentDateTime >= $givenDateTime){
             abort(403, "Training was already finished and can't evaluate today.");
         }
         return Inertia::render('Training/EvaluationPublic', [
@@ -69,7 +72,7 @@ class TrainingController extends Controller
         $currentDateTime = new DateTime();
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        if($givenDateTime != $currentDateTime){
+        if($currentDateTime >= $givenDateTime){
             abort(403, "Training was already finished and can't evaluate today.");
         }
 
@@ -142,8 +145,9 @@ class TrainingController extends Controller
      */
     public function index()
     {
+        $certificateRequestsCount = RequestCertificate::where('is_approve',0)->count();
         $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(20);
-        return Inertia::render('Training/Index', ['pagination' => $pagination]);
+        return Inertia::render('Training/Index', ['pagination' => $pagination, 'certificateRequestsCount'=>$certificateRequestsCount]);
     }
 
     /**
@@ -629,5 +633,52 @@ class TrainingController extends Controller
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
 
+    }
+
+    public function TrainingCertificateRequest(){
+        $certificateRequests = RequestCertificate::with(['trainingParticipants','training'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+        return Inertia::render('Training/RequestCertificate', 
+        [
+            'certificateRequests' => $certificateRequests
+        ]);
+    }
+
+    public function UpdateTrainingCertificateRequest(Request $request){
+
+        $requestCert = RequestCertificate::with(['trainingParticipants','training'])->where('id',$request->id)->first();
+
+        RequestCertificate::find($request->id)->update([
+            'is_approve' => $request->status
+        ]);
+
+        if($request->status == 1){ //approve
+            $project = [
+                'greeting' => 'Hi '.$requestCert->trainingParticipants->fname.',',
+                'body' => 'This is the certificate of participation on '. $requestCert->training->title,
+                'thanks' => 'Thank you this is from Capacity Building Web Application',
+                'actionText' => 'Download Certificate',
+                'actionURL' => route('public.cert.participant', [
+                    'l_name' => $requestCert->trainingParticipants->lname,
+                    'f_name' => $requestCert->trainingParticipants->fname,
+                    'm_name' => $requestCert->trainingParticipants->mname,
+                    'ext_name' => $requestCert->trainingParticipants->ext_name,
+                    'training_id' => $requestCert->training_id,
+                ]),
+            ];
+        }else{
+            $project = [
+                'greeting' => 'Hi '.$requestCert->trainingParticipants->fname.',',
+                'body' => 'We are sorry to inform you that your request on the certificate of participation on '. $requestCert->training->title.' has been rejected.',
+                'thanks' => 'Thank you this is from Capacity Building Web Application',
+                'actionText' => '',
+                'actionURL' => '',
+            ];
+        }
+
+        Notification::route('mail', $requestCert->trainingParticipants->email)->notify(new NotificationsSendEmail($project));
+
+        return Inertia::location(route('training.certificate-request'));
     }
 }

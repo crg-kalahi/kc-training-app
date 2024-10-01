@@ -74,6 +74,10 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
         Route::get('training/{id}/export-report', [TrainingController::class, 'ExportTrainingReport'])->name('training.export-report');
         Route::get('training/{id}/export-participants', [TrainingController::class, 'ExportTrainingParticipants'])->name('training.export-participants');
         Route::get('training/{id}/preview-report', [TrainingController::class, 'PreviewTrainingReport'])->name('training.preview-report');
+
+        Route::get('training/certificate-request', [TrainingController::class, 'TrainingCertificateRequest'])->name('training.certificate-request');
+        Route::put('training/update-certificate-request', [TrainingController::class, 'UpdateTrainingCertificateRequest'])->name('training.update-certificate-request');
+
         Route::apiResource('training-participant', TrainingParticipantController::class)->names('training.participant');
         Route::resource('training', TrainingController::class)->names('training');
     

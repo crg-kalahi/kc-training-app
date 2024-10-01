@@ -217,6 +217,7 @@
             const page = this.$page.url
             return [
               { name: 'Dashboard', href: route('external.dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
+              { name: 'My Trainings', href: route('external.my-trainings'), icon: Bars4Icon, current: page.startsWith('/training') },
             ]
           }
       },
