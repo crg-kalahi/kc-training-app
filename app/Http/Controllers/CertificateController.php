@@ -12,13 +12,13 @@ class CertificateController extends Controller
     public function participation(Request $request){
         $training = Training::findOrFail($request->training_id);
 
-        // $givenDateTime = new DateTime($training->date_to);
-        // $currentDateTime = new DateTime();
-        // $givenDateTime->setTime(0, 0, 0);
-        // $currentDateTime->setTime(0, 0, 0);
-        // if($givenDateTime != $currentDateTime){
-        //     abort(403, "Training was already finished and can't evaluate today.");
-        // }
+        $givenDateTime = new DateTime($training->date_to);
+        $currentDateTime = new DateTime();
+        $givenDateTime->setTime(0, 0, 0);
+        $currentDateTime->setTime(0, 0, 0);
+        if($currentDateTime >= $givenDateTime){
+            abort(403, "Training was already finished and can't evaluate today.");
+        }
         
         $mname = $request->m_name ? " ".$request->m_name[0]."." : "";
         $extname = $request->ext_name ? ", ".$request->ext_name:"";

@@ -18,6 +18,7 @@ use App\Models\Training;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
 use App\Notifications\SendEmail as NotificationsSendEmail;
+use App\Notifications\SendEmailRPResult as NotificationsSendEmailRP;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\RequestCertificate;
 
 class TrainingController extends Controller
 {
@@ -38,9 +40,11 @@ class TrainingController extends Controller
         $givenDateTime = new DateTime($item->date_to);
         $currentDateTime = new DateTime();
 
+    
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        if($givenDateTime != $currentDateTime){
+
+        if($currentDateTime >= $givenDateTime){
             abort(403, "Training was already finished and can't evaluate today.");
         }
         return Inertia::render('Training/EvaluationPublic', [
@@ -68,7 +72,7 @@ class TrainingController extends Controller
         $currentDateTime = new DateTime();
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        if($givenDateTime != $currentDateTime){
+        if($currentDateTime >= $givenDateTime){
             abort(403, "Training was already finished and can't evaluate today.");
         }
 
@@ -141,8 +145,9 @@ class TrainingController extends Controller
      */
     public function index()
     {
+        $certificateRequestsCount = RequestCertificate::where('is_approve',0)->count();
         $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(20);
-        return Inertia::render('Training/Index', ['pagination' => $pagination]);
+        return Inertia::render('Training/Index', ['pagination' => $pagination, 'certificateRequestsCount'=>$certificateRequestsCount]);
     }
 
     /**
@@ -313,6 +318,7 @@ class TrainingController extends Controller
             'training_id' => 'required|string',
             'lname' => 'required|string|max:50',
             'fname' => 'required|string|max:50',
+            'email' => 'required|email',
             'is_internal' => 'required|boolean',
             'topic' => 'required|string',
         ]);
@@ -324,6 +330,7 @@ class TrainingController extends Controller
                 'mname' => strtolower($request->mname),
                 'fname' => strtolower($request->fname),
                 'ext_name' => strtolower($request->ext_name),
+                'email' => strtolower($request->email),
                 'is_internal' => $request->is_internal,
                 'position' => $request->position,
                 'is_female' => $request->is_female,
@@ -339,6 +346,7 @@ class TrainingController extends Controller
         $rp->mname = strtolower($request->mname);
         $rp->fname = strtolower($request->fname);
         $rp->ext_name = strtolower($request->ext_name);
+        $rp->email = strtolower($request->email);
         $rp->is_internal = $request->is_internal;
         $rp->is_female = $request->is_female;
         $rp->topic = $request->topic;
@@ -518,5 +526,159 @@ class TrainingController extends Controller
             'item_training' => DB::table('evaluation_training_view')->where('training_id', $training->id)->orderBy('stat', 'desc')->get(),
             'training' => $training,
         ]);
+    }
+
+    public function SendRPRating(Request $request){
+
+
+        
+
+
+        try {
+            $results = DB::select('SELECT
+            trp.fname,
+            trp.mname,
+            trp.lname,
+            trp.email,
+            trp.topic,
+            t.title AS "t_title",
+            t.venue AS "t_venue",
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    "title", avg_stats.title,
+                    "stat", format(avg_stats.avg_stat,2)
+                )
+            ) AS details
+        FROM
+            training_resource_people trp
+            JOIN (
+                SELECT
+                    ekrp.rp_id,
+                    krp.title,
+                    AVG(ekrp.stat) AS avg_stat
+                FROM
+                    evaluation_key_resource_people ekrp
+                    JOIN key_resource_people krp ON ekrp.area_rp_id = krp.id
+                GROUP BY
+                    ekrp.rp_id, krp.title
+            ) AS avg_stats ON trp.id = avg_stats.rp_id
+            JOIN trainings t ON trp.training_id = t.id
+        WHERE
+            t.id = "'.$request->training_id.'"
+        GROUP BY
+            trp.fname, trp.mname, trp.lname, trp.email, trp.topic, t.title, t.venue
+        ORDER BY
+            trp.lname, trp.fname, t.title
+        ');
+
+
+
+            $htmlData = [];
+            foreach ($results as $result) {
+
+            $htmlContent = '<!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    *{
+                    font-family: "Dancing Script", cursive;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    th, td {
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                    }
+                    th {
+                        background-color: #f2f2f2;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>'.$result->topic.'</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Key Areas</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                        $details = json_decode($result->details);
+                        foreach ($details as $index => $detail) {
+                            $htmlContent .= '<tr><td>' . htmlspecialchars($detail->title) . '</td>';
+                            $htmlContent .= '<td>' . htmlspecialchars($detail->stat) . '</td></tr>';
+                        }
+                    $htmlContent .= '</tbody>
+                </table>
+            </body>
+            </html>';
+
+
+            $RPContent =  'Hi '.$result->fname.','
+            .'<br><br>'.'This is the result of your performance as the resource speaker during '
+            .$result->t_title.' at '.$result->t_venue
+            .'<br>'.$htmlContent.'<br>'
+            ."<br>Thank you, this is from Capacity Building Web Application";
+
+            Notification::route('mail', $result->email)->notify(new NotificationsSendEmailRP($RPContent));
+
+            } // end foreach results
+
+            return redirect()->back()->with('success', 'Rating sent successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
+
+    }
+
+    public function TrainingCertificateRequest(){
+        $certificateRequests = RequestCertificate::with(['trainingParticipants','training'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+        return Inertia::render('Training/RequestCertificate', 
+        [
+            'certificateRequests' => $certificateRequests
+        ]);
+    }
+
+    public function UpdateTrainingCertificateRequest(Request $request){
+
+        $requestCert = RequestCertificate::with(['trainingParticipants','training'])->where('id',$request->id)->first();
+
+        RequestCertificate::find($request->id)->update([
+            'is_approve' => $request->status
+        ]);
+
+        if($request->status == 1){ //approve
+            $project = [
+                'greeting' => 'Hi '.$requestCert->trainingParticipants->fname.',',
+                'body' => 'This is the certificate of participation on '. $requestCert->training->title,
+                'thanks' => 'Thank you this is from Capacity Building Web Application',
+                'actionText' => 'Download Certificate',
+                'actionURL' => route('public.cert.participant', [
+                    'l_name' => $requestCert->trainingParticipants->lname,
+                    'f_name' => $requestCert->trainingParticipants->fname,
+                    'm_name' => $requestCert->trainingParticipants->mname,
+                    'ext_name' => $requestCert->trainingParticipants->ext_name,
+                    'training_id' => $requestCert->training_id,
+                ]),
+            ];
+        }else{
+            $project = [
+                'greeting' => 'Hi '.$requestCert->trainingParticipants->fname.',',
+                'body' => 'We are sorry to inform you that your request on the certificate of participation on '. $requestCert->training->title.' has been rejected.',
+                'thanks' => 'Thank you this is from Capacity Building Web Application',
+                'actionText' => '',
+                'actionURL' => '',
+            ];
+        }
+
+        Notification::route('mail', $requestCert->trainingParticipants->email)->notify(new NotificationsSendEmail($project));
+
+        return Inertia::location(route('training.certificate-request'));
     }
 }

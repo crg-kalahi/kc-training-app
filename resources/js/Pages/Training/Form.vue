@@ -32,7 +32,7 @@ const submit = () => {
             <div class="text-lg font-medium breadcrumbs">
                 <ul>
                     <li><Link :href="route('training.index')">Training</Link></li>
-                    <li>Create Event</li>
+                    <li>Create Training</li>
                 </ul>
             </div>
         </div>

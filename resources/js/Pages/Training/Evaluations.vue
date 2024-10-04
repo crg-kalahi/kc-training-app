@@ -2,7 +2,7 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import Modal from '@/Components/Modal.vue';
 import QRCodeVue3 from "qrcode-vue3";
-import { QrCodeIcon, EyeIcon, DocumentArrowDownIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
+import { QrCodeIcon, EyeIcon, DocumentArrowDownIcon, DocumentTextIcon, PaperAirplaneIcon  } from '@heroicons/vue/24/outline';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import moment from 'moment'
 import { StarIcon, ChevronDownIcon  } from '@heroicons/vue/20/solid';
@@ -83,6 +83,22 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
           const { id } = this.training
           const url = type ? route('training.preview-report', {id}) : route('training.export-report', {id})
           window.open(url, "_blank")
+        },
+        sendRatingRP(training_id){
+          // alert(training_id);
+          this.$inertia.put(route('training.resource-person.rating'), {
+              training_id: training_id,
+          }, {
+              onSuccess: () => {
+                  // Optionally handle success, e.g., show a message or update the UI
+                  alert('Rating sent successfully!');
+              },
+              onError: (error) => {
+                  // Optionally handle error, e.g., show an error message
+                  alert('An error occurred while sending the rating.');
+              }
+          });
+
         }
     },
     components: { StarIcon, DocumentArrowDownIcon, DocumentTextIcon }
@@ -175,6 +191,11 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
                   <button type="button" @click="previewReport(false)" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
                   <DocumentArrowDownIcon class="h-6 w-6 mr-3" />
                   Download Excel</button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
+                  <button type="button" @click="sendRatingRP(training.id)" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
+                  <PaperAirplaneIcon  class="h-6 w-6 mr-3" />
+                  Send Rating to RP</button>
                 </MenuItem>
               </div>
             </MenuItems>

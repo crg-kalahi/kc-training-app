@@ -11,7 +11,6 @@ const form = useForm({
     mname: '',
     lname: '',
     ext_name: '',
-    id_number: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -34,13 +33,9 @@ const submit = () => {
         <form @submit.prevent="submit">
             <div class="flex gap-x-5 divide-x">
                 <div class="shrink">
-                    <div>
-                        <BreezeLabel for="id_number" value="ID Number" />
-                        <BreezeInput id="id_number" type="text" class="mt-1 block w-full" v-model="form.id_number" required autofocus autocomplete="name" />
-                    </div>
                     <div class="grid grid-cols-2 gap-4 mt-4">
                         <div>
-                            <BreezeLabel for="lname" value="Sure/Last Name" />
+                            <BreezeLabel for="lname" value="Last Name" />
                             <BreezeInput id="lname" type="text" class="mt-1 block w-full" v-model="form.lname" required autocomplete="name" />
                         </div>
                         <div>

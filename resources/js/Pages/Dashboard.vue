@@ -1,109 +1,61 @@
 <script setup>
+import { ref,computed } from 'vue'; 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
+import BreezeAuthenticatedGuestLayout from '@/Layouts/AuthenticatedGuest.vue';
 import { Head } from '@inertiajs/inertia-vue3';
-import {
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-  } from '@headlessui/vue'
-import { ChevronRightIcon, EllipsisVerticalIcon, UserIcon } from '@heroicons/vue/20/solid'
+import { UserIcon } from '@heroicons/vue/20/solid'
+import { Chart, registerables } from "chart.js";
+import { LineChart, BarChart } from 'vue-chart-3';
+import { Qalendar } from "qalendar";
+
+
+Chart.register(...registerables);
 
 const props = defineProps({
-  participants: Array
+  participants: Array,
+  plByMonth: Array,
+  events: Array,
+  permissions: Array
 })
-const projects = [
-    {
-      id: 1,
-      title: 'Crisis Communication Workshop - Batch 1',
-      initials: 'CCW',
-      venue: 'Goat 2 Geder Hotel and Restaurant, Butuan City',
-      members: [
-        {
-          name: 'Dries Vincent',
-          handle: 'driesvincent',
-          imageUrl:
-            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        },
-        {
-          name: 'Lindsay Walton',
-          handle: 'lindsaywalton',
-          imageUrl:
-            'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        },
-        {
-          name: 'Courtney Henry',
-          handle: 'courtneyhenry',
-          imageUrl:
-            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        },
-        {
-          name: 'Tom Cook',
-          handle: 'tomcook',
-          imageUrl:
-            'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        },
-      ],
-      totalMembers: 12,
-      lastUpdated: 'March 17, 2020',
-      pinned: true,
-      bgColorClass: 'bg-pink-600',
-    },
-    // More projects...
-  ]
-  const pinnedProjects = projects.filter((project) => project.pinned)
-  const stats = [
-    { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
-    { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
-    { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
-    { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
-  ]
-  import { LineChart, PieChart } from 'vue-chart-3';
-  // import { valueOr }
-  import { Chart, registerables } from "chart.js";
-  Chart.register(...registerables);
-  // const ChartNumberUtils = (config) => {
-  //   var cfg = config || {};
-  //   var min = valueOrDefault(cfg.min, 0);
-  //   var max = valueOrDefault(cfg.max, 100);
-  //   var from = valueOrDefault(cfg.from, []);
-  //   var count = valueOrDefault(cfg.count, 8);
-  //   var decimals = valueOrDefault(cfg.decimals, 8);
-  //   var continuity = valueOrDefault(cfg.continuity, 1);
-  //   var dfactor = Math.pow(10, decimals) || 0;
-  //   var data = [];
-  //   var i, value;
 
-  //   for (i = 0; i < count; ++i) {
-  //     value = (from[i] || 0) + this.rand(min, max);
-  //     if (this.rand() <= continuity) {
-  //       data.push(Math.round(dfactor * value) / dfactor);
-  //     } else {
-  //       data.push(null);
-  //     }
-  //   }
+const stats = [
+  { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
+  { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
+  { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
+  { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
+]
 
-  //   return data;
-  // }
-  // const chartData = {
-  //  labels: ['red', 'orange'],
-  //  datasets: [
-  //   {
-  //     data: ChartNumberUtils({count: 5, min: 0, max: 100}),
-  //     backgroundColor: '#FF6B6C',
-  //   },
-  //   {
-  //     data: ChartNumberUtils({count: 10, min: 0, max: 100}),
-  //     backgroundColor: '#FF6B6C',
-  //   },
-  // ]
-  // }
+const data = ref(props.plByMonth);
+const events = ref(props.events);
+
+const config=  {
+      week: {
+        startsOn: 'sunday',
+      },
+      month: {
+        // Hide leading and trailing dates in the month view (defaults to true when not set)
+        showTrailingAndLeadingDates: false,
+      },
+      defaultMode: 'month',
+      isSilent: true,
+      showCurrentTime: true,
+}
+
+
+const hasPermission = (permission) => {
+  return props.permissions.includes(permission);
+}
+
+const currentLayout = computed(() => {
+  return hasPermission('GUEST - Login') ? BreezeAuthenticatedGuestLayout : BreezeAuthenticatedLayout;
+});
+
 </script>
 
 <template>
     <Head title="Dashboard" />
 
-    <BreezeAuthenticatedLayout>
+    <component :is="currentLayout">
         <!-- Page title & actions -->
     <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div class="min-w-0 flex-1">
@@ -135,14 +87,39 @@ const projects = [
     </div>
     <section class="mt-3 px-4 py-3 sm:px-6 lg:px-8">
         <h3 class="text-base font-semibold leading-6 text-gray-900">Training Summary</h3>
-        <dl class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <dl class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-1">
           <div class="relative overflow-hidden rounded-lg bg-white px-4 shadow">
-              <PieChart :chartData="chartData"/>
-          </div>
-          <div class="relative overflow-hidden rounded-lg bg-white px-4 shadow">
+              <BarChart
+              :chart-data="{
+                labels: data.map(item => `${item.mname} ${item.yr}`),
+                datasets: [
+                  {
+                    label: 'TOTAL TRAININGS',
+                    backgroundColor: '#90e0ef',
+                    data: data.map(item => item.total_trainings)
+                  },
+                ]
+              }"
+              :options="{
+                responsive: true,
+                maintainAspectRatio: false
+              }"
+            />
 
+
+
+            
           </div>
+          <Qalendar 
+              :events="events"
+              :config="config"
+            />
         </dl>
     </section>
-    </BreezeAuthenticatedLayout>
+    <section>
+      <br>
+    </section>
+  </component>
 </template>
+
+

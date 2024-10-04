@@ -1,0 +1,1 @@
+<div>{!! $htmlContent !!}</div>

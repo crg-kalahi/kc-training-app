@@ -56,7 +56,7 @@ import moment from 'moment';
 import { QrCodeIcon } from '@heroicons/vue/24/outline';
 import Modal from '@/Components/Modal.vue';
 export default {
-    props: ["pagination"],
+    props: ["pagination","certificateRequestsCount"],
     computed: {
         ratings(){
             const rates = ['Poor', 'Fair', 'Satisfactory', 'Very Satisfactory', 'Excellent']
@@ -110,8 +110,13 @@ export default {
             <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">Trainings</h1>
         </div>
         <div class="flex sm:mt-0 sm:ml-4">
-            <!-- <button type="button" class="sm:order-0 order-1 ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:ml-0">Share</button> -->
-            <Link :href="route('training.create')" class="order-0 inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 sm:order-1 sm:ml-3">Create</Link>
+            <div class="relative">
+                <Link :href="route('training.certificate-request')" class="sm:order-0 order-1 ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:ml-0">Certificate Request</Link>
+                <span class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
+                    {{certificateRequestsCount}}
+                </span>
+            </div>
+            <Link :href="route('training.create')" class="order-0 inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 sm:order-1 sm:ml-3">Create Training</Link>
         </div>
     </div>
         <div class="mt-2 hidden sm:block">
