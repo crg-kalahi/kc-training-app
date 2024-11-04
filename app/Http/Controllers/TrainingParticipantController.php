@@ -6,6 +6,7 @@ use App\Models\TrainingParticipant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class TrainingParticipantController extends Controller
 {
@@ -118,5 +119,10 @@ class TrainingParticipantController extends Controller
         $p = TrainingParticipant::findOrFail($id);
         $p->delete();
         return redirect()->back();
+    }
+
+    public function attendance($id){
+        $participants = TrainingParticipant::with('training')->where('training_id', $id)->get();
+        return Inertia::render('Training/Attendance/ParticipantsAttendance', ['participants'=>$participants]);
     }
 }

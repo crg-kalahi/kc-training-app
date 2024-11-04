@@ -7,7 +7,8 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "build": "npm run production"
     },
     "devDependencies": {
         "@inertiajs/inertia": "^0.11.0",
@@ -25,7 +26,9 @@
         "postcss": "^8.4.6",
         "tailwindcss": "^3.0.18",
         "vue": "^3.2.31",
-        "vue-loader": "^17.0.0"
+        "vue-loader": "^17.0.0",
+        "webpack": "^5.96.1",
+        "webpack-cli": "^5.1.4"
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.12",

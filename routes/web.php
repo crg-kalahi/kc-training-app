@@ -51,6 +51,7 @@ Route::get('training/{id}/evaluation-response/public', [TrainingController::clas
 Route::get('training/{id}/participants/registration', [TrainingParticipantRegistrationController::class, 'index'])->name('training.participants.registration.index');
 Route::post('training/participants/register', [TrainingParticipantRegistrationController::class, 'register'])->name('training.participants.register');
 Route::get('training/participants/register/sent', [TrainingParticipantRegistrationController::class, 'registrationSent'])->name('training.participants.registration.sent');
+Route::get('training/{id}/participants/attendance', [TrainingParticipantController::class, 'attendance'])->name('training.participants.attendance.index');
 
 
 Route::group(['middleware' => ['auth', 'verified']], function(){
