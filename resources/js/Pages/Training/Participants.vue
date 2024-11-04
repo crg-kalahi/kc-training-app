@@ -204,12 +204,20 @@ import {
             <MenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div class="py-1 divide-y divide-gray-300">
                 <MenuItem v-slot="{ active }">
-                  <Link :href="route('training.participants.registration.index', {id: training.id})" type="button" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
+                  <a :href="route('training.participants.registration.index', {id: training.id})" target="_blank" type="button" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
                   <EyeIcon  class="h-6 w-6 mr-3" />
-                  View Registration Link </Link>
+                  View Registration Link </a>
+                </MenuItem>
+              </div>
+              <div class="py-1 divide-y divide-gray-300">
+                <MenuItem v-slot="{ active }">
+                  <a :href="route('training.participants.attendance.index', {id: training.id})" target="_blank" type="button" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
+                  <DocumentArrowDownIcon  class="h-6 w-6 mr-3" />
+                  View Attendace Link </a>
                 </MenuItem>
               </div>
             </MenuItems>
+            
           </transition>
         </Menu>
         <button v-if="people.length" @click="proceedToExcel" type="button" class="block rounded-md bg-green-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Export Participants</button>
