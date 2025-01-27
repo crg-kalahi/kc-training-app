@@ -73,7 +73,8 @@ const submit = () => {
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="max-w-2xl mx-auto text-center">
             <div >
-                <img src="/images/train-logo2.png" alt="T.R.A.I.N Logo" class="inline-block w-28 h-28 rounded-full" />
+                <!-- <img src="/images/train-logo2.png" alt="T.R.A.I.N Logo" class="inline-block w-28 h-28 rounded-full" /> -->
+                <img src="images/trainlogo1.png" alt="T.R.A.I.N Logo" class="h-28 w-28 inline-block">
             </div>
             <h2 class="text-3xl font-bold leading-tight text-black sm:text-1xl lg:text-2xl">Training Resources and Information Network </h2>
             <p class="max-w-xl mx-auto mt-4 text-base leading-relaxed text-gray-600">Login to your account</p>
