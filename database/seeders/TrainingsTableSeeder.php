@@ -161,8 +161,8 @@ class TrainingsTableSeeder extends Seeder
                 'key_trainings' => $keyTrainings[array_rand($keyTrainings)], // Random UUID from KeyTraining
                 'key_learnings' => $keyLearnings[array_rand($keyLearnings)], // Random UUID from Learning
                 'key_rp' => $keyResourcePeople[array_rand($keyResourcePeople)], // Random UUID from KeyResourcePerson
-                'date_from' => $dateFrom,
-                'date_to' => $dateTo,
+                'date_from' => date('Y-m-d', strtotime($dateFrom)),
+                'date_to' => date('Y-m-d', strtotime($dateTo)),
                 'rso_number' => 'RSO-' . str_pad($i + 1, 5, '0', STR_PAD_LEFT),
                 'encoded_by' => 'user_' . rand(1, 10), // Assuming you have users with ids 1-10
                 'created_at' => Carbon::now(),
