@@ -1,0 +1,13 @@
+stages:
+  - deploy
+
+deploy_job:
+  stage: deploy
+  tags: 
+    - deploy
+  script:
+    - "cd /opt/apps/train && git pull --force gitlab-ssh main"
+  after_script:
+    - echo "Cleaning up temporary files..." 
+  only:
+    - staging
