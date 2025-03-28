@@ -6,7 +6,11 @@ deploy_job:
   tags: 
     - deploy
   script:
-    - "cd /opt/apps/train && git pull --force gitlab-ssh main"
+    - "cd /opt/apps/train"
+    - "git pull --force gitlab-ssh main"   
+    - "git reset --hard"  
+    - "npm install"  
+    - "npm run build" 
   after_script:
     - echo "Cleaning up temporary files..." 
   only:
