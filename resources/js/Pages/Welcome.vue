@@ -1,15 +1,22 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-r from-blue-500 to-teal-400 flex flex-col justify-center items-center text-white" style="background: url('/images/header.png');">
-      <header class="w-4/5 p-10 flex justify-between items-center">
-        <h1 class="text-3xl font-bold">T.R.A.I.N</h1>
-        <nav class="flex space-x-4">
-          <a href="#features" class="hover:underline" @click.prevent="scrollToSection('features')">Features</a>
-          <a href="#about" class="hover:underline" @click.prevent="scrollToSection('about')">About</a>
-          <a href="#team" class="hover:underline" @click.prevent="scrollToSection('team')">Team</a>
-          <a href="#contact" class="hover:underline" @click.prevent="scrollToSection('contact')">Contact</a>
-          <a href="#developers" class="hover:underline" @click.prevent="scrollToSection('developers')">Developers</a>
-        </nav>
-      </header>
+    <div class="min-h-screen bg-gradient-to-r from-blue-500 to-teal-400 flex flex-col justify-center items-center text-white" 
+    style="background-image: url('/images/header.png');background-size: cover; background-repeat: no-repeat;background-position: center;">
+    <header class="w-4/5 p-10 flex justify-between items-center">
+  <!-- Logo and Title -->
+  <div class="flex items-center space-x-4">
+    <img src="images/trainlogo1.png" alt="T.R.A.I.N Logo" class="h-10 w-10 object-contain">
+    <h1 class="text-3xl font-bold">T.R.A.I.N</h1>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex space-x-4">
+    <a href="#features" class="hover:underline" @click.prevent="scrollToSection('features')">Features</a>
+    <a href="#about" class="hover:underline" @click.prevent="scrollToSection('about')">About</a>
+    <a href="#team" class="hover:underline" @click.prevent="scrollToSection('team')">Team</a>
+    <a href="#contact" class="hover:underline" @click.prevent="scrollToSection('contact')">Contact</a>
+    <a href="#developers" class="hover:underline" @click.prevent="scrollToSection('developers')">Developers</a>
+  </nav>
+</header>
   
       <main class="flex-1 flex flex-col justify-center items-center text-center p-10" >
         <h2 class="text-5xl font-extrabold mb-4">Training Resources and Information Network</h2>
@@ -164,7 +171,6 @@
       <section id="developers" class="w-full bg-white text-gray-800 py-16">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <h3 class="text-3xl font-bold mb-6">Knowledge Management</h3>
-            <p class="text-lg mb-12">Choose a plan that fits your needs and start your journey today.</p>
             
             <!-- User Avatars -->
             <div class="flex justify-center gap-8">
