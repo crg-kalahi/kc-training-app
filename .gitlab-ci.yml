@@ -7,7 +7,7 @@ deploy_job:
     - deploy
   script:
     - "cd /opt/apps/train"
-    - "git pull --force main"   
+    - "git pull --force staging"   
     - "git reset --hard"  
     - "npm install"  
     - "npm run build" 
