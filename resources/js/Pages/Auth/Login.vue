@@ -6,6 +6,9 @@ import BreezeLabel from '@/Components/Label.vue';
 import BreezeApplicationLogo from '@/Components/ApplicationLogo.vue';
 import BreezeValidationErrors from '@/Components/ValidationErrors.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import { VueReCaptcha, useReCaptcha } from 'vue-recaptcha-v3'
+
+const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
 defineProps({
     canResetPassword: Boolean,
@@ -15,13 +18,34 @@ defineProps({
 const form = useForm({
     email: '',
     password: '',
-    remember: false
+    remember: false,
+    recaptcha_token: '', 
 });
 
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+// const submit = () => {
+//     form.post(route('login'), {
+//         onFinish: () => form.reset('password'),
+//     });
+// };
+
+
+const submit = async () => {
+    try {
+        await recaptchaLoaded();
+        form.recaptcha_token = await executeRecaptcha('login');
+
+        if (!form.recaptcha_token) {
+            alert('ReCAPTCHA verification failed. Please try again.');
+            return;
+        }
+
+        form.post(route('login'), {
+            onFinish: () => form.reset('password'),
+        });
+    } catch (error) {
+        console.error('reCAPTCHA error:', error);
+        alert('Failed to execute reCAPTCHA. Please check your network and try again.');
+    }
 };
 </script>
 

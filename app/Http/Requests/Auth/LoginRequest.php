@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Http;
 
 class LoginRequest extends FormRequest
 {
@@ -44,6 +45,7 @@ class LoginRequest extends FormRequest
     public function authenticate()
     {
         $this->ensureIsNotRateLimited();
+        $this->validateRecaptcha();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
@@ -90,4 +92,23 @@ class LoginRequest extends FormRequest
     {
         return Str::lower($this->input('email')).'|'.$this->ip();
     }
+
+
+    private function validateRecaptcha()
+    {
+        $recaptchaSecret = env('GOOGLE_RECAPTCHA_SECRET');
+        $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $recaptchaSecret,
+            'response' => $this->input('recaptcha_token'),
+        ]);
+
+        $recaptchaData = $recaptchaResponse->json();
+        
+        if (!$recaptchaData['success'] || $recaptchaData['score'] < 0.5) {
+            throw ValidationException::withMessages([
+                'recaptcha' => __('ReCAPTCHA verification failed. Please try again.'),
+            ]);
+        }
+    }
+
 }
