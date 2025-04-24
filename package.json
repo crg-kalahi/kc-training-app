@@ -37,6 +37,7 @@
         "helper-js": "^3.1.5",
         "qalendar": "^3.8.1",
         "qrcode-vue3": "^1.4.17",
-        "vue-chart-3": "^3.1.8"
+        "vue-chart-3": "^3.1.8",
+        "vue-recaptcha-v3": "^2.0.1"
     }
 }
