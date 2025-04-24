@@ -32,10 +32,22 @@ export default {
 <template>
     <Head title="Training Attendance" />
     <div class="p-5">
-        <h3 class="text-center"><b>ATTENDANCE SHEET</b></h3>
-        <h5 class="text-center">{{participants[0].training.title}}</h5>
-        <h6 class="text-center">{{this.formattedDateRange(participants[0].training.date_from,participants[0].training.date_to)}}</h6>
-        <h5 class="text-center">{{participants[0].training.venue}}</h5>
+        
+        <div class="relative mb-4">
+            <!-- Logos on top-left -->
+            <div class="absolute left-0 top-0 flex gap-4">
+                <img src="/images/dswd.jpg" alt="Logo 1" class="h-12 w-auto">
+                <img src="/images/bp.png" alt="Logo 2" class="h-12 w-auto">
+            </div>
+
+            <!-- Centered headers -->
+            <div class="text-center mt-5">
+                <h3 class="text-xl font-bold mt-10 mb-5">ATTENDANCE SHEET</h3>
+                <h5 class="font-bold">{{ participants[0].training.title }}</h5>
+                <h6>{{ formattedDateRange(participants[0].training.date_from, participants[0].training.date_to) }}</h6>
+                <h5>{{ participants[0].training.venue }}</h5>
+            </div>
+        </div>
         <br>
         <table >
             <thead class="bg-gray-200">
@@ -82,16 +94,23 @@ export default {
                 <!-- Optional footer rows here -->
             </tfoot>
         </table>
+        <p class="text-center" ><span >***NOTHING   FOLLOWS*** </span></p>
         <br>
        <p class="text-center"><b><u contenteditable="true">SIGNATORIES HERE</u></b></p>
        <p class="text-center" ><span contenteditable="true">POSITION</span></p>
+       
+
+       
     </div>
 </template>
 
 <style>
+    .grecaptcha-badge {
+        visibility: hidden;
+    }
 
     @page {
-        size: legal landscape; /* Change to A4 landscape if needed */
+        size: A4 landscape; /* Change to A4 landscape if needed */
         margin: 20mm; /* Adjust margins as needed */
     }
 
