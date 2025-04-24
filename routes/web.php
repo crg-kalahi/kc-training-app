@@ -12,6 +12,8 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingParticipantController;
 use App\Http\Controllers\TrainingParticipantRegistrationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PdfMailController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -38,13 +40,25 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', function(){ return view('emails.cert_participation', [
-    'title' => 'test',
-    'fullname' => 'test',
-    'venue' => 'test',
-]); });
+
+Route::get('/test', function () {
+    return Inertia::render('Test');
+    // return view('emails.test', [
+    //     'name' => 'Dioame Jade C. Rendon',
+    //     'training' => 'Community Volunteers Training on Project Implementation',
+    //     'date' => 'January 2–3, 2025',
+    //     'venue' => 'Almont Inland Resort, Butuan City',
+    //     'givenDate' => '3rd day of January 2025',
+    // ]);
+});
+
+Route::get('/test-send-pdf-email', [PdfMailController::class, 'send']);
+
+
 Route::get('/thank-you-response', function(){ return view('thanks'); })->name('thanks.response');
 Route::get('training/certificate/participation', [CertificateController::class, 'participation'])->name('public.cert.participant');
+Route::get('training/certificate/generate', [CertificateController::class, 'generate'])->name('public.cert.generate');
+
 Route::post('training/evaluation/public', [TrainingController::class, 'PublicEvaluationFormStore'])->name('public.training.evaluation.post');
 Route::get('training/{id}/evaluation-response/public', [TrainingController::class, 'PublicEvaluationForm'])->name('public.training.evaluation-response');
 
