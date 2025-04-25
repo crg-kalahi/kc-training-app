@@ -18,6 +18,17 @@ class TwoFactorController extends Controller
     public function setup()
     {
         $user = Auth::user();
+
+        // Fallback to session-stored user ID if logged out
+        if (!$user && session()->has('2fa_setup:user:id')) {
+            $user = User::find(session('2fa_setup:user:id'));
+        }
+
+        // Final guard
+        if (!$user) {
+            abort(403, 'Unauthorized. No user available for 2FA setup.');
+        }
+
         $google2fa = new Google2FA();
 
         if (!$user->google2fa_secret) {
@@ -40,9 +51,10 @@ class TwoFactorController extends Controller
         $writer = new Writer($renderer);
         $qrCodeSvg = $writer->writeString($qrCodeUrl);
 
-        return Inertia::render('Mfa/Setup', [
-            'qrCode' => $qrCodeSvg,
+        return Inertia::render('Auth/TwoFactorSetup', [
+            'qrCodeSvg' => $qrCodeSvg,
             'secret' => $user->google2fa_secret,
+            'email' => $user->email,
         ]);
     }
 
