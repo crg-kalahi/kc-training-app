@@ -15,6 +15,7 @@ use App\Http\Controllers\TrainingParticipantRegistrationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PdfMailController;
 use App\Http\Controllers\OpenAIController;
+use App\Http\Controllers\TwoFactorController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
@@ -75,8 +76,16 @@ Route::get('training/participants/register/sent', [TrainingParticipantRegistrati
 Route::get('training/{id}/participants/attendance', [TrainingParticipantController::class, 'attendance'])->name('training.participants.attendance.index');
 
 
+
+Route::get('/2fa/setup', [TwoFactorController::class, 'setup'])->name('mfa.setup');
+Route::post('/2fa/setup', [TwoFactorController::class, 'enable']);
+
+Route::get('/mfa', [TwoFactorController::class, 'showPrompt'])->name('mfa.prompt');
+Route::post('/mfa', [TwoFactorController::class, 'verify']);
+
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard')->middleware('check.external');
+
 
     // CAN MANAGE TRAINING
     Route::group(['middleware' => ['permission:STAFF - Training - Manage']], function() {
