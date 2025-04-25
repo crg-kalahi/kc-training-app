@@ -23,7 +23,7 @@
 									<div class="hidden md:block">
 										<div>
 											<!-- Clickable download link -->
-											<a :href="item.file_path" download class="flex items-center text-sm text-blue-600 hover:text-blue-800" :title="'Download ' + item.name">
+											<a v-if="item.file_path" :href="item.file_path" download class="flex items-center text-sm text-blue-600 hover:text-blue-800" :title="'Download ' + item.name">
 												<ArrowDownIcon class="h-6 w-6 text-gray-600 hover:text-gray-800" />
 												Download
 											</a>
