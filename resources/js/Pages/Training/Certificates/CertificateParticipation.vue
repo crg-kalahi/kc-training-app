@@ -1,9 +1,8 @@
 <template>
     <div>
         
-  
-      <!-- Download Button -->
-      <div
+       <!-- Download Button -->
+       <div
         v-if="remainingDays > 0"
         class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
       >
@@ -31,51 +30,69 @@
             </div>
         </div>
       </div>
+  
+
       <br><br>
       <!-- Certificate Wrapper -->
-      <div ref="certificateRef" class="max-w-4xl mx-auto p-8 border border-gray-300 shadow-lg bg-white relative font-serif no-select mt-30">
+      <div ref="certificateRef"
+        class="relative mx-auto bg-white shadow-lg font-serif no-select"
+        style="width: 1123px; height: 794px; padding: 50px 70px; border: 1px solid #ccc; box-sizing: border-box;"
+      >
         <!-- Side ribbon -->
-        <div class="absolute left-0 top-0 h-full w-36">
-          <img src="/storage/images/new/cert-design.png" alt="DSWD Logo" class="h-full" />
+        <div class="absolute left-0 top-0 h-full">
+          <img src="/storage/images/new/cert-design.png" alt="Side Ribbon" class="h-full object-cover" />
         </div>
-  
-        <!-- Header with inline logo -->
-        <div class="flex justify-between items-center">
-          <div class="text-left space-y-1 ml-40 font-[Arial]">
-            <p class="text-sm font-light">Republic of the Philippines</p>
-            <p class="text-sm font-light">Department of Social Welfare and Development</p>
-            <p class="text-sm font-light">Field Office Caraga, Capitol Site, Butuan City</p>
+
+
+        <div>
+          <!-- Header -->
+          <div class="flex justify-between items-start mb-6 mt-10">
+            <div></div>
+            <!-- Left text -->
+            <div class="text-left font-[Arial] leading-tight">
+              <p class="text-sm font-light">Republic of the Philippines</p>
+              <p class="text-sm font-light">Department of Social Welfare and Development</p>
+              <p class="text-sm font-light">Field Office Caraga, Capitol Site, Butuan City</p>
+            </div>
+
+            <!-- Right logos -->
+            <div class="flex space-x-3">
+              <img src="/images/dswd.jpg" alt="DSWD Logo" class="h-12" />
+              <img src="/images/bp.png" alt="Bagong Pilipinas Logo" class="h-12" />
+            </div>
           </div>
-          <div class="flex space-x-4">
-            <img src="/images/dswd.jpg" alt="DSWD Logo" class="h-10" />
-            <img src="/images/bp.png" alt="Bagong Pilipinas Logo" class="h-10" />
+
+          <div class="flex justify-between items-start mb-6 mt-10">
+            <div></div>
+
+              <!-- Certificate Content -->
+              <div class="text-left mt-6 mb-10 space-y-4">
+                <h1 class="text-5xl font-bold font-montserrat">Certificate of Participation</h1>
+                <h2 class="text-5xl text-red-600 font-bold font-monotype tracking-wide leading-tight">{{ data.fullname }}</h2>
+                <p class="text-lg max-w-3xl">
+                  for having successfully participated during the <b>{{ data.title }}</b>,
+                  held on {{ training_date }} at <b>{{ data.venue }}</b>.<br><br>
+                  Given this <b>{{ training_end_date }}</b>.
+                </p>
+              </div>
+            </div>
+
           </div>
+
+        <!-- Signature Section -->
+        <div class="text-center mt-16 relative">
+          <img src="/storage/images/e-sig.png" alt="Signature" class="h-16 mx-auto mb-2 absolute -top-10 left-1/2 transform -translate-x-1/2" />
+          <p class="font-bold">MARI-FLOR A. DOLLAGA-LIBANG</p>
+          <p class="text-sm">Regional Director</p>
         </div>
-  
-        <!-- Certificate Content -->
-        <div class="text-left mt-4 space-y-2 ml-40 mb-5">
-          <h1 class="text-4xl font-bold font-montserrat">Certificate of Participation</h1>
-          <h2 class="text-5xl text-red-600 font-bold font-monotype">{{data.fullname}}</h2>
-          <p class="text-sm max-w-2xl mx-auto">
-            for having successfully participated during the <b>{{data.title}}</b>.
-            held on {{training_date}} at <br> {{data.venue}}. <br><br> Given this <b>{{training_end_date}}</b>.
-          </p>
-        </div>
-  
-        <!-- Signature -->
-        <div class="mt-16 text-center leading-tight">
-          <div class="relative">
-            <img src="/storage/images/e-sig.png" alt="DSWD Signature" class="h-16 mx-auto mt-2 absolute bottom-4 left-1/2 transform -translate-x-1/2" />
-            <p class="font-bold m-0 leading-tight">MARI-FLOR A. DOLLAGA-LIBANG</p>
-            <p class="text-sm m-0 leading-tight">Regional Director</p>
-          </div>
-        </div>
-  
-        <!-- Footer logos -->
-        <div class="absolute bottom-4 right-4 flex space-x-2">
-          <img src="/storage/images/insignia.jpg" alt="ISO Logo" class="h-10" />
+
+        <!-- Footer -->
+        <div class="absolute bottom-6 right-6">
+          <img src="/storage/images/insignia.jpg" alt="ISO Logo" class="h-12" />
         </div>
       </div>
+
+
     </div>
   </template>
   
@@ -131,30 +148,30 @@
     calculateRemainingDays()
   
     // Disable right-click
-    // document.addEventListener('contextmenu', e => e.preventDefault())
+     document.addEventListener('contextmenu', e => e.preventDefault())
   
-    // // Disable key shortcuts
-    // document.addEventListener('keydown', e => {
-    //   if (
-    //     e.key === 'F12' ||
-    //     (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-    //     (e.ctrlKey && e.key === 'U')
-    //   ) {
-    //     e.preventDefault()
-    //   }
-    // })
+     // Disable key shortcuts
+     document.addEventListener('keydown', e => {
+       if (
+         e.key === 'F12' ||
+         (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+         (e.ctrlKey && e.key === 'U')
+       ) {
+         e.preventDefault()
+       }
+     })
   
-    // // Detect DevTools open
-    // setInterval(() => {
-    //   const threshold = 160
-    //   if (
-    //     window.outerWidth - window.innerWidth > threshold ||
-    //     window.outerHeight - window.innerHeight > threshold
-    //   ) {
-    //     alert("Developer tools are not allowed!")
-    //     window.location.href = "about:blank"
-    //   }
-    // }, 1000)
+    //  Detect DevTools open
+     setInterval(() => {
+       const threshold = 160
+       if (
+         window.outerWidth - window.innerWidth > threshold ||
+         window.outerHeight - window.innerHeight > threshold
+       ) {
+         alert("Developer tools are not allowed!")
+         window.location.href = "about:blank"
+       }
+     }, 1000)
   })
   </script>
   
