@@ -45,9 +45,9 @@ class TrainingController extends Controller
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
 
-        if($currentDateTime >= $givenDateTime){
-            abort(403, "Training was already finished and can't evaluate today.");
-        }
+        // if($currentDateTime >= $givenDateTime){
+        //     abort(403, "Training was already finished and can't evaluate today.");
+        // }
         return Inertia::render('Training/EvaluationPublic', [
             'training' => $item,
             'officeRep' => OfficeRepresentative::get(),
