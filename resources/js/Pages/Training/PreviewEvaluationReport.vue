@@ -1,6 +1,26 @@
 <template>
   <Head title="Evaluation Report" />
   <div class="px-4 py-10 sm:px-6 lg:px-8 bg-blue-200 min-h-screen">
+
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded-2xl max-w-xl w-full shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4 text-gray-800">AI Summary: {{selecteLearningQuestion}}</h2>
+      
+      <div class="bg-gray-100 p-4 rounded-lg text-gray-800 whitespace-pre-line leading-relaxed">
+        {{ selectedItem }}
+      </div>
+      
+      <div class="mt-6 text-right">
+        <button
+          class="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition duration-200"
+          @click="showModal = false"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
     <!-- We've used 3xl here, but feel free to try other max-widths based on your needs -->
     <div id="section-to-print" class="px-1 mx-auto pt-5 rounded-md max-w-3xl bg-white">
       <table class="min-w-full border-collapse">
@@ -89,7 +109,20 @@
               <h3 class="text-sm font-semibold text-gray-800">
                   <!-- Extend touch target to entire panel -->
                   <!-- <span class="absolute inset-0" aria-hidden="true" /> -->
-                  {{ `${index + 1}. ${learning.title}` }}
+                    <div class="flex items-center gap-2">
+                    <span>{{ `${index + 1}. ${learning.title}` }}</span>
+                    <a
+                      title="Summarize results for this Item using AI."
+                      class="cursor-pointer"
+                      @click="openModal(learning)"
+                    >
+                      <img
+                        src="/images/ai-icon.png"
+                        alt=""
+                        class="w-10 h-10 animate-pulse print:hidden"
+                      />
+                    </a>
+                  </div>
               </h3>
             </td>
           </tr>
@@ -120,6 +153,9 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
+import axios from 'axios';
+// import { H1Icon } from '@heroicons/vue/24/outline';
+
 export default {
   props: ['key_rp', 'key_learning', 'key_training', 'items_rp', 'items_learning', 'item_training', 'training'],
   computed:{
@@ -157,7 +193,36 @@ export default {
       return items
     }
   },
+  data() {
+    return {
+      showModal: false,
+      selectedItem: "TRAIN AI Summarizing...",
+      selecteLearningQuestion: ''
+    };
+    
+  },
   methods:{
+    openModal(learning) {
+      const question = learning.title;
+      const answers = this.filterLearning(learning.id).map(item => item.answer);
+
+      this.selectedItem = "TRAIN AI Summarizing...";
+      this.selecteLearningQuestion = question;
+
+      const params = {
+        question: question,
+        answers: answers
+      };
+      this.showModal = true;
+
+      axios.get(route('openai.summarize'), { params })
+        .then(response => {
+          this.selectedItem = response.data.summary;
+        })
+        .catch(error => {
+          console.error('Error summarizing:', error);
+        });
+    },
     filterLearning(id){
       if(!this.items_learning.length) return []
       return this.items_learning.filter(function(x){

@@ -14,6 +14,7 @@ use App\Http\Controllers\TrainingParticipantController;
 use App\Http\Controllers\TrainingParticipantRegistrationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PdfMailController;
+use App\Http\Controllers\OpenAIController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,12 @@ Route::get('/', function () {
 
 
 Route::get('/test', function () {
-    return Inertia::render('Test');
+
+    // $ai = new OpenAIService();
+    // $res = $ai->generateChatResponse("hello?");
+
+    // var_dump($res);
+    // return Inertia::render('Test');
     // return view('emails.test', [
     //     'name' => 'Dioame Jade C. Rendon',
     //     'training' => 'Community Volunteers Training on Project Implementation',
@@ -130,6 +136,9 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
             Route::post('/user-management/permissions', [UserManagementController::class, 'userManagementPermissions'])->name('user-management.permissions');
         });
     });   
+
+
+    Route::get('/openai/summarize', [OpenAIController::class, 'summarize'])->name('openai.summarize');
     
 });
 

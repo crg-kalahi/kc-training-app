@@ -3686,11 +3686,17 @@ details.collapse summary::-webkit-details-marker {
 .whitespace-nowrap {
   white-space: nowrap;
 }
+.whitespace-pre-line {
+  white-space: pre-line;
+}
 .break-all {
   word-break: break-all;
 }
 .rounded {
   border-radius: 0.25rem;
+}
+.rounded-2xl {
+  border-radius: 1rem;
 }
 .rounded-full {
   border-radius: 9999px;
@@ -5756,5 +5762,12 @@ details.collapse summary::-webkit-details-marker {
   .dark\:text-white {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+  }
+}
+
+@media print {
+
+  .print\:hidden {
+    display: none;
   }
 }
