@@ -73,9 +73,9 @@ class TrainingController extends Controller
         $currentDateTime = new DateTime();
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        if($currentDateTime >= $givenDateTime){
-            abort(403, "Training was already finished and can't evaluate today.");
-        }
+        // if($currentDateTime >= $givenDateTime){
+        //     abort(403, "Training was already finished and can't evaluate today.");
+        // }
 
         $eval = EvaluationTraining::create([
             'training_id' => $request->training_id,
