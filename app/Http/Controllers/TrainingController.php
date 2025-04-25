@@ -122,7 +122,7 @@ class TrainingController extends Controller
             'body' => 'This is the certificate of participation on '. $training->title,
             'thanks' => 'Thank you this is from Capacity Building Web Application',
             'actionText' => 'Download Certificate',
-            'actionURL' => route('public.cert.participant', [
+            'actionURL' => route('public.cert.generate', [
                 'l_name' => $request->l_name,
                 'f_name' => $request->f_name,
                 'm_name' => $request->m_name,
