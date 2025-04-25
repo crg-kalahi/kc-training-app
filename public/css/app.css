@@ -2912,11 +2912,17 @@ details.collapse summary::-webkit-details-marker {
   top: 0px;
   bottom: 0px;
 }
+.-top-10 {
+  top: -2.5rem;
+}
 .bottom-0 {
   bottom: 0px;
 }
 .bottom-4 {
   bottom: 1rem;
+}
+.bottom-6 {
+  bottom: 1.5rem;
 }
 .left-0 {
   left: 0px;
@@ -3227,6 +3233,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .max-h-60 {
   max-height: 15rem;
+}
+.max-h-\[400px\] {
+  max-height: 400px;
 }
 .max-h-screen {
   max-height: 100vh;
@@ -4818,6 +4827,11 @@ details.collapse summary::-webkit-details-marker {
 .hover\:text-blue-700:hover {
   --tw-text-opacity: 1;
   color: rgb(29 78 216 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-blue-800:hover {
+  --tw-text-opacity: 1;
+  color: rgb(30 64 175 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-gray-400:hover {

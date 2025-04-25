@@ -15,6 +15,7 @@ use App\Models\EvaluationKeyResourcePerson;
 use App\Models\EvaluationTraining;
 use App\Models\EventFacilitator;
 use App\Models\Training;
+use App\Models\Attachments;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
 use App\Notifications\SendEmail as NotificationsSendEmail;
@@ -146,7 +147,7 @@ class TrainingController extends Controller
     public function index()
     {
         $certificateRequestsCount = RequestCertificate::where('is_approve',0)->count();
-        $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(10);
+        $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(20);
         return Inertia::render('Training/Index', ['pagination' => $pagination, 'certificateRequestsCount'=>$certificateRequestsCount]);
     }
 
@@ -216,9 +217,15 @@ class TrainingController extends Controller
         $training->load('facilitators_');
         $training->load('resourcePersons');
         $users = User::get();
+        $attachments = Attachments::where('training_id', $training->id)->get();
+        // var_dump($attachments);
+        // die();
+        
         return Inertia::render('Training/Edit', 
             [   'training' => $training,
+                'training_id_selected' => $training->id,
                 'users' => $users,
+                'attachments' => $attachments,
                 'listTraining' => KeyTraining::get(),
                 'listLearning' => Learning::get(),
                 'listKeyResourcePerson' => KeyResourcePerson::get(), 
