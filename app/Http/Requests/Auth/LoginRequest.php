@@ -46,16 +46,40 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
         $this->validateRecaptcha();
-
+    
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
-
+    
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
-
+    
         RateLimiter::clear($this->throttleKey());
+    
+        $user = Auth::user();
+    
+       
+        if ($user->mfa_enabled) {
+            // 👇 Check if secret is missing
+            if (!$user->google2fa_secret) {
+                // logout and redirect to setup
+                session(['2fa_setup:user:id' => $user->id]);
+                Auth::logout();
+
+                throw ValidationException::withMessages([
+                    'setup' => 'You must complete 2FA setup.',
+                ]);
+            }
+
+            // Otherwise, continue with MFA prompt
+            session(['mfa:user:id' => $user->id]);
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'mfa' => 'MFA required.',
+            ]);
+        }
     }
 
     /**
