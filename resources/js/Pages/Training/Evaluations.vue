@@ -10,7 +10,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 </script>
 <script>
   export default {
-    props: ["training", "officeRep", "keyTraining", "keyRP", "keyLearning", "resourcePerson", "totalMale", "totalFemale", "overallRating", "totalPreferNotToSay"],
+    props: ["training", "officeRep", "keyTraining", "keyRP", "keyLearning", "resourcePerson", "totalMale", "totalFemale", "overallRating", "totalPreferNotToSay", "notEvaluated"],
     computed: {
         ratings() {
             return ["Poor", "Fair", "Satisfactory", "V-Satisfactory", "Excellent"];
@@ -22,6 +22,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
                 { name: "Female", stat: this.totalFemale },
                 { name: "Prefer Not To Say", stat: this.totalPreferNotToSay },
                 { name: "Total", stat: this.totalMale + this.totalFemale + this.totalPreferNotToSay},
+                { name: "Not Evaluated", stat: this.notEvaluated },
                 // { name: "Overall Rating", stat:  },
             ];
         },
@@ -302,8 +303,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
       </div>
       
       <div class="flex justify-end mt-5">
-        <button @click="toggleAlert = true" type="button" class="tracking-wider inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-          Submit Evaluation
+        <button @click="toggleAlert = true" :disabled="notEvaluated === 0" type="button" class="tracking-wider inline-flex uppercase rounded-md bg-indigo-600 py-2 px-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          <p v-if="notEvaluated === 0">
+            All PARTICIPANTS HAVE TAKEN THIS EVALUATION
+          </p>
+          <p v-else>
+            SUBMIT EVALUATION
+          </p>
         </button>
       </div>
     </div>

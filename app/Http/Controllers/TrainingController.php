@@ -383,6 +383,7 @@ class TrainingController extends Controller
                 return $key->sex != '0' && $key->sex == 'male' ? true : false;
             }));
         $eval = $item->evaluations;
+
         // $item->load('evaluation_status')
         return Inertia::render('Training/Evaluations', ['training' => $item,
             'officeRep' => OfficeRepresentative::get(),
@@ -394,6 +395,7 @@ class TrainingController extends Controller
             'totalFemale' => abs($totalMale - count($eval->filter(function($key){ return $key->sex != '0'; }))),
             'totalPreferNotToSay' => count($participants->filter(function($key){ return $key->sex == '0'; })),
             'overallRating' => $item->evaluation_status,
+            'notEvaluated' =>$item->participants->count() - ($totalMale +  abs($totalMale - count($eval->filter(function($key){ return $key->sex != '0'; }))) + count($participants->filter(function($key){ return $key->sex == '0'; }))),
         ]);
     }
 
