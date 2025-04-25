@@ -15,6 +15,7 @@ use App\Models\EvaluationKeyResourcePerson;
 use App\Models\EvaluationTraining;
 use App\Models\EventFacilitator;
 use App\Models\Training;
+use App\Models\Attachments;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
 use App\Notifications\SendEmail as NotificationsSendEmail;
@@ -44,9 +45,9 @@ class TrainingController extends Controller
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
 
-        // if($currentDateTime >= $givenDateTime){
-        //     abort(403, "Training was already finished and can't evaluate today.");
-        // }
+        if($currentDateTime >= $givenDateTime){
+            abort(403, "Training was already finished and can't evaluate today.");
+        }
         return Inertia::render('Training/EvaluationPublic', [
             'training' => $item,
             'officeRep' => OfficeRepresentative::get(),
@@ -72,9 +73,9 @@ class TrainingController extends Controller
         $currentDateTime = new DateTime();
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        // if($currentDateTime >= $givenDateTime){
-        //     abort(403, "Training was already finished and can't evaluate today.");
-        // }
+        if($currentDateTime >= $givenDateTime){
+            abort(403, "Training was already finished and can't evaluate today.");
+        }
 
         $eval = EvaluationTraining::create([
             'training_id' => $request->training_id,
@@ -121,7 +122,7 @@ class TrainingController extends Controller
             'body' => 'This is the certificate of participation on '. $training->title,
             'thanks' => 'Thank you this is from Capacity Building Web Application',
             'actionText' => 'Download Certificate',
-            'actionURL' => route('public.cert.generate', [
+            'actionURL' => route('public.cert.participant', [
                 'l_name' => $request->l_name,
                 'f_name' => $request->f_name,
                 'm_name' => $request->m_name,
@@ -146,7 +147,7 @@ class TrainingController extends Controller
     public function index()
     {
         $certificateRequestsCount = RequestCertificate::where('is_approve',0)->count();
-        $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(10);
+        $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(20);
         return Inertia::render('Training/Index', ['pagination' => $pagination, 'certificateRequestsCount'=>$certificateRequestsCount]);
     }
 
@@ -216,9 +217,15 @@ class TrainingController extends Controller
         $training->load('facilitators_');
         $training->load('resourcePersons');
         $users = User::get();
+        $attachments = Attachments::where('training_id', $training->id)->get();
+        // var_dump($attachments);
+        // die();
+        
         return Inertia::render('Training/Edit', 
             [   'training' => $training,
+                'training_id_selected' => $training->id,
                 'users' => $users,
+                'attachments' => $attachments,
                 'listTraining' => KeyTraining::get(),
                 'listLearning' => Learning::get(),
                 'listKeyResourcePerson' => KeyResourcePerson::get(), 

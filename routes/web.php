@@ -9,6 +9,7 @@ use App\Http\Controllers\OfficeRepresentativeController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\AttachmentsController;
 use App\Http\Controllers\TrainingParticipantController;
 use App\Http\Controllers\TrainingParticipantRegistrationController;
 use App\Http\Controllers\DashboardController;
@@ -95,6 +96,11 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
 
         Route::apiResource('training-participant', TrainingParticipantController::class)->names('training.participant');
         Route::resource('training', TrainingController::class)->names('training');
+
+        // Attachments
+        Route::post('attachments-file', [AttachmentsController::class, 'storeUpdate'])->name('attachments.store-update');
+        Route::delete('attachments-file/remove', [AttachmentsController::class, 'removeAttachment'])->name('attachments.desctroy');
+        Route::resource('attachments', AttachmentsController::class)->names('attachments');
     
         Route::group(['prefix' => 'configuration', 'as' => 'conf.'], function(){
             Route::get('/', [ConfigurationsController::class, 'Index'])->name('index');
