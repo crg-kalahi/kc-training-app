@@ -12,7 +12,7 @@
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
-        <script src="https://www.google.com/recaptcha/api.js?render=6LdDItIqAAAAAOcSM36py0xWyz13MM8M5RE1PFOP"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render=6Le4eCIrAAAAAO79bOS0X-L4JvzjqxGh8IWTLbOW"></script>
 
         <!-- Scripts -->
         @routes
