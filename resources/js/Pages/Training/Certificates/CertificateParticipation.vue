@@ -90,6 +90,22 @@
         <div class="absolute bottom-6 right-6">
           <img src="/storage/images/insignia.jpg" alt="ISO Logo" class="h-12" />
         </div>
+
+        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-[10px] text-gray-500">
+          <div class="flex items-center justify-center gap-2">
+            <span>DSWD TRAIN | {{ training_id_enc }}</span>
+            <QRCodeVue3
+             :value="route('cert.verify', {token: training_id_enc, fullname: data.fullname })"
+              :dotsOptions="{
+                type: 'extra-rounded',
+                color: '#26249a',
+              }"
+              :height="50"
+              :width="50"
+            />
+          </div>
+        </div>
+
       </div>
 
 
@@ -99,17 +115,20 @@
   <script setup>
   import { ref, onMounted, defineProps } from 'vue'
   import html2canvas from 'html2canvas'
+  import QRCodeVue3 from "qrcode-vue3";
   
 
   const props = defineProps({
         data: Array,
         date: String,
-        end_date: String
+        end_date: String,
+        training_id_enc: String
     });
 
   const data = ref(props.data);
   const training_date = ref(props.date);
   const training_end_date = ref(props.end_date);
+  const training_id_enc = ref(props.training_id_enc)
   
   const certificateRef = ref(null)
   const remainingDays = ref(0)

@@ -83,6 +83,8 @@ Route::post('/2fa/setup', [TwoFactorController::class, 'enable']);
 Route::get('/mfa', [TwoFactorController::class, 'showPrompt'])->name('mfa.prompt');
 Route::post('/mfa', [TwoFactorController::class, 'verify']);
 
+Route::get('/cert/verification/{token}/{fullname}', [CertificateController::class, 'verify'])->name('cert.verify');
+
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard')->middleware('check.external');
 
