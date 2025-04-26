@@ -12,6 +12,8 @@
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
+        <script src="https://www.google.com/recaptcha/api.js?render=6LdDItIqAAAAAOcSM36py0xWyz13MM8M5RE1PFOP"></script>
+
         <!-- Scripts -->
         @routes
         <script src="{{ mix('js/app.js') }}" defer></script>

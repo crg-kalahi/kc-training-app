@@ -7,6 +7,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use DateTime;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Crypt;
 
 class CertificateController extends Controller
 {
@@ -152,11 +153,22 @@ class CertificateController extends Controller
             $date = $d_from->format('F d, Y')." - ".$d_to->format('F d, Y');
         }
         
+        $encrypted = Crypt::encryptString($training->id . $fullname);
+        $short = substr(base64_encode($encrypted), 0, 24);
 
         return Inertia::render('Training/Certificates/CertificateParticipation', [
             'data' => $data,
             'date' => $date,
-            'end_date' => $d_to->format('jS')." day of ".$d_to->format('F, Y')
+            'end_date' => $d_to->format('jS')." day of ".$d_to->format('F, Y'),
+            'training_id_enc' =>  $short
+        ]);
+    }
+
+
+    public function verify($token,$fullname){
+        return Inertia::render('Training/Certificates/Verification', [
+            'token' => $token,
+            'fullname' => urldecode($fullname), // decode in case it's URL encoded
         ]);
     }
 }
