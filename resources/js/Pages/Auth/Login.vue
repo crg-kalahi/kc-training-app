@@ -16,7 +16,7 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
+    username: '',
     password: '',
     remember: false,
     recaptcha_token: '', 
@@ -50,48 +50,7 @@ const submit = async () => {
 </script>
 
 <template>
-
-    <!-- <div class="flex">
-        <div class="hidden md:block grow h-screen"></div>
-        <div class="w-screen md:w-1/3 px-10 py-16">
-
-            <BreezeApplicationLogo class="w-20 h-20 fill-current text-gray-500 mx-auto"/>
-            <BreezeValidationErrors class="mb-4" />
-
-            <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-                {{ status }}
-            </div>
-
-            <form @submit.prevent="submit">
-                <div>
-                    <BreezeLabel for="email" value="Email" />
-                    <BreezeInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus autocomplete="username" />
-                </div>
-
-                <div class="mt-4">
-                    <BreezeLabel for="password" value="Password" />
-                    <BreezeInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" />
-                </div>
-
-                <div class="block mt-4">
-                    <label class="flex items-center">
-                        <BreezeCheckbox name="remember" v-model:checked="form.remember" />
-                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                    </label>
-                </div>
-
-                <div class="flex items-center justify-end mt-4">
-                    <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
-                        Forgot your password?
-                    </Link>
-
-                    <BreezeButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                        Log in
-                    </BreezeButton>
-                </div>
-            </form>
-        </div>
-    </div> -->
+    
 
     <section class="py-10 bg-gray-50 h-screen">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -111,7 +70,7 @@ const submit = async () => {
                     <form @submit.prevent="submit">
                         <div class="space-y-5">
                             <div>
-                                <label for="" class="text-base font-medium text-gray-900"> Email address </label>
+                                <label for="" class="text-base font-medium text-gray-900"> Username </label>
                                 <div class="mt-2.5 relative text-gray-400 focus-within:text-gray-600">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -120,11 +79,11 @@ const submit = async () => {
                                     </div>
 
                                     <input
-                                        type="email"
+                                        type="username"
                                         name=""
                                         id=""
-                                        v-model="form.email" required autofocus autocomplete="username"
-                                        placeholder="Enter email to get started"
+                                        v-model="form.username" required autofocus autocomplete="username"
+                                        placeholder="Enter username to get started"
                                         class="block w-full py-4 pl-10 pr-4 text-black placeholder-gray-500 transition-all duration-200 bg-white border border-gray-200 rounded-md focus:outline-none focus:border-blue-600 caret-blue-600"
                                     />
                                 </div>
