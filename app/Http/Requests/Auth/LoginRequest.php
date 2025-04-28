@@ -6,9 +6,12 @@ use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Http;
+use App\Models\User;
+use PragmaRX\Google2FA\Google2FA;
 
 class LoginRequest extends FormRequest
 {
@@ -30,7 +33,7 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -46,40 +49,110 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
         $this->validateRecaptcha();
-    
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-    
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-        }
-    
         RateLimiter::clear($this->throttleKey());
-    
-        $user = Auth::user();
-    
-       
-        if ($user->mfa_enabled) {
-            // 👇 Check if secret is missing
-            if (!$user->google2fa_secret) {
-                // logout and redirect to setup
-                session(['2fa_setup:user:id' => $user->id]);
-                Auth::logout();
 
+        // First, find user locally
+        $user = User::where('username', request('username'))->first();
+
+        if ($user) {
+            // User found locally, verify password
+            if (!Hash::check(request('password'), $user->password)) {
                 throw ValidationException::withMessages([
-                    'setup' => 'You must complete 2FA setup.',
+                    'username' => trans('auth.failed'),
                 ]);
             }
 
-            // Otherwise, continue with MFA prompt
-            session(['mfa:user:id' => $user->id]);
-            Auth::logout();
+            // User is authenticated locally
+            Auth::login($user);
 
+            // Check if MFA is enabled
+            if ($user->mfa_enabled) {
+                if (!$user->google2fa_secret) {
+                    session(['2fa_setup:user:id' => $user->id]);
+                    Auth::logout();
+
+                    throw ValidationException::withMessages([
+                        'setup' => 'You must complete 2FA setup.',
+                    ]);
+                }
+
+                session(['mfa:user:id' => $user->id]);
+                Auth::logout();
+
+                throw ValidationException::withMessages([
+                    'mfa' => 'MFA required.',
+                ]);
+            }
+
+            return; // ✅ login successful, continue
+        }
+
+        // User not found locally, authenticate with external portal
+        $credentials = request()->only('username', 'password');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . env('CC_TOKEN'),
+            'Accept' => 'application/json',
+        ])->post(env('CC_URL') . '/api/v1/staff/portal/login', $credentials);
+
+        if ($response->failed()) {
+            RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
-                'mfa' => 'MFA required.',
+                'username' => trans('auth.failed'),
             ]);
         }
+
+   
+
+        // External authentication success, register user locally
+        $userData = $response->json('data');
+
+
+
+        $user = User::updateOrCreate([
+            'username' => $userData['username'],
+        ], [
+            'lname' => $userData['first_name'],
+            'mname' => $userData['middle_name'],
+            'fname' => $userData['last_name'],
+            'id_number' => $userData['id_number'],
+            'email' => $userData['email'] ?? null,
+            'username' => $userData['username'] ?? null,
+            'division' => $userData['division'] ?? null,
+            'section' => $userData['section'] ?? null,
+            'mobile_no' => isset($userData['contact'])
+                ? (str_starts_with($userData['contact'], '+63')
+                    ? $userData['contact']
+                    : (str_starts_with($userData['contact'], '09')
+                        ? preg_replace('/^09/', '+639', $userData['contact'])
+                        : $userData['contact']))
+                : null,
+            'password' => bcrypt($credentials['password']),
+            'google2fa_secret' => (new Google2FA())->generateSecretKey(),
+            'mfa_enabled' => true,
+            'mfa_verified' => false,
+        ]);
+
+        if (!$user->hasRole('staff-admin')) {
+            $user->assignRole('staff-admin');
+        }
+
+        // Log in the newly registered user
+        Auth::login($user);
+
+        // Force MFA setup since this is a new user
+       // Force MFA setup since this is a new user
+        session(['2fa_setup:user:id' => $user->id]);
+        Auth::logout();
+
+        // Redirect directly instead of throwing
+        return redirect()->route('mfa.setup');
+    }
+
+    protected function loginUser(User $user): void
+    {
+        Auth::login($user, $this->boolean('remember'));
+        RateLimiter::clear($this->throttleKey());
     }
 
     /**
