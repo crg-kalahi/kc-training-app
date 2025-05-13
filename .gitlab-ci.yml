@@ -1,8 +1,8 @@
 stages:
-  - staging
+  - build
 
 deploy_job:
-  stage: staging
+  stage: build
   tags: 
     - staging
   script:
