@@ -1,10 +1,10 @@
 stages:
-  - deploy
+  - staging
 
 deploy_job:
-  stage: deploy
+  stage: staging
   tags: 
-    - deploy
+    - staging
   script:
     - "cd /opt/apps/train"
     - "git reset --hard"  
