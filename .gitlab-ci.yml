@@ -10,7 +10,7 @@ deploy_job:
     - git config --global --add safe.directory /opt/apps/train
     - cd /opt/apps/train
     - git reset --hard
-    - git pull origin train
+    - git pull origin staging
     - echo "Successfully pulled latest changes"
   after_script:
     - echo "Cleaning up temporary files..."
