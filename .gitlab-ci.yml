@@ -6,6 +6,7 @@ deploy_job:
   tags: 
     - staging
   script:
+    - git config --global --add safe.directory /opt/apps/train
     - "git reset --hard"  
     - "git pull --force origin staging" 
     - "npm run dev" 
