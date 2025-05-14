@@ -9,6 +9,7 @@ deploy_job:
     - git config --global --add safe.directory /opt/apps/train
     - "git reset --hard"  
     - "git pull --force origin staging" 
+    - "npm install"
     - "npm run dev" 
     - "php artisan migrate"
     - "php artisan optimize"
