@@ -6,7 +6,6 @@ deploy_job:
   tags: 
     - staging
   script:
-    - "cd /opt/apps/train"
     - "git reset --hard"  
     - "git pull --force origin staging" 
     - "npm run dev" 
