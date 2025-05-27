@@ -12,7 +12,7 @@ deploy_job:
     - git reset --hard
     - git pull origin staging
     - echo "Successfully pulled latest changes"
-    - npm run dev
+    #- npm run dev
   after_script:
     - echo "Cleaning up temporary files..."
   only:
