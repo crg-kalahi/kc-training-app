@@ -14,6 +14,8 @@ deploy_job:
     - echo "Successfully pulled latest changes"
     - npm install
     - npx mix
+    - php artisan optimize
+    - php artisan config:clear
   after_script:
     - echo "Cleaning up temporary files..."
   only:
