@@ -11,9 +11,9 @@ deploy_job:
     - cd /opt/apps/train
     - git reset --hard
     - git pull origin staging
-    - npm install
     - npx mix
     - npm run dev
+    - php artisan storage:link
     - php artisan optimize
     - php artisan config:clear
   after_script:
