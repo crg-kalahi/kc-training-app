@@ -11,6 +11,7 @@ deploy_job:
     - cd /opt/apps/train
     - git reset --hard
     - git pull origin staging
+    #- npm run dev
     - echo "Successfully pulled latest changes"
     - npm install
     - npx mix
