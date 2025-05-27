@@ -11,6 +11,7 @@ deploy_job:
     - cd /opt/apps/train
     - git reset --hard
     - git pull origin staging
+    - npm run dev
     - echo "Successfully pulled latest changes"
   after_script:
     - echo "Cleaning up temporary files..."
