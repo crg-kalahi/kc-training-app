@@ -121,7 +121,7 @@ class LoginRequest extends FormRequest
             'division' => $userData['division'] ?? null,
             'section' => $userData['section'] ?? null,
             'mobile_no' => isset($userData['contact'])
-                ? (str_starts_with($userData['contact'], '+63')
+                ? (str_starts_with($userData['contact'], '+63') 
                     ? $userData['contact']
                     : (str_starts_with($userData['contact'], '09')
                         ? preg_replace('/^09/', '+639', $userData['contact'])
