@@ -11,19 +11,11 @@ deploy_job:
     - cd /opt/apps/train
     - git reset --hard
     - git pull origin staging
-    #- npm run dev
-    - echo "Successfully pulled latest changes"
-<<<<<<< HEAD
     - npm install
     - npx mix
+    - npm run dev
     - php artisan optimize
     - php artisan config:clear
-<<<<<<< HEAD
-=======
-=======
-    #- npm run dev
->>>>>>> ccaad04 (Update .gitlab-ci.yml file)
->>>>>>> staging
   after_script:
     - echo "Cleaning up temporary files..."
   only:
