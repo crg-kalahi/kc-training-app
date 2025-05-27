@@ -3,20 +3,20 @@
         
        <!-- Download Button -->
        <div
-        v-if="remainingDays > 0"
         class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
       >
         <!-- Card Container -->
         <div class="bg-white p-6 rounded-lg shadow-lg text-center w-96">
-          <p class="text-gray-800 text-2xl mb-4 font-medium">🎉 Hey there, don't miss out!</p>
-          <p class="text-gray-600 text-lg mb-6">You can download your certificate now.</p>
+          <p  v-if="remainingDays > 0" class="text-gray-800 text-2xl mb-4 font-medium">🎉 Hey there, don't miss out!</p>
+          <p  v-if="remainingDays > 0" class="text-gray-600 text-lg mb-6">You can download your certificate now.</p>
   
           <!-- New Greeting Message -->
-          <p class="text-gray-800 text-lg mt-4 font-medium">Greetings from the DSWD Capacity Building Section!</p>
+          <p  v-if="remainingDays > 0" class="text-gray-800 text-lg mt-4 font-medium">Greetings from the DSWD Capacity Building Section!</p>
           
           <button
             @click="downloadAsImage"
             class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded text-lg"
+            v-if="remainingDays > 0"
           >
             Download Certificate
           </button>
@@ -37,6 +37,7 @@
       <div ref="certificateRef"
         class="relative mx-auto bg-white shadow-lg font-serif no-select"
         style="width: 1123px; height: 794px; padding: 50px 70px; border: 1px solid #ccc; box-sizing: border-box;"
+         v-if="remainingDays > 0"
       >
         <!-- Side ribbon -->
         <div class="absolute left-0 top-0 h-full">
@@ -133,8 +134,8 @@
   const certificateRef = ref(null)
   const remainingDays = ref(0)
   
-  const START_DATE = new Date('2025-04-24')
-  const EXPIRY_DAYS = 3
+  const START_DATE = new Date('2025-05-27')
+  const EXPIRY_DAYS = 5
   
   const calculateRemainingDays = () => {
     const now = new Date()
@@ -144,6 +145,8 @@
     const timeDiff = expiryDate - now
     remainingDays.value = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 0
   }
+
+
   
   const downloadAsImage = async () => {
     if (remainingDays.value <= 0) return
@@ -165,32 +168,31 @@
   
   onMounted(() => {
     calculateRemainingDays()
+    // // Disable right-click
+    //  document.addEventListener('contextmenu', e => e.preventDefault())
   
-    // Disable right-click
-     document.addEventListener('contextmenu', e => e.preventDefault())
+    //  // Disable key shortcuts
+    //  document.addEventListener('keydown', e => {
+    //    if (
+    //      e.key === 'F12' ||
+    //      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+    //      (e.ctrlKey && e.key === 'U')
+    //    ) {
+    //      e.preventDefault()
+    //    }
+    //  })
   
-     // Disable key shortcuts
-     document.addEventListener('keydown', e => {
-       if (
-         e.key === 'F12' ||
-         (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-         (e.ctrlKey && e.key === 'U')
-       ) {
-         e.preventDefault()
-       }
-     })
-  
-    //  Detect DevTools open
-     setInterval(() => {
-       const threshold = 160
-       if (
-         window.outerWidth - window.innerWidth > threshold ||
-         window.outerHeight - window.innerHeight > threshold
-       ) {
-         alert("Developer tools are not allowed!")
-         window.location.href = "about:blank"
-       }
-     }, 1000)
+    // //  Detect DevTools open
+    //  setInterval(() => {
+    //    const threshold = 160
+    //    if (
+    //      window.outerWidth - window.innerWidth > threshold ||
+    //      window.outerHeight - window.innerHeight > threshold
+    //    ) {
+    //      alert("Developer tools are not allowed!")
+    //      window.location.href = "about:blank"
+    //    }
+    //  }, 1000)
   })
   </script>
   
