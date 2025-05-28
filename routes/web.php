@@ -134,7 +134,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     });
 
     // CAN USER MANAGE
-    Route::group(['middleware' => ['permission:STAFF - User - Manage']], function() {
+    Route::group(['middleware' => ['roles:staff-admin']], function() {
 
         //Settings
         Route::group(['prefix' => 'settings'], function(){
@@ -144,7 +144,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
          //User management
         Route::group(['prefix' => 'user-management'], function(){
             Route::get('/', [UserManagementController::class, 'Index'])->name('user-management');
-            Route::post('/user-management/permissions', [UserManagementController::class, 'userManagementPermissions'])->name('user-management.permissions');
+            Route::post('/user-management/roles', [UserManagementController::class, 'userManagementRoles'])->name('user-management.roles');
         });
     });   
 

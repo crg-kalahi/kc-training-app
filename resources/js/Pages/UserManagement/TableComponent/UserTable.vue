@@ -1,91 +1,93 @@
 <template>
-  <div class="p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4">List of Users</h2>
+  <div class="p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">List of Users</h2>
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-100">
+        <thead class="bg-gray-50 text-gray-700">
           <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" @click="sortTable('fname')">
+            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hover:text-indigo-600 transition-colors duration-150 cursor-pointer" @click="sortTable('fname')">
               First Name
-              <span class="ml-2">
+              <span class="ml-1">
                 <i :class="getSortIcon('fname')"></i>
               </span>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" @click="sortTable('lname')">
+            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hover:text-indigo-600 transition-colors duration-150 cursor-pointer" @click="sortTable('lname')">
               Last Name
-              <span class="ml-2">
+              <span class="ml-1">
                 <i :class="getSortIcon('lname')"></i>
               </span>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" @click="sortTable('permissions')">
-              Permissions
-              <span class="ml-2">
-                <i :class="getSortIcon('permissions')"></i>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hover:text-indigo-600 transition-colors duration-150 cursor-pointer" @click="sortTable('roles')">
+              Roles
+              <span class="ml-1">
+                <i :class="getSortIcon('roles')"></i>
               </span>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
-              Actions
-            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
           </tr>
-          <tr class="bg-gray-50">
+          <tr class="bg-white">
             <td class="px-6 py-2">
-              <input v-model="filters.fname" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Filter by First Name" />
+              <input v-model="filters.fname" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Filter by First Name" />
             </td>
             <td class="px-6 py-2">
-              <input v-model="filters.lname" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Filter by Last Name" />
+              <input v-model="filters.lname" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Filter by Last Name" />
             </td>
             <td class="px-6 py-2">
-              <input v-model="filters.permissions" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Filter by Permissions" />
+              <input v-model="filters.roles" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Filter by Roles" />
             </td>
             <td class="px-6 py-2"></td>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 transition-colors duration-200">
-            <td class="px-6 py-4 whitespace-nowrap">{{ user.fname }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ user.lname }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ user.fname }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ user.lname }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span 
-    v-for="permission in user.permissions" 
-    :key="permission" 
-    class="block bg-gray-200 text-gray-800 text-sm font-medium px-2.5 py-0.5 rounded-full mb-2 last:mb-0"
-  >
-    {{ permission }}
-  </span>
+                v-for="role in user.roles" 
+                :key="role" 
+                class="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full mr-1 mb-1"
+              >
+                {{ role }}
+              </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap flex space-x-2">
-              <button @click="toggleForm(user)" class="bg-blue-500 text-sm text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">Edit</button>
-              <!-- <button @click="deactivateUser(user.id)" class="bg-red-500 text-sm text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200">Deactivate</button> -->
+              <button @click="toggleForm(user)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Edit
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
     <!-- Pagination -->
-    <div class="mt-4 flex justify-between items-center">
-      <button @click="previousPage" :disabled="currentPage === 1" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:bg-gray-200">
+    <div class="mt-6 flex justify-between items-center">
+      <button @click="previousPage" :disabled="currentPage === 1"
+        class="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed shadow">
         Previous
       </button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:bg-gray-200">
+      <span class="text-sm text-gray-700 font-medium">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages"
+        class="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed shadow">
         Next
       </button>
     </div>
   </div>
 
   <RightPanel v-model="openForm" title="Edit User" subtitle="" @submit="submitForm">
-    <div class="p-6">
-      <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
-        <h2 class="text-lg font-semibold">User Details</h2>
-        <p class="mt-2 text-gray-700"><strong>ID:</strong> {{ userData.id }}</p>
-        <p class="mt-2 text-gray-700"><strong>First Name:</strong> {{ userData.fname }}</p>
-        <p class="mt-2 text-gray-700"><strong>Last Name:</strong> {{ userData.lname }}</p>
+    <div class="p-6 space-y-6">
+      <div class="bg-gray-100 p-5 rounded-xl shadow-inner">
+        <h2 class="text-lg font-semibold text-gray-800">User Details</h2>
+        <p class="mt-2 text-gray-600"><strong>ID:</strong> {{ userData.id }}</p>
+        <p class="mt-2 text-gray-600"><strong>First Name:</strong> {{ userData.fname }}</p>
+        <p class="mt-2 text-gray-600"><strong>Last Name:</strong> {{ userData.lname }}</p>
       </div>
 
-      <div class="bg-white p-4 rounded-lg shadow-md">
-        <h2 class="text-lg font-semibold mb-2">Edit Permissions</h2>
-        <label for="permissions" class="block text-gray-700 font-medium mb-1">Select Permission:</label>
-        <AutoComplete :suggestions="permissions" @select="handleSelect"/>
+      <div class="bg-white p-5 rounded-xl shadow">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">Edit Roles</h2>
+        <label for="roles" class="block text-sm font-medium text-gray-700 mb-2">Select Role:</label>
+        <AutoComplete :suggestions="roles" @select="handleSelect" />
       </div>
     </div>
   </RightPanel>
@@ -101,14 +103,11 @@ import { Inertia } from '@inertiajs/inertia';
 
 const props = defineProps({
   users: Array,
-  permissionsList: Array
+  rolesList: Array
 });
 
-
-console.log(props.users);
-
 const users = ref([...props.users]);
-const permissions = ref(props.permissionsList);
+const roles = ref(props.rolesList);
 
 watch(() => props.users, (newUsers) => {
   users.value = [...newUsers];
@@ -125,19 +124,19 @@ const userData = ref({
   fname: '',
   lname: '',
   id: '',
-  permission: '',
+  role: '',
 });
 
 const filters = ref({
   id: '',
   fname: '',
   lname: '',
-  permissions: '',
+  roles: '',
 });
 
 const dataForSubmission = useForm({
   id: '',
-  permissions: []
+  roles: []
 });
 
 const filteredUsers = computed(() => {
@@ -145,18 +144,15 @@ const filteredUsers = computed(() => {
     const matchesId = filters.value.id === '' || user.id.toString().includes(filters.value.id);
     const matchesFname = filters.value.fname === '' || user.fname.toLowerCase().includes(filters.value.fname.toLowerCase());
     const matchesLname = filters.value.lname === '' || user.lname.toLowerCase().includes(filters.value.lname.toLowerCase());
-    const matchesPermissions = filters.value.permissions === '' || user.permissions.join(' ').toLowerCase().includes(filters.value.permissions.toLowerCase());
-    return matchesId && matchesFname && matchesLname && matchesPermissions;
+    const matchesRoles = filters.value.roles === '' || user.roles.join(' ').toLowerCase().includes(filters.value.roles.toLowerCase());
+    return matchesId && matchesFname && matchesLname && matchesRoles;
   });
 
   if (sortBy.value) {
     filtered.sort((a, b) => {
       let result = 0;
-      if (a[sortBy.value] < b[sortBy.value]) {
-        result = -1;
-      } else if (a[sortBy.value] > b[sortBy.value]) {
-        result = 1;
-      }
+      if (a[sortBy.value] < b[sortBy.value]) result = -1;
+      else if (a[sortBy.value] > b[sortBy.value]) result = 1;
       return sortDirection.value === 'asc' ? result : -result;
     });
   }
@@ -170,15 +166,11 @@ const paginatedUsers = computed(() => {
 });
 
 const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
+  if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
 const previousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
+  if (currentPage.value > 1) currentPage.value--;
 };
 
 const sortTable = (field) => {
@@ -204,21 +196,20 @@ const toggleForm = (data) => {
 };
 
 const handleSelect = (selectedTags) => {
-  dataForSubmission.permissions = selectedTags;
+  dataForSubmission.roles = selectedTags;
 };
 
 const submitForm = () => {
- 
-  dataForSubmission.post(route("user-management.permissions"), {
+  dataForSubmission.post(route("user-management.roles"), {
     preserveScroll: true,
     onSuccess: () => {
       const index = users.value.findIndex(user => user.id === dataForSubmission.id);
-      users.value[index].permissions = dataForSubmission.permissions;
+      users.value[index].roles = dataForSubmission.roles;
     }
   });
 };
 </script>
 
 <style scoped>
-/* Custom styles can be added here */
+/* You may add custom animations or override Tailwind here if needed */
 </style>

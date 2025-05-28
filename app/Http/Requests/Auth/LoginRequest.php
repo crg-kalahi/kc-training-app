@@ -112,9 +112,9 @@ class LoginRequest extends FormRequest
         $user = User::updateOrCreate([
             'username' => $userData['username'],
         ], [
-            'lname' => $userData['first_name'],
+            'lname' => $userData['last_name'],
             'mname' => $userData['middle_name'],
-            'fname' => $userData['last_name'],
+            'fname' => $userData['first_name'],
             'id_number' => $userData['id_number'],
             'email' => $userData['email'] ?? null,
             'username' => $userData['username'] ?? null,
@@ -133,8 +133,8 @@ class LoginRequest extends FormRequest
             'mfa_verified' => false,
         ]);
 
-        if (!$user->hasRole('staff-admin')) {
-            $user->assignRole('staff-admin');
+        if (!$user->hasRole('guest')) {
+            $user->assignRole('guest');
         }
 
         // Log in the newly registered user

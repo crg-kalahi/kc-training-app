@@ -8,6 +8,13 @@ class DashboardController extends Controller
 {
     public function Index(){
 
+        $user = auth()->user();
+
+        // Redirect if the user does not have the "guest" role
+        if (!$user->hasRole('guest')) {
+            return redirect('/dashboard');
+        }
+
         $results = DB::select("SELECT
                 month,
                 mname,

@@ -144,11 +144,40 @@ class TrainingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+   public function index(Request $request)
     {
-        $certificateRequestsCount = RequestCertificate::where('is_approve',0)->count();
-        $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(20);
-        return Inertia::render('Training/Index', ['pagination' => $pagination, 'certificateRequestsCount'=>$certificateRequestsCount]);
+        $user = Auth::user();
+        $search = $request->input('search');
+
+        $certificateRequestsCount = RequestCertificate::where('is_approve', 0)->count();
+
+        $query = Training::with('facilitators')->orderBy('date_from', 'desc');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('venue', 'like', "%{$search}%");
+            });
+        }
+
+        if (!$user->hasRole('staff-admin')) {
+            $query->where(function ($q) use ($user) {
+                $q->where('encoded_by', $user->id)
+                ->orWhereHas('facilitators', function ($fq) use ($user) {
+                    $fq->where('user_id', $user->id);
+                });
+            });
+        }
+
+        $pagination = $query->paginate(10)->withQueryString();
+
+        return Inertia::render('Training/Index', [
+            'pagination' => $pagination,
+            'certificateRequestsCount' => $certificateRequestsCount,
+            'filters' => [
+                'search' => $search,
+            ]
+        ]);
     }
 
     /**

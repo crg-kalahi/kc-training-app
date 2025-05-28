@@ -13,7 +13,7 @@ deploy_job:
     - git pull origin staging
     - npx mix
     - npm run dev
-    - php artisan storage:link
+    - php artisan migrate
     - php artisan optimize
     - php artisan config:clear
   after_script:

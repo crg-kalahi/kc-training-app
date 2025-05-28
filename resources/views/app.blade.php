@@ -22,8 +22,5 @@
     <body class="font-sans antialiased h-full">
         @inertia
 
-        @env ('local')
-            <script src="http://localhost:8080/js/bundle.js"></script>
-        @endenv
     </body>
 </html>
