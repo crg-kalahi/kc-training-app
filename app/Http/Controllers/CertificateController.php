@@ -143,14 +143,17 @@ class CertificateController extends Controller
             'venue' => $venue,
         ];
 
-        
+        $end_date_raw = "";
         if(strcmp($training->date_from, $training->date_to) == 0){
             $d_from = new DateTime($training->date_from);
+            $d_to = new DateTime($training->date_from);
             $date = $d_from->format('F d, Y');
+            $end_date_raw = $training->date_from;
         }else{
             $d_from = new DateTime($training->date_from);
             $d_to = new DateTime($training->date_to);
             $date = $d_from->format('F d, Y')." - ".$d_to->format('F d, Y');
+            $end_date_raw = $training->date_to;
         }
         
         $encrypted = Crypt::encryptString($training->id . $fullname);
@@ -160,6 +163,7 @@ class CertificateController extends Controller
             'data' => $data,
             'date' => $date,
             'end_date' => $d_to->format('jS')." day of ".$d_to->format('F, Y'),
+            'end_date_raw' => date('Y-m-d', strtotime($end_date_raw)),
             'training_id_enc' =>  $short
         ]);
     }

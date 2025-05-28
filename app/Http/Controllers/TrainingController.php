@@ -568,10 +568,6 @@ class TrainingController extends Controller
 
     public function SendRPRating(Request $request){
 
-
-        
-
-
         try {
             $results = DB::select('SELECT
             trp.fname,

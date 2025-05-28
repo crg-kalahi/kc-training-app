@@ -122,6 +122,7 @@
   const props = defineProps({
         data: Array,
         date: String,
+        end_date_raw: String,
         end_date: String,
         training_id_enc: String
     });
@@ -134,7 +135,7 @@
   const certificateRef = ref(null)
   const remainingDays = ref(0)
   
-  const START_DATE = new Date('2025-05-27')
+  const START_DATE = new Date(props.end_date_raw)
   const EXPIRY_DAYS = 5
   
   const calculateRemainingDays = () => {
@@ -168,31 +169,31 @@
   
   onMounted(() => {
     calculateRemainingDays()
-    // Disable right-click
-     document.addEventListener('contextmenu', e => e.preventDefault())
+    // // Disable right-click
+    //  document.addEventListener('contextmenu', e => e.preventDefault())
   
-     // Disable key shortcuts
-     document.addEventListener('keydown', e => {
-       if (
-         e.key === 'F12' ||
-         (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-         (e.ctrlKey && e.key === 'U')
-       ) {
-         e.preventDefault()
-       }
-     })
+    //  // Disable key shortcuts
+    //  document.addEventListener('keydown', e => {
+    //    if (
+    //      e.key === 'F12' ||
+    //      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+    //      (e.ctrlKey && e.key === 'U')
+    //    ) {
+    //      e.preventDefault()
+    //    }
+    //  })
   
-    //  Detect DevTools open
-     setInterval(() => {
-       const threshold = 160
-       if (
-         window.outerWidth - window.innerWidth > threshold ||
-         window.outerHeight - window.innerHeight > threshold
-       ) {
-         alert("Developer tools are not allowed!")
-         window.location.href = "about:blank"
-       }
-     }, 1000)
+    // //  Detect DevTools open
+    //  setInterval(() => {
+    //    const threshold = 160
+    //    if (
+    //      window.outerWidth - window.innerWidth > threshold ||
+    //      window.outerHeight - window.innerHeight > threshold
+    //    ) {
+    //      alert("Developer tools are not allowed!")
+    //      window.location.href = "about:blank"
+    //    }
+    //  }, 1000)
   })
   </script>
   
