@@ -134,7 +134,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     });
 
     // CAN USER MANAGE
-    Route::group(['middleware' => ['role:staff-admin']], function() {
+    Route::group(['middleware' => ['permission:STAFF - User - Manage']], function() {
 
         //Settings
         Route::group(['prefix' => 'settings'], function(){
