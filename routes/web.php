@@ -90,7 +90,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
 
 
     // CAN MANAGE TRAINING
-    Route::group(['middleware' => ['permission:STAFF - Training - Manage']], function() {
+    Route::group(['middleware' => ['role:staff-admin|staff']], function() {
         Route::post('training/evaluation', [TrainingController::class, 'StoreEvaluation'])->name('training.evaluation.post');
         Route::put('training-facilitators', [TrainingController::class, 'facilitateFacilitator'])->name('training.facilitators');
         Route::put('training-key-factors/{id}', [TrainingController::class, 'UpdateKeyFactors'])->name('training.key_factors');
@@ -134,7 +134,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     });
 
     // CAN USER MANAGE
-    Route::group(['middleware' => ['permission:STAFF - User - Manage']], function() {
+    Route::group(['middleware' => ['role:staff-admin']], function() {
 
         //Settings
         Route::group(['prefix' => 'settings'], function(){
