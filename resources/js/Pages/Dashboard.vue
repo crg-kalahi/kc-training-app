@@ -15,8 +15,17 @@ const props = defineProps({
   participants: Array,
   plByMonth: Array,
   events: Array,
-  permissions: Array
-})
+  permissions: Array,
+  
+  totalTrainings: Number,
+  totalParticipants: Number,
+  internalParticipants: Number,
+  externalParticipants: Number,
+  upcomingTrainingsCount: Number,
+  latestTraining: Object,  // { title: string, date_from: string }
+  averageTrainingsPerMonth: Number,
+   evaluations: Array,
+});
 
 const stats = [
   { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
@@ -66,7 +75,9 @@ const currentLayout = computed(() => {
             <!-- <button type="button" class="order-0 inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 sm:order-1 sm:ml-3">Create</button> -->
         </div>
     </div>
-    <div class="px-4 py-3 sm:px-6 lg:px-8 mt-3">
+
+
+        <div class="px-4 py-3 sm:px-6 lg:px-8 mt-3">
       <h3 class="text-base font-semibold leading-6 text-gray-900">Overall Trained Participants</h3>
       <dl class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-4">
         <div v-for="item in stats" :key="item.id" class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 shadow sm:px-6 sm:pt-6">
@@ -85,11 +96,13 @@ const currentLayout = computed(() => {
         </div>
       </dl>
     </div>
-    <section class="mt-3 px-4 py-3 sm:px-6 lg:px-8">
+
+
+        <section class="mt-3 px-4 py-3 sm:px-6 lg:px-8">
         <h3 class="text-base font-semibold leading-6 text-gray-900">Training Summary</h3>
-        <dl class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-1">
-          <div class="relative overflow-hidden rounded-lg bg-white px-4 shadow">
-              <BarChart
+        <div class="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="relative overflow-hidden rounded-lg bg-white px-4 shadow h-[400px]">
+            <BarChart
               :chart-data="{
                 labels: data.map(item => `${item.mname} ${item.yr}`),
                 datasets: [
@@ -104,21 +117,82 @@ const currentLayout = computed(() => {
                 responsive: true,
                 maintainAspectRatio: false
               }"
+              style="height: 100%;"
             />
-
-
-
-            
           </div>
-          <Qalendar 
+          <div class="bg-white rounded-lg shadow p-4 h-[400px]">
+            <Qalendar 
               :events="events"
               :config="config"
+              class="h-full"
             />
-        </dl>
+          </div>
+        </div>
     </section>
+    
+
+
+    <div class="px-4 py-6 sm:px-6 lg:px-8 mt-6">
+      <h3 class="text-base font-semibold leading-6 text-gray-900 border-b border-gray-300 pb-2 mb-4">
+        Key Summary
+      </h3>
+      <dl class="grid grid-cols-1 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+      <!-- Total Trainings -->
+      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
+        <dt class="text-sm font-medium text-gray-500 truncate">Total Trainings</dt>
+        <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $page.props.totalTrainings }}</dd>
+      </div>
+
+      <!-- Total Participants -->
+      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
+        <dt class="text-sm font-medium text-gray-500 truncate">Total Participants</dt>
+        <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $page.props.totalParticipants }}</dd>
+      </div>
+
+      <!-- Internal Participants -->
+      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
+        <dt class="text-sm font-medium text-gray-500 truncate">Internal Participants</dt>
+        <dd class="mt-1 text-3xl font-semibold text-green-600">{{ $page.props.internalParticipants }}</dd>
+      </div>
+
+      <!-- External Participants -->
+      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
+        <dt class="text-sm font-medium text-gray-500 truncate">External Participants</dt>
+        <dd class="mt-1 text-3xl font-semibold text-red-600">{{ $page.props.externalParticipants }}</dd>
+      </div>
+
+      <!-- Upcoming Trainings -->
+      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
+        <dt class="text-sm font-medium text-gray-500 truncate">Upcoming Trainings</dt>
+        <dd class="mt-1 text-3xl font-semibold text-indigo-600">{{ $page.props.upcomingTrainingsCount }}</dd>
+      </div>
+
+      <!-- Average Trainings / Month -->
+      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
+        <dt class="text-sm font-medium text-gray-500 truncate">Avg Trainings/Month</dt>
+        <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $page.props.averageTrainingsPerMonth }}</dd>
+      </div>
+    </dl>
+
+        <div class="mt-6 bg-white rounded-lg shadow p-6">
+        <h4 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Latest Trainings</h4>
+        <ul class="space-y-4">
+          <li v-for="training in latestTraining" :key="training.title + training.date_from" class="border rounded-lg p-4 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+            <h5 class="text-md font-semibold text-indigo-600 mb-1 truncate">{{ training.title }}</h5>
+            <p class="text-sm text-gray-500">
+              <time>{{ new Date(training.date_from).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) }}</time>
+            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+
     <section>
       <br>
     </section>
+    
   </component>
 </template>
 
