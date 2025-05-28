@@ -76,7 +76,16 @@
               <MenuItems class="absolute right-0 left-0 z-10 mx-3 mt-1 origin-top divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="py-1">
                   <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">View profile</a>
+                   <a :href="route('me.profile')"  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
+                      View profile
+                    </a>
+                  </MenuItem>
+                </div>
+                  <div class="py-1">
+                  <MenuItem v-slot="{ active }">
+                   <a :href="route('external.my-trainings')" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
+                      My Trainings
+                    </a>
                   </MenuItem>
                 </div>
                 <div class="py-1">

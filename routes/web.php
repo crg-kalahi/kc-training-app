@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PdfMailController;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\ProfileController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
@@ -150,7 +151,8 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
 
 
     Route::get('/openai/summarize', [OpenAIController::class, 'summarize'])->name('openai.summarize');
-    
+    Route::get('/me/profile', ProfileController::class)->name('me.profile');
+    Route::post('/profile/mfa', [ProfileController::class, 'updateMfa'])->name('profile.mfa');
 });
 
 require __DIR__.'/auth.php';
