@@ -13,7 +13,6 @@ deploy_job:
     - git pull origin staging
     - npx mix
     - npm run dev
-    - composer install --no-interaction --optimize-autoloader
     - php artisan optimize
     - php artisan route:clear
     - php artisan config:clear
