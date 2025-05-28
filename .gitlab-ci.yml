@@ -16,6 +16,7 @@ deploy_job:
     - php artisan migrate
     - php artisan optimize
     - php artisan config:clear
+    - php artisan db:seed --class=RoleSeeder
     - php artisan db:seed --class=PermissionSeeder
   
   after_script:
