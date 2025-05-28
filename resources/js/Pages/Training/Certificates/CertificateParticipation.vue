@@ -169,31 +169,31 @@
   
   onMounted(() => {
     calculateRemainingDays()
-    // // Disable right-click
-    //  document.addEventListener('contextmenu', e => e.preventDefault())
+    // Disable right-click
+     document.addEventListener('contextmenu', e => e.preventDefault())
   
-    //  // Disable key shortcuts
-    //  document.addEventListener('keydown', e => {
-    //    if (
-    //      e.key === 'F12' ||
-    //      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-    //      (e.ctrlKey && e.key === 'U')
-    //    ) {
-    //      e.preventDefault()
-    //    }
-    //  })
+     // Disable key shortcuts
+     document.addEventListener('keydown', e => {
+       if (
+         e.key === 'F12' ||
+         (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+         (e.ctrlKey && e.key === 'U')
+       ) {
+         e.preventDefault()
+       }
+     })
   
-    // //  Detect DevTools open
-    //  setInterval(() => {
-    //    const threshold = 160
-    //    if (
-    //      window.outerWidth - window.innerWidth > threshold ||
-    //      window.outerHeight - window.innerHeight > threshold
-    //    ) {
-    //      alert("Developer tools are not allowed!")
-    //      window.location.href = "about:blank"
-    //    }
-    //  }, 1000)
+    //  Detect DevTools open
+     setInterval(() => {
+       const threshold = 160
+       if (
+         window.outerWidth - window.innerWidth > threshold ||
+         window.outerHeight - window.innerHeight > threshold
+       ) {
+         alert("Developer tools are not allowed!")
+         window.location.href = "about:blank"
+       }
+     }, 1000)
   })
   </script>
   
