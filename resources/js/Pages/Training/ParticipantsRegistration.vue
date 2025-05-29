@@ -32,42 +32,50 @@ export default {
   },
   methods:{
     submitForm(training_id){
-        const { id, lname, fname, mname, ext_name, email,
-        is_internal, is_female, position } = this.form
-        axios({
-            method: 'POST',
-            url: route('training.participants.register'),
-            data: {
-                id, lname, fname, mname, ext_name, email, training_id, is_internal, is_female, position
-            }
-        })
-        .then(response => {
-            // Handle success
-            console.log('Form submitted successfully:', response.data);
-            this.message = 'Form submitted successfully!';
-            this.error = ''; // Clear previous errors if any
 
-            window.location.href = route('training.participants.registration.sent');
-        })
-        .catch(error => {
-            if (error.response && error.response.status === 422) {
-                // Handle validation errors
-                this.form.errors = {};
-                const errorMessages = error.response.data.errors;
-                
-                for (const [key, messages] of Object.entries(errorMessages)) {
-                    this.form.errors[key] = messages.join(' '); // Combine messages into a single string
-                }
-                
-                this.message = ''; // Clear previous success messages
-                console.log('Validation errors:', this.form.errors);
-            } else {
-                // Handle other errors
-                this.message = '';
-                this.error = 'An unexpected error occurred.';
-                console.error('Error:', error);
-            }
-        });
+       const _confirm = confirm("Are you sure all your details are correct?");
+
+       if(_confirm){
+          const { id, lname, fname, mname, ext_name, email,
+          is_internal, is_female, position } = this.form
+          axios({
+              method: 'POST',
+              url: route('training.participants.register'),
+              data: {
+                  id, lname, fname, mname, ext_name, email, training_id, is_internal, is_female, position
+              }
+          })
+          .then(response => {
+              // Handle success
+              console.log('Form submitted successfully:', response.data);
+              this.message = 'Form submitted successfully!';
+              this.error = ''; // Clear previous errors if any
+
+              window.location.href = route('training.participants.registration.sent');
+          })
+          .catch(error => {
+              if (error.response && error.response.status === 422) {
+                  // Handle validation errors
+                  this.form.errors = {};
+                  const errorMessages = error.response.data.errors;
+                  
+                  for (const [key, messages] of Object.entries(errorMessages)) {
+                      this.form.errors[key] = messages.join(' '); // Combine messages into a single string
+                  }
+                  
+                  this.message = ''; // Clear previous success messages
+                  console.log('Validation errors:', this.form.errors);
+              } else {
+                  // Handle other errors
+                  this.message = '';
+                  this.error = 'An unexpected error occurred.';
+                  console.error('Error:', error);
+              }
+          });
+       }
+
+
+        
     },
     formReset(){
         this.form.reset('id','lname', 'fname', 'mname', 'ext_name', 'email', 'is_internal', 'is_female', 'position')
@@ -193,13 +201,20 @@ export default {
                 <p class="mt-1 text-sm text-red-500" v-if="form.errors.position">{{ form.errors.position }}</p>
               </div>
   
-              <!-- Email -->
-              <div>
-                <label for="create-item-email" class="block text-sm font-medium text-gray-900">Email<span class="text-red-600">*</span></label>
-                <input v-model="form.email" type="email" id="create-item-email" placeholder="Valid & Active email"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-600 focus:border-indigo-600 sm:text-sm" />
-                <p class="mt-1 text-sm text-red-500" v-if="form.errors.email">{{ form.errors.email }}</p>
-              </div>
+                    <!-- Email -->
+            <div>
+              <label for="create-item-email" class="block text-sm font-medium text-gray-900">
+                Email <span class="text-red-600">*</span>
+              </label>
+              <input v-model="form.email" type="email" id="create-item-email" placeholder="Valid & Active email"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-600 focus:border-indigo-600 sm:text-sm" />
+              <p class="mt-1 text-sm text-red-500" v-if="form.errors.email">{{ form.errors.email }}</p>
+              
+              <!-- Email Note -->
+              <p class="mt-2 text-sm text-yellow-600 font-medium">
+                ⚠️ Please double-check your email address to avoid issues on receiving your certificate.
+              </p>
+            </div>
 
 
 

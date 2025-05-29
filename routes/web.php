@@ -71,6 +71,8 @@ Route::get('training/certificate/generate', [CertificateController::class, 'gene
 Route::post('training/evaluation/public', [TrainingController::class, 'PublicEvaluationFormStore'])->name('public.training.evaluation.post');
 Route::get('training/{id}/evaluation-response/public', [TrainingController::class, 'PublicEvaluationForm'])->name('public.training.evaluation-response');
 
+Route::get('training/{id}/evaluation-response/{participant_id}/public/', [TrainingController::class, 'PublicEvaluationFormSecured'])->name('public.training.evaluation-response.secured');
+
 Route::get('training/{id}/participants/registration', [TrainingParticipantRegistrationController::class, 'index'])->name('training.participants.registration.index');
 Route::post('training/participants/register', [TrainingParticipantRegistrationController::class, 'register'])->name('training.participants.register');
 Route::get('training/participants/register/sent', [TrainingParticipantRegistrationController::class, 'registrationSent'])->name('training.participants.registration.sent');
@@ -105,6 +107,8 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
         Route::put('evaluation-response/{id}/update', [TrainingController::class, 'UpdateEvaluationResponse'])->name('training.evaluation-response.update');
         Route::get('evaluation-response/{id}/show', [TrainingController::class, 'ShowEvaluationResponse'])->name('training.evaluation-response.show');
         Route::delete('evaluation-response/{id}/delete', [TrainingController::class, 'RemoveEvaluationResponse'])->name('training.evaluation-response.delete');
+        Route::post('training/evaluation/send', [TrainingController::class, 'SendEvaluation'])->name('training.evaluation.send');
+
         Route::get('training/{id}/export-report', [TrainingController::class, 'ExportTrainingReport'])->name('training.export-report');
         Route::get('training/{id}/export-participants', [TrainingController::class, 'ExportTrainingParticipants'])->name('training.export-participants');
         Route::get('training/{id}/preview-report', [TrainingController::class, 'PreviewTrainingReport'])->name('training.preview-report');

@@ -2,11 +2,13 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import Modal from '@/Components/Modal.vue';
 import QRCodeVue3 from "qrcode-vue3";
-import { QrCodeIcon, EyeIcon, DocumentArrowDownIcon, DocumentTextIcon, PaperAirplaneIcon  } from '@heroicons/vue/24/outline';
+import { QrCodeIcon, EyeIcon, DocumentArrowDownIcon, DocumentTextIcon, PaperAirplaneIcon,EnvelopeIcon  } from '@heroicons/vue/24/outline';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import moment from 'moment'
 import { StarIcon, ChevronDownIcon  } from '@heroicons/vue/20/solid';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import axios from 'axios';
+
 </script>
 <script>
   export default {
@@ -35,6 +37,9 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
         return {
             toggleAlert: false,
             showQrCode: false,
+            showEvaluation: false,
+            isSendEvaluation: false,
+            modalClosable: false,
             form: useForm({
                 key_training: [],
                 key_RP: [],
@@ -50,6 +55,26 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
         this.resetForm();
     },
     methods: {
+      
+        sendEvaluation() {
+            this.showEvaluation = true;
+            this.isSendEvaluation = false;
+            this.modalClosable = false;
+            // Replace with actual data you want to send
+            const payload = {
+                training_id: this.training.id,
+            };
+
+            axios.post(route("training.evaluation.send"), payload)
+                .then(response => {
+                    this.isSendEvaluation = true;
+                    this.modalClosable = true;
+                    
+                })
+                .catch(error => {
+                    console.error('Failed to submit evaluation:', error.response?.data || error.message);
+                });
+        },
         updateRpArea(indexRp, indexKey, item) {
             console.log(indexRp, indexKey, item);
             // let { key_RP } = this.form
@@ -110,16 +135,52 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     <Head title="Evaluations" />
 
     <BreezeAuthenticatedLayout>
+
+       <Modal v-model="showEvaluation" :closable="modalClosable"  >
+        <div class="flex items-center justify-center py-5">
+
+          <div class="flex items-center justify-center py-5">
+            <div class="flex items-center justify-center py-5">
+              <!-- Sending State -->
+              <div class="flex items-center gap-2" v-if="!isSendEvaluation">
+                <h1>Sending Evaluation</h1>
+                <svg width="24" height="24" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="25" cy="25" r="20" fill="none" stroke="#3498db" stroke-width="5" stroke-linecap="round" stroke-dasharray="90 150" stroke-dashoffset="0">
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      from="0 25 25"
+                      to="360 25 25"
+                      dur="1s"
+                      repeatCount="indefinite" />
+                  </circle>
+                </svg>
+              </div>
+
+              <!-- Sent State -->
+              <div class="flex items-center gap-2 text-green-600" v-if="isSendEvaluation">
+                <h1>Evaluation Sent</h1>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                  <path d="M20.285 6.708l-11.464 11.464-5.536-5.536 1.414-1.414 4.122 4.122 10.05-10.05z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </Modal>
+
       <Modal v-model="showQrCode">
-        <div class="py-5">
-          <QRCodeVue3 :value="route('public.training.evaluation-response', {id: training.id})"
+        <div class="flex items-center justify-center py-5">
+          <QRCodeVue3 
+            :value="route('public.training.evaluation-response', {id: training.id})"
             :dotsOptions="{
               type: 'extra-rounded',
               color: '#26249a',
             }"
             :height="400"
             :width="400"
-            class="flex justify-center"
           />
         </div>
         <div class="text-center bg-gray-50 pb-5 pt-3">
@@ -176,7 +237,12 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
                 <MenuItem v-slot="{ active }">
                   <button type="button" @click="showQrCode = true" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
                   <QrCodeIcon class="h-6 w-6 mr-3" />
-                  QR Code</button>
+                  Evaluation QR</button>
+                </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                  <button type="button" @click="sendEvaluation()" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
+                  <EnvelopeIcon  class="h-6 w-6 mr-3" />
+                  Send Evaluation</button>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
                   <Link :href="route('training.evaluation-response', {id: training.id})" type="button" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm inline-flex w-full items-center']">
@@ -198,6 +264,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
                   <PaperAirplaneIcon  class="h-6 w-6 mr-3" />
                   Send Rating to RP</button>
                 </MenuItem>
+           
               </div>
             </MenuItems>
           </transition>
