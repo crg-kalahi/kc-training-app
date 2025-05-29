@@ -57,6 +57,9 @@ import axios from 'axios';
     methods: {
       
         sendEvaluation() {
+
+          var _confirm = confirm("Are you sure you want to send the evaluation? This action cannot be undone.");
+          if (_confirm) {
             this.showEvaluation = true;
             this.isSendEvaluation = false;
             this.modalClosable = false;
@@ -74,6 +77,7 @@ import axios from 'axios';
                 .catch(error => {
                     console.error('Failed to submit evaluation:', error.response?.data || error.message);
                 });
+          }
         },
         updateRpArea(indexRp, indexKey, item) {
             console.log(indexRp, indexKey, item);

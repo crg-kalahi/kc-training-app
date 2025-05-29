@@ -767,7 +767,7 @@ class TrainingController extends Controller
             $url = url("/training/{$training_id}/evaluation-response/{$participant->id}/public");
             $project = [
                 'greeting' => 'Hi ' . $participant->fname . ',',
-                'body' => 'Evaluation for ' . $participant->training->title,
+                'body' => 'We value your feedback! Please take a moment to complete the evaluation for the training titled "' . $participant->training->title . '". Your insights will help us improve future learning sessions.',
                 'thanks' => 'Thank you, this is from Capacity Building Web Application',
                 'actionText' => 'Open Evaluation',
                 'actionURL' => $url,
