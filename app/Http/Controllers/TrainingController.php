@@ -69,6 +69,8 @@ class TrainingController extends Controller
    
    public function PublicEvaluationForm($id)
     {
+
+        abort(403, "This is a secured evaluation form. Please use the link provided in the email to access it.");
         $item = Training::where('id', $id)->firstOrFail();
 
         $givenDateTime = new DateTime($item->date_to);
@@ -115,10 +117,20 @@ class TrainingController extends Controller
         //     abort(403, "Training was already finished and can't evaluate today.");
         // }
 
+          // Check if this participant already evaluated this training
+        $existing = EvaluationTraining::where('training_id', $request->training_id)
+            ->where('participants_id', $request->participant_id)
+            ->exists();
+
+        if ($existing) {
+            abort(403, "You have already submitted an evaluation for this training.");
+        }
+
         $eval = EvaluationTraining::create([
             'training_id' => $request->training_id,
             'sex' => $request->sex,
             'office_rep_id' => $request->office_rep,
+            'participants_id' => $request->participant_id,
         ]);
 
         $keyTraining = [];
@@ -442,6 +454,7 @@ class TrainingController extends Controller
         $item = Training::where('id', $id)->firstOrFail();
         return Inertia::render('Training/Participants', ['training' => $item, 'people' => $item->participants]);
     }
+
     public function GetEvaluations($id){
         $item = Training::where('id', $id)->firstOrFail();
         $participants = collect($item->evaluations);

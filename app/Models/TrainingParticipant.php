@@ -18,11 +18,14 @@ class TrainingParticipant extends Model
         'municipality', 'brgy'
     ];
 
+
+
+
     public function training(){
         return $this->belongsTo(Training::class, 'training_id', 'id');
     }
 
-    protected $appends = ['full_name', 'avatar'];
+    protected $appends = ['full_name', 'avatar', 'has_evaluated'];
 
     public function getFullNameAttribute(){
         $m = $this->mname ? " ".ucfirst($this->mname[0])."." : "";
@@ -30,7 +33,18 @@ class TrainingParticipant extends Model
         return ucfirst($this->lname) . ", " . ucfirst($this->fname) . $m . $ext;
     }
 
+    public function getHasEvaluatedAttribute()
+    {
+        return EvaluationTraining::where('training_id', $this->training_id)
+            ->where('participants_id', $this->id)
+            ->exists();
+    }
+
     public function getAvatarAttribute(){
         return "https://ui-avatars.com/api/?background=E53D00&color=fff&name=". $this->lname.'+'.$this->fname;
     }
+
+   
+
+
 }
