@@ -13,8 +13,6 @@ deploy_job:
     - git pull origin staging
     - npx mix
     - npm run dev
-    - php artisan migrate:fresh
-    - php artisan db:seed --class=StagingSeeder
     - php artisan optimize
     - php artisan route:clear
     - php artisan config:clear
