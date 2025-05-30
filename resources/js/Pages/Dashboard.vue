@@ -1,13 +1,12 @@
 <script setup>
-import { ref,computed } from 'vue'; 
+import { ref, computed } from 'vue';
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import BreezeAuthenticatedGuestLayout from '@/Layouts/AuthenticatedGuest.vue';
 import { Head } from '@inertiajs/inertia-vue3';
-import { UserIcon } from '@heroicons/vue/20/solid'
+import { UserIcon } from '@heroicons/vue/20/solid';
 import { Chart, registerables } from "chart.js";
 import { LineChart, BarChart } from 'vue-chart-3';
 import { Qalendar } from "qalendar";
-
 
 Chart.register(...registerables);
 
@@ -16,15 +15,15 @@ const props = defineProps({
   plByMonth: Array,
   events: Array,
   permissions: Array,
-  
   totalTrainings: Number,
   totalParticipants: Number,
   internalParticipants: Number,
   externalParticipants: Number,
   upcomingTrainingsCount: Number,
-  latestTraining: Object,  // { title: string, date_from: string }
+  latestTraining: Object,
   averageTrainingsPerMonth: Number,
-   evaluations: Array,
+  evaluations: Array,
+  officeRepSummary: Array,
 });
 
 const stats = [
@@ -32,64 +31,67 @@ const stats = [
   { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
   { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
   { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
-]
+];
 
 const data = ref(props.plByMonth);
 const events = ref(props.events);
+const officeRepSummary = ref(props.officeRepSummary);
 
-const config=  {
-      week: {
-        startsOn: 'sunday',
-      },
-      month: {
-        // Hide leading and trailing dates in the month view (defaults to true when not set)
-        showTrailingAndLeadingDates: false,
-      },
-      defaultMode: 'month',
-      isSilent: true,
-      showCurrentTime: true,
-}
+const config = {
+  week: { startsOn: 'sunday' },
+  month: { showTrailingAndLeadingDates: false },
+  defaultMode: 'month',
+  isSilent: true,
+  showCurrentTime: true,
+};
 
-
-const hasPermission = (permission) => {
-  return props.permissions.includes(permission);
-}
+const hasPermission = (permission) => props.permissions.includes(permission);
 
 const currentLayout = computed(() => {
   return hasPermission('GUEST - Login') ? BreezeAuthenticatedGuestLayout : BreezeAuthenticatedLayout;
 });
-
 </script>
 
 <template>
-    <Head title="Dashboard" />
-
-    <component :is="currentLayout">
-        <!-- Page title & actions -->
+  <Head title="Dashboard" />
+  <component :is="currentLayout">
+    <!-- Page Title -->
     <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <div class="min-w-0 flex-1">
-            <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">Dashboard</h1>
-        </div>
-        <div class="mt-4 flex sm:mt-0 sm:ml-4">
-            <!-- <button type="button" class="sm:order-0 order-1 ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:ml-0">Share</button> -->
-            <!-- <button type="button" class="order-0 inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 sm:order-1 sm:ml-3">Create</button> -->
-        </div>
+      <div class="min-w-0 flex-1">
+        <h1 class="text-2xl font-bold leading-6 text-gray-900">📊 Dashboard</h1>
+      </div>
     </div>
 
-
-        <div class="px-4 py-3 sm:px-6 lg:px-8 mt-3">
-      <h3 class="text-base font-semibold leading-6 text-gray-900">Overall Trained Participants</h3>
-      <dl class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-4">
-        <div v-for="item in stats" :key="item.id" class="relative overflow-hidden rounded-lg bg-white px-4 pt-5 shadow sm:px-6 sm:pt-6">
+    <!-- Participants Overview -->
+    <div class="px-4 py-3 sm:px-6 lg:px-8 mt-4">
+      <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-4">Overall Trained Participants</h3>
+      <dl class="grid grid-cols-1 gap-5 sm:grid-cols-4">
+        <div
+          v-for="item in stats"
+          :key="item.name"
+          class="relative overflow-hidden rounded-xl bg-gradient-to-r from-white to-gray-50 px-4 pt-5 shadow hover:shadow-lg transition transform hover:scale-105 border border-gray-200"
+        >
           <dt>
-            <div :class="['absolute rounded-md p-3', item.name == 'Male' ? 'bg-indigo-500' : 'bg-pink-500']">
+            <div
+              :class="[
+                'absolute rounded-full p-3',
+                item.name === 'Male'
+                  ? 'bg-gradient-to-r from-indigo-500 to-indigo-600'
+                  : 'bg-gradient-to-r from-pink-500 to-pink-600'
+              ]"
+            >
               <component :is="item.icon" class="h-6 w-6 text-white" aria-hidden="true" />
             </div>
-            <p class="ml-16 truncate text-sm font-medium text-gray-500">{{ item.name }}</p>
+            <p class="ml-16 truncate text-sm font-medium text-gray-600">{{ item.name }}</p>
           </dt>
           <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-            <p class="text-2xl font-semibold text-gray-900">{{ item.value }}</p>
-            <p :class="[item.type === 'Internal' ? 'text-green-600' : 'text-red-600', 'ml-2 flex items-baseline text-sm font-semibold']">
+            <p class="text-3xl font-bold text-gray-900">{{ item.value }}</p>
+            <p
+              :class="[
+                item.type === 'Internal' ? 'text-green-600' : 'text-red-600',
+                'ml-2 text-sm font-semibold'
+              ]"
+            >
               {{ item.type }}
             </p>
           </dd>
@@ -97,103 +99,103 @@ const currentLayout = computed(() => {
       </dl>
     </div>
 
-
-        <section class="mt-3 px-4 py-3 sm:px-6 lg:px-8">
-        <h3 class="text-base font-semibold leading-6 text-gray-900">Training Summary</h3>
-        <div class="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <div class="relative overflow-hidden rounded-lg bg-white px-4 shadow h-[400px]">
-            <BarChart
-              :chart-data="{
-                labels: data.map(item => `${item.mname} ${item.yr}`),
-                datasets: [
-                  {
-                    label: 'TOTAL TRAININGS',
-                    backgroundColor: '#90e0ef',
-                    data: data.map(item => item.total_trainings)
-                  },
-                ]
-              }"
-              :options="{
-                responsive: true,
-                maintainAspectRatio: false
-              }"
-              style="height: 100%;"
-            />
-          </div>
-          <div class="bg-white rounded-lg shadow p-4 h-[400px]">
-            <Qalendar 
-              :events="events"
-              :config="config"
-              class="h-full"
-            />
-          </div>
+    <!-- Training Summary -->
+    <section class="mt-4 px-4 py-3 sm:px-6 lg:px-8">
+      <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-4 flex items-center">
+        📅 Training Summary
+      </h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Bar Chart -->
+        <div class="rounded-xl bg-white shadow p-4 h-[400px] border border-gray-200">
+          <BarChart
+            :chart-data="{
+              labels: data.map(item => `${item.mname} ${item.yr}`),
+              datasets: [
+                {
+                  label: 'Total Trainings',
+                  backgroundColor: '#90e0ef',
+                  data: data.map(item => item.total_trainings)
+                }
+              ]
+            }"
+            :options="{ responsive: true, maintainAspectRatio: false }"
+            style="height: 100%;"
+          />
         </div>
+        <!-- Calendar -->
+        <div class="rounded-xl bg-white shadow p-4 h-[400px] border border-gray-200">
+          <Qalendar :events="events" :config="config" class="h-full" />
+        </div>
+      </div>
     </section>
-    
 
-
+    <!-- Key Summary -->
     <div class="px-4 py-6 sm:px-6 lg:px-8 mt-6">
-      <h3 class="text-base font-semibold leading-6 text-gray-900 border-b border-gray-300 pb-2 mb-4">
-        Key Summary
+      <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-4">
+        🔑 Key Summary
       </h3>
       <dl class="grid grid-cols-1 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-      <!-- Total Trainings -->
-      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
-        <dt class="text-sm font-medium text-gray-500 truncate">Total Trainings</dt>
-        <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $page.props.totalTrainings }}</dd>
-      </div>
-
-      <!-- Total Participants -->
-      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
-        <dt class="text-sm font-medium text-gray-500 truncate">Total Participants</dt>
-        <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $page.props.totalParticipants }}</dd>
-      </div>
-
-      <!-- Internal Participants -->
-      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
-        <dt class="text-sm font-medium text-gray-500 truncate">Internal Participants</dt>
-        <dd class="mt-1 text-3xl font-semibold text-green-600">{{ $page.props.internalParticipants }}</dd>
-      </div>
-
-      <!-- External Participants -->
-      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
-        <dt class="text-sm font-medium text-gray-500 truncate">External Participants</dt>
-        <dd class="mt-1 text-3xl font-semibold text-red-600">{{ $page.props.externalParticipants }}</dd>
-      </div>
-
-      <!-- Upcoming Trainings -->
-      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
-        <dt class="text-sm font-medium text-gray-500 truncate">Upcoming Trainings</dt>
-        <dd class="mt-1 text-3xl font-semibold text-indigo-600">{{ $page.props.upcomingTrainingsCount }}</dd>
-      </div>
-
-      <!-- Average Trainings / Month -->
-      <div class="overflow-hidden rounded-lg bg-white px-6 py-6 shadow hover:shadow-md transition cursor-default">
-        <dt class="text-sm font-medium text-gray-500 truncate">Avg Trainings/Month</dt>
-        <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $page.props.averageTrainingsPerMonth }}</dd>
-      </div>
-    </dl>
-
-        <div class="mt-6 bg-white rounded-lg shadow p-6">
-        <h4 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Latest Trainings</h4>
-        <ul class="space-y-4">
-          <li v-for="training in latestTraining" :key="training.title + training.date_from" class="border rounded-lg p-4 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-            <h5 class="text-md font-semibold text-indigo-600 mb-1 truncate">{{ training.title }}</h5>
-            <p class="text-sm text-gray-500">
-              <time>{{ new Date(training.date_from).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) }}</time>
-            </p>
-          </li>
-        </ul>
-      </div>
+        <div
+          v-for="(label, index) in [
+            { title: 'Total Trainings', value: $page.props.totalTrainings },
+            { title: 'Total Participants', value: $page.props.totalParticipants },
+            { title: 'Internal Participants', value: $page.props.internalParticipants, color: 'text-green-600' },
+            { title: 'External Participants', value: $page.props.externalParticipants, color: 'text-red-600' },
+            { title: 'Upcoming Trainings', value: $page.props.upcomingTrainingsCount, color: 'text-indigo-600' },
+            { title: 'Avg Trainings/Month', value: $page.props.averageTrainingsPerMonth }
+          ]"
+          :key="index"
+          class="overflow-hidden rounded-xl bg-white px-6 py-6 shadow hover:shadow-lg transition transform hover:scale-105 border border-gray-200"
+        >
+          <dt class="text-sm font-medium text-gray-600 truncate">{{ label.title }}</dt>
+          <dd
+            class="mt-1 text-3xl font-bold"
+            :class="label.color || 'text-gray-900'"
+          >
+            {{ label.value }}
+          </dd>
+        </div>
+      </dl>
     </div>
 
+    <!-- Evaluations by Office Representative -->
+    <div class="px-4 py-6 sm:px-6 lg:px-8 mt-6">
+      <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-4">
+        🏢 Evaluations by Office Representative
+      </h3>
+      <dl class="grid grid-cols-1 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+        <div
+          v-for="(item, index) in officeRepSummary"
+          :key="index"
+          class="overflow-hidden rounded-xl bg-white px-6 py-6 shadow hover:shadow-lg transition transform hover:scale-105 border border-gray-200"
+        >
+          <dt class="text-sm font-medium text-gray-600 truncate">{{ item.office_rep_title }}</dt>
+          <dd class="mt-1 text-3xl font-bold text-gray-900">{{ item.total_evaluations }}</dd>
+        </div>
+      </dl>
+    </div>
 
+    <!-- Latest Trainings -->
+    <div class="px-4 py-6 sm:px-6 lg:px-8 mt-6">
+      <h4 class="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2 mb-4">
+        📝 Latest Trainings
+      </h4>
+      <ul class="space-y-4">
+        <li
+          v-for="training in latestTraining"
+          :key="training.title + training.date_from"
+          class="border rounded-xl p-4 bg-white shadow hover:shadow-lg transition transform hover:scale-105 border-gray-200"
+        >
+          <h5 class="text-md font-semibold text-indigo-600 mb-1 truncate">{{ training.title }}</h5>
+          <p class="text-sm text-gray-500">
+            <time>
+              {{ new Date(training.date_from).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) }}
+            </time>
+          </p>
+        </li>
+      </ul>
+    </div>
 
-    <section>
-      <br>
-    </section>
-    
+    <section><br></section>
   </component>
 </template>
-
-

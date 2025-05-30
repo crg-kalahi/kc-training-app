@@ -69,6 +69,13 @@ class DashboardController extends Controller
         // Average trainings per month (last 12 months)
         $averageTrainingsPerMonth = round(collect($results)->avg('total_trainings'), 2);
 
+        $officeRepSummary = DB::table('evaluation_trainings as et')
+    ->join('office_representatives as or', 'et.office_rep_id', '=', 'or.id')
+    ->select('or.title as office_rep_title', DB::raw('COUNT(et.id) as total_evaluations'))
+    ->groupBy('or.title')
+    ->orderBy('total_evaluations', 'desc')
+    ->get();
+
         return Inertia::render('Dashboard', [
             'participants' => DB::table('participant_lists_view')->groupBy('full_name', 'is_internal')->get(),
             'plByMonth' => $results,
@@ -82,7 +89,8 @@ class DashboardController extends Controller
             'externalParticipants' => $externalParticipants,
             'upcomingTrainingsCount' => $upcomingTrainingsCount,
             'latestTraining' => $latestTraining,
-            'averageTrainingsPerMonth' => $averageTrainingsPerMonth
+            'averageTrainingsPerMonth' => $averageTrainingsPerMonth,
+            'officeRepSummary' => $officeRepSummary
         ]);
     }
 
