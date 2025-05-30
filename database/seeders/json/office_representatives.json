@@ -1,0 +1,112 @@
+{
+  "RECORDS": [
+    {
+      "id": 1,
+      "deleted_at": null,
+      "title": "DSWD Field Office (FO)",
+      "order": "A",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:17:22",
+      "updated_at": "30/3/2023 11:17:22"
+    },
+    {
+      "id": 2,
+      "deleted_at": null,
+      "title": "DSWD Central Office (CO)",
+      "order": "B",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:17:30",
+      "updated_at": "30/3/2023 11:17:30"
+    },
+    {
+      "id": 3,
+      "deleted_at": null,
+      "title": "Centers and Institutions (CIS)",
+      "order": "C",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:17:38",
+      "updated_at": "30/3/2023 11:17:38"
+    },
+    {
+      "id": 4,
+      "deleted_at": null,
+      "title": "Local Government Unit (LGU)",
+      "order": "D",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:17:46",
+      "updated_at": "30/3/2023 11:17:46"
+    },
+    {
+      "id": 5,
+      "deleted_at": null,
+      "title": "National Government Agency",
+      "order": "E",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:17:54",
+      "updated_at": "30/3/2023 11:17:54"
+    },
+    {
+      "id": 6,
+      "deleted_at": null,
+      "title": "Non-Government Organization",
+      "order": "F",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:18:02",
+      "updated_at": "30/3/2023 11:18:02"
+    },
+    {
+      "id": 7,
+      "deleted_at": null,
+      "title": "People’s Organization",
+      "order": "G",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:18:08",
+      "updated_at": "30/3/2023 11:18:08"
+    },
+    {
+      "id": 8,
+      "deleted_at": null,
+      "title": "Volunteers",
+      "order": "H",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:18:17",
+      "updated_at": "30/3/2023 11:18:17"
+    },
+    {
+      "id": 9,
+      "deleted_at": null,
+      "title": "Academe",
+      "order": "I",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:18:29",
+      "updated_at": "30/3/2023 11:18:29"
+    },
+    {
+      "id": 10,
+      "deleted_at": null,
+      "title": "Religious",
+      "order": "J",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:18:37",
+      "updated_at": "30/3/2023 11:18:37"
+    },
+    {
+      "id": 11,
+      "deleted_at": null,
+      "title": "Business sector",
+      "order": "K",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:18:47",
+      "updated_at": "30/3/2023 11:18:47"
+    },
+    {
+      "id": 12,
+      "deleted_at": null,
+      "title": "Media",
+      "order": "L",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:18:54",
+      "updated_at": "30/3/2023 11:18:54"
+    }
+  ]
+}

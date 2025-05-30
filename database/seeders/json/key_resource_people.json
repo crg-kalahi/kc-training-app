@@ -1,0 +1,40 @@
+{
+  "RECORDS": [
+    {
+      "id": 1,
+      "deleted_at": null,
+      "title": "Mastery of Subject Matter",
+      "order": "A",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:19:14",
+      "updated_at": "30/3/2023 11:19:14"
+    },
+    {
+      "id": 2,
+      "deleted_at": null,
+      "title": "Delivery and Presentation",
+      "order": "B",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:19:22",
+      "updated_at": "30/3/2023 11:19:22"
+    },
+    {
+      "id": 3,
+      "deleted_at": null,
+      "title": "Appropriateness of Visual Aids/Handouts",
+      "order": "C",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:19:28",
+      "updated_at": "30/3/2023 11:19:28"
+    },
+    {
+      "id": 4,
+      "deleted_at": null,
+      "title": "Clarity of Discussion",
+      "order": "D",
+      "is_default": 1,
+      "created_at": "30/3/2023 11:19:37",
+      "updated_at": "30/3/2023 11:19:37"
+    }
+  ]
+}

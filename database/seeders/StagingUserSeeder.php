@@ -25,6 +25,7 @@ class StagingUserSeeder extends Seeder
                 'mname' => 'admin',
                 'lname' => 'admin',
                 'id_number' => '16-0000',
+                'username' => 'admin',
                 'email' => 'admin@admin.com',
                 'password' => Hash::make('password'),
                 'role' => 'staff-admin'
@@ -41,6 +42,7 @@ class StagingUserSeeder extends Seeder
                 "mname" =>  $user['mname'],
                 "lname" =>  $user['lname'],
                 "id_number" =>  $user['id_number'],
+                'username' =>  $user['username'],
             ]);
             $createdUser->assignRole($user['role']);
         }

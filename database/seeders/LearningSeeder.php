@@ -4,31 +4,41 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker;
+use App\Models\Conf\Learning;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 class LearningSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        // Initialize Faker
-        $faker = Faker::create();
+        // Disable foreign key checks (in case of constraints)
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // Truncate the table first
+        Learning::truncate();
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Generate 100 records with fake data
-        $data = [];
+        $json = File::get(database_path('seeders/json/learnings.json'));
+        $data = json_decode($json, true);
 
-        for ($i = 1; $i <= 50; $i++) {
-            $data[] = [
-                'title' => $faker->sentence(5),  // Generate a random sentence with 5 words
-                'order' => $i,            // Set the order field as the loop index
-                'is_default' => $i % 2 == 0 ? true : false,  // Alternate between true and false for is_default
-                'deleted_at' => $faker->boolean(20) ? Carbon::now()->subDays(rand(1, 30)) : null, // 20% chance for a deleted_at value
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ];
+        if (isset($data['RECORDS'])) {
+            foreach ($data['RECORDS'] as $record) {
+                Learning::create([
+                    'id' => $record['id'],
+                    'title' => $record['title'],
+                    'order' => $record['order'],
+                    'is_default' => $record['is_default'],
+                    'created_at' => Carbon::createFromFormat('d/m/Y H:i:s', $record['created_at']),
+                    'updated_at' => Carbon::createFromFormat('d/m/Y H:i:s', $record['updated_at']),
+                    'deleted_at' => $record['deleted_at'] 
+                        ? Carbon::createFromFormat('d/m/Y H:i:s', $record['deleted_at']) 
+                        : null,
+                ]);
+            }
         }
-
-        // Insert data into the table
-        DB::table('learnings')->insert($data);
     }
 }

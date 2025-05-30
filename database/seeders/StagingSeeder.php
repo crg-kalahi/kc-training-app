@@ -19,5 +19,9 @@ class StagingSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(StagingUserSeeder::class);
+        $this->call(KeyResourcePersonSeeder::class);
+        $this->call(KeyTrainingSeeder::class);
+        $this->call(LearningSeeder::class);
+        $this->call(OfficeRepresentativesSeeder::class);
     }
 }
