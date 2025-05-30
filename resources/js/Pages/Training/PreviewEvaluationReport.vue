@@ -109,20 +109,23 @@
               <h3 class="text-sm font-semibold text-gray-800">
                   <!-- Extend touch target to entire panel -->
                   <!-- <span class="absolute inset-0" aria-hidden="true" /> -->
-                    <div class="flex items-center gap-2">
-                    <span>{{ `${index + 1}. ${learning.title}` }}</span>
-                    <a
-                      title="Summarize results for this Item using AI."
-                      class="cursor-pointer"
-                      @click="openModal(learning)"
-                    >
-                      <img
-                        src="/images/ai-icon.png"
-                        alt=""
-                        class="w-10 h-10 animate-pulse print:hidden"
-                      />
-                    </a>
-                  </div>
+                  <div class="flex items-center gap-2">
+                  <span>{{ `${index + 1}. ${learning.title}` }}</span>
+                  <button
+                    title="Summarize results for this item using AI."
+                    @click="openModal(learning)"
+                    class="inline-flex items-center gap-1 px-2 py-1 text-gray-700 text-sm font-medium transition duration-200 ease-in-out print:hidden"
+                  >
+                    <img
+                      src="/images/ai-icon.png"
+                      alt="AI"
+                      class="w-8 h-8 animate-pulse"
+                    />
+                    <span class="text-xs font-semibold text-blue-600">Summarize AI</span>
+
+                   
+                  </button>
+                </div>
               </h3>
             </td>
           </tr>

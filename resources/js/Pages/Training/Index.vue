@@ -115,6 +115,7 @@ export default {
                             <th class="border-b border-gray-200 bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900">
                                 <span class="lg:pl-2">Title and Venue</span>
                             </th>
+                            <th class="border-b border-gray-200 bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900 md:table-cell">Participants</th>
                             <th class="border-b border-gray-200 bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900 md:table-cell">Rating</th>
                             <th class="hidden border-b border-gray-200 bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900 md:table-cell">Facilitators</th>
                             <th class="hidden border-b border-gray-200 bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900 md:table-cell">Date</th>
@@ -132,6 +133,7 @@ export default {
                                     </div>
                                 </div>
                             </td>
+                            <td class="w-full max-w-0 whitespace-nowrap px-6 py-3 text-sm font-medium text-gray-900 text-center">{{ event.participants_count }}</td>
                             <td class="whitespace-nowrap px-6 py-3 text-left text-sm text-gray-500 md:table-cell">{{ event.evaluation_status }}</td>
                             <td class="px-6 py-3 text-sm font-medium text-gray-500">
                                 <div class="flex justify-center items-center space-x-2">

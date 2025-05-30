@@ -194,14 +194,16 @@ class TrainingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-   public function index(Request $request)
+    public function index(Request $request)
     {
         $user = Auth::user();
         $search = $request->input('search');
 
         $certificateRequestsCount = RequestCertificate::where('is_approve', 0)->count();
 
-        $query = Training::with('facilitators')->orderBy('date_from', 'desc');
+        $query = Training::with('facilitators')
+            ->withCount('participants') // Add participants count here
+            ->orderBy('date_from', 'desc');
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
