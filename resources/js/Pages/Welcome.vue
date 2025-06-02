@@ -12,9 +12,8 @@
   <nav class="flex space-x-4">
     <a href="#features" class="hover:underline" @click.prevent="scrollToSection('features')">Features</a>
     <a href="#about" class="hover:underline" @click.prevent="scrollToSection('about')">About</a>
-    <a href="#team" class="hover:underline" @click.prevent="scrollToSection('team')">Team</a>
-    <a href="#contact" class="hover:underline" @click.prevent="scrollToSection('contact')">Contact</a>
-    <a href="#developers" class="hover:underline" @click.prevent="scrollToSection('developers')">Developers</a>
+    <a href="#team" class="hover:underline" @click.prevent="scrollToSection('team')">Authors</a>
+    <a href="#developers" class="hover:underline" @click.prevent="scrollToSection('developers')">KM</a>
   </nav>
 </header>
   
@@ -49,6 +48,9 @@
           </div>
         </div>
       </section>
+
+
+
   
       <section id="about" class="w-full bg-gray-100 text-gray-800 py-16">
         <div class="max-w-7xl mx-auto px-4">
@@ -87,10 +89,27 @@
         </div>
         </section>
 
+
+
+        <section id="regional-director" class="w-full bg-white text-gray-800 py-16">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <h3 class="text-3xl font-bold mb-6">Regional Director</h3>
+                
+                <div class="flex justify-center">
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
+                        <img src="/images/teams/rd.jpg" alt="Regional Director" class="w-32 h-32 mx-auto mb-4 rounded-full object-cover">
+                        <h4 class="text-xl font-semibold mb-2">Mari-Flor A. Dollaga-Libang</h4>
+                        <p class="text-gray-600 mb-4">Regional Director</p>
+                        <p class="text-gray-500">DSWD Field Office Caraga</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
   
         <section id="team" class="w-full bg-white text-gray-800 py-16">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h3 class="text-3xl font-bold mb-6">Team</h3>
+            <h3 class="text-3xl font-bold mb-6">Authors</h3>
             
             <!-- Team members grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -120,79 +139,67 @@
             </div>
         </div>
         </section>
-  
-        <section id="contact" class="w-full bg-gray-100 text-gray-800 py-16">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <h3 class="text-3xl font-bold mb-6">Contact Us</h3>
-            <p class="text-lg mb-8">Have a question or need support? We're here to help! Reach out to us anytime.</p>
-
-            <!-- Contact Form -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h4 class="text-2xl font-semibold mb-4">Send us a message</h4>
-                <form action="#" method="POST" class="space-y-4">
-                <div>
-                    <label for="name" class="block text-sm font-medium">Your Name</label>
-                    <input type="text" id="name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your name">
-                </div>
-                <div>
-                    <label for="email" class="block text-sm font-medium">Your Email</label>
-                    <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email">
-                </div>
-                <div>
-                    <label for="message" class="block text-sm font-medium">Your Message</label>
-                    <textarea id="message" name="message" required rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type your message here"></textarea>
-                </div>
-                <button type="submit" class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none">Send Message</button>
-                </form>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h4 class="text-2xl font-semibold mb-4">Get in Touch</h4>
-                <p class="text-lg mb-4">Prefer to contact us directly? You can reach us via email:</p>
-                <div class="flex items-center space-x-2 text-lg font-medium text-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12l-6-6m0 0l-6 6m6-6v12"></path></svg>
-                <a href="mailto:kalahicapbuildcaraga@gmail.com" class="hover:underline">kalahicapbuildcaraga@gmail.com</a>
-                </div>
-            </div>
-            </div>
-
-            <!-- Optional: A map or location -->
-            <div class="mt-12">
-            <h4 class="text-2xl font-semibold text-center mb-4">Our Location</h4>
-            <div class="aspect-w-16 aspect-h-9">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1970.6542694429425!2d125.53467470431444!3d8.943690055103659!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301c04fea75abc9%3A0xc04cf3f7a098d4e7!2sDepartment%20of%20Social%20Welfare%20and%20Development%20(DSWD)%20-%20Field%20Office%20Caraga!5e0!3m2!1sen!2sph!4v1737950650513!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full h-full border-0 rounded-lg shadow-lg" ></iframe>
-            </div>
-            </div>
-        </div>
-        </section>
+        
   
       <section id="developers" class="w-full bg-white text-gray-800 py-16">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <h3 class="text-3xl font-bold mb-6">Knowledge Management</h3>
+
             
-            <!-- User Avatars -->
+              <!-- User Avatars -->
             <div class="flex justify-center gap-8">
-            <!-- User 1 -->
-            <div class="flex flex-col items-center">
-                <img src="/images/teams/alvin.jpg" alt="User 1" class="w-24 h-24 rounded-full mb-4 object-cover">
-                <h4 class="text-xl font-semibold">Alvin M. Mapalo </h4>
-                <p class="text-gray-600">Writer - SMO III</p>
+              <!-- User 1 -->
+              <div class="flex flex-col items-center">
+                  <img src="/images/teams/kmhead.jpg" alt="User 1" class="w-24 h-24 rounded-full mb-4 object-cover">
+                  <h4 class="text-xl font-semibold">Ramil M. Taculod </h4>
+                  <p class="text-gray-600">CAO</p>
+              </div>
+
+              <!-- User 2 -->
+              <div class="flex flex-col items-center">
+                  <img src="/images/teams/anafe.jpg" alt="User 2" class="w-24 h-24 rounded-full mb-4 object-cover">
+                  <h4 class="text-xl font-semibold"> Anafe A. Lecciones </h4>
+                  <p class="text-gray-600">TS III</p>
+              </div>
+
+                 <!-- User 2 -->
+              <div class="flex flex-col items-center">
+                  <img src="/images/teams/ester.jpg" alt="User 2" class="w-24 h-24 rounded-full mb-4 object-cover">
+                  <h4 class="text-xl font-semibold"> Esterlita V. Villamor </h4>
+                  <p class="text-gray-600">DRPM, KALAHI CIDSS</p>
+              </div>
+
             </div>
 
-            <!-- User 2 -->
+            <!-- User Avatars -->
+            <div class="flex justify-center gap-8 mt-5">
+              <!-- User 1 -->
+              <div class="flex flex-col items-center">
+                  <img src="/images/teams/alvin.jpg" alt="User 1" class="w-24 h-24 rounded-full mb-4 object-cover">
+                  <h4 class="text-xl font-semibold">Alvin M. Mapalo </h4>
+                  <p class="text-gray-600">Writer - SMO III</p>
+              </div>
+
+              <!-- User 2 -->
+              <div class="flex flex-col items-center">
+                  <img src="/images/teams/rin.jpg" alt="User 2" class="w-24 h-24 rounded-full mb-4 object-cover">
+                  <h4 class="text-xl font-semibold"> Victorino A. Sistoso </h4>
+                  <p class="text-gray-600">Writer - TS III</p>
+              </div>
+
+                              <!-- User 3 -->
             <div class="flex flex-col items-center">
-                <img src="/images/teams/rin.jpg" alt="User 2" class="w-24 h-24 rounded-full mb-4 object-cover">
-                <h4 class="text-xl font-semibold"> Victorino A. Sistoso </h4>
-                <p class="text-gray-600">Writer - TS III</p>
+                <img src="/images/teams/bodo.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
+                <h4 class="text-xl font-semibold">Tseiammetse Angelo C. Rendon</h4>
+                <p class="text-gray-600">Developer - FA III, KALAHI CIDSS</p>
             </div>
+              
 
             <!-- User 3 -->
             <div class="flex flex-col items-center">
                 <img src="/images/teams/jade.png" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
                 <h4 class="text-xl font-semibold">Dioame Jade C. Rendon</h4>
-                <p class="text-gray-600">Developer - CP III</p>
+                <p class="text-gray-600">Developer - CP III, RICTMS</p>
             </div>
 
 
@@ -203,10 +210,69 @@
                 <p class="text-gray-600">Former Developer</p>
             </div>
 
-
             </div>
         </div>
         </section>
+
+
+
+        <section id="developers" class="w-full bg-white text-gray-800 py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h3 class="text-3xl font-bold mb-6">Deployment Team</h3>
+            
+            <!-- User Avatars -->
+            <div class="flex justify-center gap-8">
+              
+
+            <!-- User 3 -->
+            <div class="flex flex-col items-center">
+                <img src="/images/teams/john.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
+                <h4 class="text-xl font-semibold">John A. Leonardo</h4>
+                <p class="text-gray-600">ITO II, RICTMS Head</p>
+            </div>
+
+
+               <!-- User 3 -->
+               <div class="flex flex-col items-center">
+                <img src="/images/teams/michael.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
+                <h4 class="text-xl font-semibold">Michael P. Beray</h4>
+                <p class="text-gray-600">ITO II</p>
+            </div>
+
+                 <!-- User 3 -->
+               <div class="flex flex-col items-center">
+                <img src="/images/teams/juls.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
+                <h4 class="text-xl font-semibold">Julieto Ompad</h4>
+                <p class="text-gray-600">ITO I</p>
+            </div>
+
+                 <!-- User 3 -->
+               <div class="flex flex-col items-center">
+                <img src="/images/teams/glen.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
+                <h4 class="text-xl font-semibold">Glen Victor C. Segovia</h4>
+                <p class="text-gray-600">CPIII QA</p>
+            </div>
+
+            </div>
+
+            
+        </div>
+        </section>
+
+        
+        <section id="thank-you" class="w-full bg-gray-100 text-gray-800 py-16">
+          <div class="max-w-7xl mx-auto px-4 text-center">
+              <h3 class="text-3xl font-bold mb-6">Thank You!</h3>
+              <p class="text-lg max-w-3xl mx-auto mb-4">
+                  We extend our deepest gratitude to the dedicated team behind this initiative — from our visionary Regional Director to our committed Authors, Knowledge Management team, and the Deployment Team. Your expertise, hard work, and passion have made this project possible, inspiring positive change in the communities we serve.
+              </p>
+              <p class="text-lg max-w-3xl mx-auto">
+                  Together, we build a stronger future. Maraming Salamat po!
+              </p>
+          </div>
+      </section>
+        
+        
   
       <footer class="w-full bg-gray-800 text-gray-400 py-8 text-center">
         <p>&copy; TRAIN. All rights reserved.</p>
