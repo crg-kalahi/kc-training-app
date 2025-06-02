@@ -12,21 +12,27 @@ class AddFilePathToAttachmentsTable extends Migration
      * @return void
      */
     public function up()
-    {
-        Schema::table('attachments', function (Blueprint $table) {
-            $table->string('file_path')->nullable();
-        });
-    }
+        {
+            // Check if 'file_path' column does NOT exist before adding it
+            if (!Schema::hasColumn('attachments', 'file_path')) {
+                Schema::table('attachments', function (Blueprint $table) {
+                    $table->string('file_path')->nullable();
+                });
+            }
+        }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('attachments', function (Blueprint $table) {
-            $table->dropColumn('file_path');
-        });
-    }
+        /**
+         * Reverse the migrations.
+         *
+         * @return void
+         */
+        public function down()
+        {
+            // Check if 'file_path' column exists before dropping it
+            if (Schema::hasColumn('attachments', 'file_path')) {
+                Schema::table('attachments', function (Blueprint $table) {
+                    $table->dropColumn('file_path');
+                });
+            }
+        }
 }
