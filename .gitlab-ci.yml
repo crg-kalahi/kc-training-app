@@ -11,10 +11,9 @@ deploy_job:
     - cd /opt/apps/train
     - git reset --hard
     - git pull origin staging
-    - npx mix
-    - npm run dev
-    
+
     # Install Composer dependencies
+    - rm -rf vendor
     - composer install
     - php artisan migrate
     
@@ -22,6 +21,10 @@ deploy_job:
     - php artisan optimize
     - php artisan route:clear
     - php artisan config:clear
+
+    # 
+    - npx mix
+    - npm run dev
   
   after_script:
     - echo "Cleaning up temporary files..."
