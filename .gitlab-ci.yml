@@ -14,7 +14,7 @@ deploy_job:
     - npx mix
     - npm run dev
     
-    - composer require owen-it/laravel-auditing
+    - composer require owen-it/laravel-auditing:"^13.0"
     - php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="config"
     - php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="migrations"
     - php artisan migrate
