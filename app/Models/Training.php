@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Training extends Model
+class Training extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, UUID;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'title', 'venue', 'date_from', 'date_to', 'encoded_by', 'key_trainings', 'key_learnings', 'key_rp'

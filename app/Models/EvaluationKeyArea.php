@@ -6,10 +6,12 @@ use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class EvaluationKeyArea extends Model
+class EvaluationKeyArea extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, UUID;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'evaluation_id', 'area_training_id', 'stat'
