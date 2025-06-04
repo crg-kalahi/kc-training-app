@@ -6,12 +6,10 @@ use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class Attachments extends Model implements Auditable
+class Attachments extends Model 
 {
     use HasFactory, SoftDeletes, UUID;
-      use \OwenIt\Auditing\Auditable;
 
     protected $keyType = 'string';
     public $incrementing = false;

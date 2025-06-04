@@ -6,12 +6,10 @@ use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class TrainingParticipant extends Model implements Auditable
+class TrainingParticipant extends Model
 {
     use HasFactory, SoftDeletes, UUID;
-    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'lname', 'fname', 'mname', 'ext_name', 'email',

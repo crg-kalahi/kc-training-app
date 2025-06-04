@@ -11,10 +11,6 @@ deploy_job:
     - cd /opt/apps/train
     - git reset --hard
     - git pull origin staging
-
-    # Install Composer dependencies
-    - composer install
-    - php artisan migrate
     
     # Clear caches and optimize
     - php artisan optimize
