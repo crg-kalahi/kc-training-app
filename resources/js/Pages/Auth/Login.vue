@@ -124,14 +124,6 @@ const submit = async () => {
                                 </button>
                             </div>
 
-                             <!-- Register Button -->
-                            <div class="text-center">
-                                <p class="text-base text-gray-600">Don’t have an account? 
-                                    <Link href="/register" class="font-medium text-blue-600 transition-all duration-200 hover:text-blue-700 hover:underline">
-                                        Register
-                                    </Link>
-                                </p>
-                            </div>
 
                             <!-- <div class="text-center">
                                 <p class="text-base text-gray-600">Don’t have an account? <a href="#" title="" class="font-medium text-orange-500 transition-all duration-200 hover:text-orange-600 hover:underline">Create a free account</a></p>
