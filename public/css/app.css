@@ -2912,11 +2912,11 @@ details.collapse summary::-webkit-details-marker {
   top: 0px;
   bottom: 0px;
 }
-.-top-10 {
-  top: -2.5rem;
-}
 .bottom-0 {
   bottom: 0px;
+}
+.bottom-28 {
+  bottom: 7rem;
 }
 .bottom-4 {
   bottom: 1rem;
@@ -3020,6 +3020,9 @@ details.collapse summary::-webkit-details-marker {
 .my-auto {
   margin-top: auto;
   margin-bottom: auto;
+}
+.-mb-3 {
+  margin-bottom: -0.75rem;
 }
 .-ml-0\.5 {
   margin-left: -0.125rem;

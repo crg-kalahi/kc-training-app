@@ -66,9 +66,10 @@
             <div></div>
 
               <!-- Certificate Content -->
-              <div class=" mt-6 mb-10 space-y-4">
+              <div class=" mt-6 space-y-4">
                 <h1 class="text-5xl font-bold font-montserrat">Certificate of Participation</h1>
-                  <h2 class="text-5xl text-red-600 font-bold font-poppins tracking-wide leading-tight uppercase">
+                <br>
+                <h2 class="text-4xl text-red-600 font-bold font-poppins tracking-wide leading-tight uppercase">
                   {{ data.fullname }}
                 </h2>
                 
@@ -83,11 +84,11 @@
           </div>
 
         <!-- Signature Section -->
-        <div class="text-center mt-16 relative">
-          <img src="/storage/images/e-sig.png" alt="Signature" class="h-16 mx-auto mb-2 absolute -top-10 left-1/2 transform -translate-x-1/2" />
-          <p class="font-bold">MARI-FLOR A. DOLLAGA-LIBANG</p>
-          <p class="text-sm">Regional Director</p>
-        </div>
+      <div class="absolute bottom-28 left-1/2 transform -translate-x-1/2 text-center">
+        <img src="/storage/images/e-sig.png" alt="Signature" class="h-16 mx-auto -mb-3" />
+        <p class="font-bold">MARI-FLOR A. DOLLAGA-LIBANG</p>
+        <p class="text-sm">Regional Director</p>
+      </div>
 
         <!-- Footer -->
         <div class="absolute bottom-6 right-6">
