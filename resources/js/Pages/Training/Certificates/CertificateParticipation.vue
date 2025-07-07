@@ -5,12 +5,11 @@
        <div
         class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
       >
-        <!-- Card Container -->
         <div class="bg-white p-6 rounded-lg shadow-lg text-center w-96">
           <p  v-if="remainingDays > 0" class="text-gray-800 text-2xl mb-4 font-medium">🎉 Hey there, don't miss out!</p>
           <p  v-if="remainingDays > 0" class="text-gray-600 text-lg mb-6">You can download your certificate now.</p>
   
-          <!-- New Greeting Message -->
+
           <p  v-if="remainingDays > 0" class="text-gray-800 text-lg mt-4 font-medium">Greetings from the DSWD Capacity Building Section!</p>
           
           <button
@@ -67,13 +66,16 @@
             <div></div>
 
               <!-- Certificate Content -->
-              <div class="text-left mt-6 mb-10 space-y-4">
+              <div class=" mt-6 mb-10 space-y-4">
                 <h1 class="text-5xl font-bold font-montserrat">Certificate of Participation</h1>
-                <h2 class="text-5xl text-red-600 font-bold font-monotype tracking-wide leading-tight">{{ data.fullname }}</h2>
-                <p class="text-lg max-w-3xl">
-                  for having successfully participated during the <b>{{ data.title }}</b>,
+                  <h2 class="text-5xl text-red-600 font-bold font-poppins tracking-wide leading-tight uppercase">
+                  {{ data.fullname }}
+                </h2>
+                
+                <p class="text-lg max-w-3xl font-poppins">
+                  for having successfully participated during the <b>{{ data.title }}</b>, 
                   held on {{ training_date }} at <b>{{ data.venue }}</b>.<br><br>
-                  Given this <b>{{ training_end_date }}</b>.
+                  Given on <b>{{ training_end_date }}</b>.
                 </p>
               </div>
             </div>
@@ -89,13 +91,7 @@
 
         <!-- Footer -->
         <div class="absolute bottom-6 right-6">
-          <img src="/storage/images/insignia.jpg" alt="ISO Logo" class="h-12" />
-        </div>
-
-        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-[10px] text-gray-500">
-          <div class="flex items-center justify-center gap-2">
-            <span>DSWD TRAIN | {{ training_id_enc }}</span>
-            <QRCodeVue3
+               <QRCodeVue3
              :value="route('cert.verify', {token: training_id_enc, fullname: data.fullname })"
               :dotsOptions="{
                 type: 'extra-rounded',
@@ -104,6 +100,12 @@
               :height="100"
               :width="100"
             />
+        </div>
+
+        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-[10px] text-gray-500">
+          <div class="flex items-center justify-center gap-2">
+            <span>DSWD TRAIN | {{ training_id_enc }}</span>
+       
           </div>
         </div>
 

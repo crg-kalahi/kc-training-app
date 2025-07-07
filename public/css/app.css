@@ -4270,6 +4270,9 @@ details.collapse summary::-webkit-details-marker {
 .font-montserrat {
   font-family: Montserrat, sans-serif;
 }
+.font-poppins {
+  font-family: Poppins, sans-serif;
+}
 .font-sans {
   font-family: Nunito, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }

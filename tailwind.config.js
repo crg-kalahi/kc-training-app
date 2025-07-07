@@ -14,6 +14,7 @@ module.exports = {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
                 montserrat: ['Montserrat', 'sans-serif'],
                 monotype: ['"Monotype Corsiva"', 'cursive'],
+                poppins: ['Poppins', 'sans-serif'],
             },
         },
     },
