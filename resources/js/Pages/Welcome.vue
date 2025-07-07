@@ -4,8 +4,8 @@
     <header class="w-4/5 p-10 flex justify-between items-center">
   <!-- Logo and Title -->
   <div class="flex items-center space-x-4">
-    <img src="images/trainlogo1.png" alt="T.R.A.I.N Logo" class="h-10 w-10 object-contain">
-    <h1 class="text-3xl font-bold">T.R.A.I.N</h1>
+    <img src="images/trainlogo1.png" alt="TRAIN-ABCD Logo" class="h-10 w-10 object-contain">
+    <h1 class="text-3xl font-bold">TRAIN-ABCD</h1>
   </div>
 
   <!-- Navigation -->
@@ -18,7 +18,7 @@
 </header>
   
       <main class="flex-1 flex flex-col justify-center items-center text-center p-10" >
-        <h2 class="text-5xl font-extrabold mb-4">Training Resources and Information Network</h2>
+        <h2 class="text-5xl font-extrabold mb-4">Training Resources and Information Network  <br>for Adaptive Capacity Building in Community Development</h2>
         <p class="text-xl max-w-2xl mb-6">
           Training Management Application aimed at streamlining and optimizing capacity-building process.
         </p>
@@ -236,14 +236,20 @@
                <div class="flex flex-col items-center">
                 <img src="/images/teams/michael.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
                 <h4 class="text-xl font-semibold">Michael P. Beray</h4>
-                <p class="text-gray-600">ITO II</p>
+                <p class="text-gray-600">ITO II, Server Admin</p>
+            </div>
+
+                     <div class="flex flex-col items-center">
+                <img src="/images/teams/symon.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
+                <h4 class="text-xl font-semibold">Symon Jay Concon</h4>
+                <p class="text-gray-600">ITO I, Database Admin</p>
             </div>
 
                  <!-- User 3 -->
                <div class="flex flex-col items-center">
                 <img src="/images/teams/juls.jpg" alt="User 3" class="w-24 h-24 rounded-full mb-4 object-cover">
                 <h4 class="text-xl font-semibold">Julieto Ompad</h4>
-                <p class="text-gray-600">ITO I</p>
+                <p class="text-gray-600">ITO I, PM</p>
             </div>
 
                  <!-- User 3 -->
