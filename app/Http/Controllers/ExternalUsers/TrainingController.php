@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class TrainingController extends Controller
 {
     public function Index(){
+     
 
         $training = TrainingParticipant::with('training')
         ->where('email', auth()->user()->email)
@@ -33,9 +34,23 @@ class TrainingController extends Controller
 
             return $participant;
         });
-        return Inertia::render('Guest/Training', [
-            'training' => $training
-        ]);
+
+
+        $user = auth()->user();
+
+        // Redirect if the user does not have the "guest" role
+        if (!$user->hasRole('guest')) {
+       
+            return Inertia::render('Training/Me/Training', [
+                'training' => $training
+            ]);
+        }else{
+                 return Inertia::render('Guest/Training', [
+                'training' => $training
+            ]);
+        }
+
+     
     }
 
     public function StoreTrainingCertificateRequest(Request $request){

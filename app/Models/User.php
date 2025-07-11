@@ -27,6 +27,12 @@ class User extends Authenticatable
         'id_number',
         'email',
         'password',
+        'username',
+        'division',
+        'section',
+        'mobile_no',
+        'google2fa_secret',
+        'mfa_enabled',
     ];
 
     /**

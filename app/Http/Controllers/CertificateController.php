@@ -6,6 +6,8 @@ use App\Models\Training;
 use Barryvdh\DomPDF\Facade\Pdf;
 use DateTime;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Crypt;
 
 class CertificateController extends Controller
 {
@@ -16,9 +18,9 @@ class CertificateController extends Controller
         $currentDateTime = new DateTime();
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        if($currentDateTime >= $givenDateTime){
-            abort(403, "Training was already finished and can't evaluate today.");
-        }
+        // if($currentDateTime >= $givenDateTime){
+        //     abort(403, "Training was already finished and can't evaluate today.");
+        // }
         
         $mname = $request->m_name ? " ".$request->m_name[0]."." : "";
         $extname = $request->ext_name ? ", ".$request->ext_name:"";
@@ -115,5 +117,62 @@ class CertificateController extends Controller
         $pdf = PDF::loadHtml($html)
         ->setPaper('a4', 'landscape');
         return $pdf->download('certificate-of-participation.pdf');
+    }
+
+    public function generate(Request $request){
+        $training = Training::findOrFail($request->training_id);
+
+        $givenDateTime = new DateTime($training->date_to);
+        $currentDateTime = new DateTime();
+        $givenDateTime->setTime(0, 0, 0);
+        $currentDateTime->setTime(0, 0, 0);
+        // if($currentDateTime >= $givenDateTime){
+        //     abort(403, "Training was already finished and can't evaluate today.");
+        // }
+        
+        $mname = $request->m_name ? " ".$request->m_name[0]."." : "";
+        $extname = $request->ext_name ? ", ".$request->ext_name:"";
+        $fullname = $request->f_name.$mname." ".$request->l_name.$extname;
+
+        $title = $training->title;
+        $venue = $training->venue;
+        
+        $data = [
+            'fullname' => $fullname,
+            'title' => $title,
+            'venue' => $venue,
+        ];
+
+        $end_date_raw = "";
+        if(strcmp($training->date_from, $training->date_to) == 0){
+            $d_from = new DateTime($training->date_from);
+            $d_to = new DateTime($training->date_from);
+            $date = $d_from->format('F d, Y');
+            $end_date_raw = $training->date_from;
+        }else{
+            $d_from = new DateTime($training->date_from);
+            $d_to = new DateTime($training->date_to);
+            $date = $d_from->format('F d, Y')." - ".$d_to->format('F d, Y');
+            $end_date_raw = $training->date_to;
+        }
+        
+        $encrypted = Crypt::encryptString($training->id . $fullname);
+        $short = substr(base64_encode($encrypted), 0, 24);
+
+        return Inertia::render('Training/Certificates/CertificateParticipation', [
+            'data' => $data,
+            'date' => $date,
+            'end_date' => $d_to->format('jS')." day of ".$d_to->format('F, Y'),
+            'end_date_raw' => date('Y-m-d', strtotime($end_date_raw)),
+            'training_id_enc' =>  strtoupper($request->training_id)
+        ]);
+    }
+
+
+    public function verify($token,$fullname){
+        return Inertia::render('Training/Certificates/Verification', [
+            'token' => $token,
+            'fullname' => urldecode($fullname), // decode in case it's URL encoded
+        ]);
     }
 }

@@ -6,6 +6,9 @@ import BreezeLabel from '@/Components/Label.vue';
 import BreezeApplicationLogo from '@/Components/ApplicationLogo.vue';
 import BreezeValidationErrors from '@/Components/ValidationErrors.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import { VueReCaptcha, useReCaptcha } from 'vue-recaptcha-v3'
+
+const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
 defineProps({
     canResetPassword: Boolean,
@@ -13,67 +16,48 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
+    username: '',
     password: '',
-    remember: false
+    remember: false,
+    recaptcha_token: '', 
 });
 
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
+// const submit = () => {
+//     form.post(route('login'), {
+//         onFinish: () => form.reset('password'),
+//     });
+// };
+
+
+const submit = async () => {
+    try {
+        await recaptchaLoaded();
+        form.recaptcha_token = await executeRecaptcha('login');
+
+        if (!form.recaptcha_token) {
+            alert('ReCAPTCHA verification failed. Please try again.');
+            return;
+        }
+
+        form.post(route('login'), {
+            onFinish: () => form.reset('password'),
+        });
+    } catch (error) {
+        console.error('reCAPTCHA error:', error);
+        alert('Failed to execute reCAPTCHA. Please check your network and try again.');
+    }
 };
 </script>
 
 <template>
-
-    <!-- <div class="flex">
-        <div class="hidden md:block grow h-screen"></div>
-        <div class="w-screen md:w-1/3 px-10 py-16">
-
-            <BreezeApplicationLogo class="w-20 h-20 fill-current text-gray-500 mx-auto"/>
-            <BreezeValidationErrors class="mb-4" />
-
-            <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-                {{ status }}
-            </div>
-
-            <form @submit.prevent="submit">
-                <div>
-                    <BreezeLabel for="email" value="Email" />
-                    <BreezeInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus autocomplete="username" />
-                </div>
-
-                <div class="mt-4">
-                    <BreezeLabel for="password" value="Password" />
-                    <BreezeInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" />
-                </div>
-
-                <div class="block mt-4">
-                    <label class="flex items-center">
-                        <BreezeCheckbox name="remember" v-model:checked="form.remember" />
-                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                    </label>
-                </div>
-
-                <div class="flex items-center justify-end mt-4">
-                    <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
-                        Forgot your password?
-                    </Link>
-
-                    <BreezeButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                        Log in
-                    </BreezeButton>
-                </div>
-            </form>
-        </div>
-    </div> -->
+    
 
     <section class="py-10 bg-gray-50 h-screen">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="max-w-2xl mx-auto text-center">
             <div >
-                <img src="/images/train-logo2.png" alt="T.R.A.I.N Logo" class="inline-block w-28 h-28 rounded-full" />
+                <!-- <img src="/images/train-logo2.png" alt="T.R.A.I.N Logo" class="inline-block w-28 h-28 rounded-full" /> -->
+                <img src="images/trainlogo1.png" alt="T.R.A.I.N Logo" class="h-28 w-28 inline-block">
             </div>
             <h2 class="text-3xl font-bold leading-tight text-black sm:text-1xl lg:text-2xl">Training Resources and Information Network </h2>
             <p class="max-w-xl mx-auto mt-4 text-base leading-relaxed text-gray-600">Login to your account</p>
@@ -86,7 +70,7 @@ const submit = () => {
                     <form @submit.prevent="submit">
                         <div class="space-y-5">
                             <div>
-                                <label for="" class="text-base font-medium text-gray-900"> Email address </label>
+                                <label for="" class="text-base font-medium text-gray-900"> Username </label>
                                 <div class="mt-2.5 relative text-gray-400 focus-within:text-gray-600">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -95,11 +79,11 @@ const submit = () => {
                                     </div>
 
                                     <input
-                                        type="email"
+                                        type="username"
                                         name=""
                                         id=""
-                                        v-model="form.email" required autofocus autocomplete="username"
-                                        placeholder="Enter email to get started"
+                                        v-model="form.username" required autofocus autocomplete="username"
+                                        placeholder="Enter username to get started"
                                         class="block w-full py-4 pl-10 pr-4 text-black placeholder-gray-500 transition-all duration-200 bg-white border border-gray-200 rounded-md focus:outline-none focus:border-blue-600 caret-blue-600"
                                     />
                                 </div>
@@ -140,14 +124,6 @@ const submit = () => {
                                 </button>
                             </div>
 
-                             <!-- Register Button -->
-                            <div class="text-center">
-                                <p class="text-base text-gray-600">Don’t have an account? 
-                                    <Link href="/register" class="font-medium text-blue-600 transition-all duration-200 hover:text-blue-700 hover:underline">
-                                        Register
-                                    </Link>
-                                </p>
-                            </div>
 
                             <!-- <div class="text-center">
                                 <p class="text-base text-gray-600">Don’t have an account? <a href="#" title="" class="font-medium text-orange-500 transition-all duration-200 hover:text-orange-600 hover:underline">Create a free account</a></p>

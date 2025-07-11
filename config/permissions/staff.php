@@ -5,7 +5,4 @@ return [
     'Training' => [
         'Manage',
     ],
-    'User' => [
-        'Manage'
-    ]
 ];

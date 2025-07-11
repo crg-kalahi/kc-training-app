@@ -18,7 +18,7 @@
         "@vue/compiler-sfc": "^3.2.31",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
-        "axios": "^0.21",
+        "axios": "^1.9.0",
         "daisyui": "^3.2.1",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
@@ -35,8 +35,10 @@
         "@heroicons/vue": "^2.0.16",
         "chart.js": "^3.9.1",
         "helper-js": "^3.1.5",
+        "html2canvas": "^1.4.1",
         "qalendar": "^3.8.1",
         "qrcode-vue3": "^1.4.17",
-        "vue-chart-3": "^3.1.8"
+        "vue-chart-3": "^3.1.8",
+        "vue-recaptcha-v3": "^2.0.1"
     }
 }

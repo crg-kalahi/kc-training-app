@@ -10,9 +10,10 @@ import moment from 'moment'
 import { useForm } from '@inertiajs/inertia-vue3'
 import KeyTrainingEdit from './EditComponents/KeyTrainingEdit.vue';
 import ResourcePerson from './EditComponents/ResourcePerson.vue';
+import FilesRepository from './EditComponents/FilesRepository.vue';
 import { ArrowUpRightIcon } from '@heroicons/vue/24/outline';
 export default {
-    props: ["training", "users", "listTraining", "listLearning", "listKeyResourcePerson"],
+    props: ["training", "training_id_selected", "attachments", "users", "listTraining", "listLearning", "listKeyResourcePerson"],
     methods: {
         moment,
     },
@@ -224,7 +225,6 @@ export default {
       <div class="border-t border-gray-200" />
     </div>
   </div>
-
   <div class="mt-10 sm:mt-0 px-6">
     <div class="md:grid md:grid-cols-3 md:gap-6">
       <div class="md:col-span-3">
@@ -259,6 +259,26 @@ export default {
       </div>
     </div>
   </div>
+
+  <div class="hidden sm:block" aria-hidden="true">
+    <div class="py-5">
+      <div class="border-t border-gray-200" />
+    </div>
+  </div>
+  <div class="mt-10 sm:mt-0 px-6">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-3">
+        <div class="px-4 sm:px-0">
+          <h3 class="text-base font-semibold leading-6 text-gray-900">Attachments (File Repository)</h3>
+          <p class="mt-1 text-sm text-gray-600">This will be the list of presentation, files, pictures, etc in the event</p>
+        </div>
+      </div>
+      <div class="mt-5 md:col-span-3 md:mt-0">
+        <FilesRepository :attachments="attachments" :training_id="training_id_selected"/>
+      </div>
+    </div>
+  </div>
+
 
   </BreezeAuthenticatedLayout>
 </template>

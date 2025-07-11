@@ -12,6 +12,8 @@
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
+        <script src="https://www.google.com/recaptcha/api.js?render=6Le4eCIrAAAAAO79bOS0X-L4JvzjqxGh8IWTLbOW"></script>
+
         <!-- Scripts -->
         @routes
         <script src="{{ mix('js/app.js') }}" defer></script>
@@ -20,8 +22,5 @@
     <body class="font-sans antialiased h-full">
         @inertia
 
-        @env ('local')
-            <script src="http://localhost:8080/js/bundle.js"></script>
-        @endenv
     </body>
 </html>

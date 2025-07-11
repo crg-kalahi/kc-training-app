@@ -5,7 +5,7 @@ import Modal from '@/Components/Modal.vue';
 import DangerAlertDialog from '@/Components/DangerAlertDialog.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import moment from 'moment'
-import { QrCodeIcon, EyeIcon, DocumentArrowDownIcon, DocumentTextIcon, PaperAirplaneIcon  } from '@heroicons/vue/24/outline';
+import { QrCodeIcon, EyeIcon, DocumentArrowDownIcon, DocumentTextIcon, PaperAirplaneIcon, CheckCircleIcon, XCircleIcon  } from '@heroicons/vue/24/outline';
 import { StarIcon, ChevronDownIcon  } from '@heroicons/vue/20/solid';
 import { CheckIcon, ChevronUpDownIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
@@ -90,6 +90,8 @@ import {
     mounted(){
       this.form.training_id = this.training.id
       this.getParticipantList()
+
+      console.log(this.people);
     },
     methods:{
       proceedToExcel(){
@@ -243,6 +245,7 @@ import {
               <table class="min-w-full divide-y divide-gray-300">
                 <thead class="bg-gray-50">
                   <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Evaluated?</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Munis</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Brgy</th>
@@ -263,6 +266,16 @@ import {
                 </thead>
                 <tbody class="bg-white">
                   <tr v-for="(person, personIdx) in filteredPeople" :key="person.email" :class="personIdx % 2 === 0 ? undefined : 'bg-gray-50'">
+                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                      <template v-if="person.has_evaluated">
+                        <!-- Heroicon: Check -->
+                        <CheckCircleIcon class="h-5 w-5 text-green-500" />
+                      </template>
+                      <template v-else>
+                        <!-- Heroicon: X -->
+                        <XCircleIcon class="h-5 w-5 text-gray-300" />
+                      </template>
+                    </td>
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">{{ person.full_name }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">
                       <input class="w-28 px-0 py-0" @change="configItem(person, 'changeTest')" v-model="person.municipality"/>

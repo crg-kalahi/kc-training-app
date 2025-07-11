@@ -15,10 +15,12 @@ use App\Models\EvaluationKeyResourcePerson;
 use App\Models\EvaluationTraining;
 use App\Models\EventFacilitator;
 use App\Models\Training;
+use App\Models\Attachments;
 use App\Models\TrainingResourcePerson;
 use App\Models\User;
 use App\Notifications\SendEmail as NotificationsSendEmail;
 use App\Notifications\SendEmailRPResult as NotificationsSendEmailRP;
+use App\Notifications\SendEmailEvaluation as NotificationSendEmailEvaluation;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,23 +32,60 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\RequestCertificate;
+use App\Models\TrainingParticipant;
 
 class TrainingController extends Controller
 {
-   
-    public function PublicEvaluationForm($id){
+
+
+    public function PublicEvaluationFormSecured($id,$participant_id){
         $item = Training::where('id', $id)->firstOrFail();
 
         $givenDateTime = new DateTime($item->date_to);
-        $currentDateTime = new DateTime();
-
-    
         $givenDateTime->setTime(0, 0, 0);
+
+        $cutoffDate = clone $givenDateTime;
+        $cutoffDate->modify('+5 days');
+
+        $currentDateTime = new DateTime();
         $currentDateTime->setTime(0, 0, 0);
 
-        if($currentDateTime >= $givenDateTime){
-            abort(403, "Training was already finished and can't evaluate today.");
+        if ($currentDateTime > $cutoffDate) {
+            abort(403, "Training was already finished on {$givenDateTime->format('F j, Y')} (5 days ago) and can't be evaluated today.");
         }
+
+        $participant = TrainingParticipant::where('training_id', $id)->where('id', $participant_id)->first();
+
+        return Inertia::render('Training/EvaluationPublicSecured', [
+            'participant' => $participant,
+            'training' => $item,
+            'officeRep' => OfficeRepresentative::get(),
+            'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyRP' => KeyResourcePerson::whereIn('id', explode(',', $item->key_rp))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'keyLearning' => Learning::whereIn('id', explode(',', $item->key_learnings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
+            'resourcePerson' => $item->resourcePersons,
+        ]);
+    }
+   
+   public function PublicEvaluationForm($id)
+    {
+
+        abort(403, "This is a secured evaluation form. Please use the link provided in the email to access it.");
+        $item = Training::where('id', $id)->firstOrFail();
+
+        $givenDateTime = new DateTime($item->date_to);
+        $givenDateTime->setTime(0, 0, 0);
+
+        $cutoffDate = clone $givenDateTime;
+        $cutoffDate->modify('+5 days');
+
+        $currentDateTime = new DateTime();
+        $currentDateTime->setTime(0, 0, 0);
+
+        if ($currentDateTime > $cutoffDate) {
+            abort(403, "Training was already finished on {$givenDateTime->format('F j, Y')} (5 days ago) and can't be evaluated today.");
+        }
+
         return Inertia::render('Training/EvaluationPublic', [
             'training' => $item,
             'officeRep' => OfficeRepresentative::get(),
@@ -56,6 +95,7 @@ class TrainingController extends Controller
             'resourcePerson' => $item->resourcePersons,
         ]);
     }
+
 
     public function PublicEvaluationFormStore(Request $request){
         $request->validate([
@@ -72,14 +112,25 @@ class TrainingController extends Controller
         $currentDateTime = new DateTime();
         $givenDateTime->setTime(0, 0, 0);
         $currentDateTime->setTime(0, 0, 0);
-        if($currentDateTime >= $givenDateTime){
-            abort(403, "Training was already finished and can't evaluate today.");
+
+        // if($currentDateTime >= $givenDateTime){
+        //     abort(403, "Training was already finished and can't evaluate today.");
+        // }
+
+          // Check if this participant already evaluated this training
+        $existing = EvaluationTraining::where('training_id', $request->training_id)
+            ->where('participants_id', $request->participant_id)
+            ->exists();
+
+        if ($existing) {
+            abort(403, "You have already submitted an evaluation for this training.");
         }
 
         $eval = EvaluationTraining::create([
             'training_id' => $request->training_id,
             'sex' => $request->sex,
             'office_rep_id' => $request->office_rep,
+            'participants_id' => $request->participant_id,
         ]);
 
         $keyTraining = [];
@@ -121,7 +172,7 @@ class TrainingController extends Controller
             'body' => 'This is the certificate of participation on '. $training->title,
             'thanks' => 'Thank you this is from Capacity Building Web Application',
             'actionText' => 'Download Certificate',
-            'actionURL' => route('public.cert.participant', [
+            'actionURL' => route('public.cert.generate', [
                 'l_name' => $request->l_name,
                 'f_name' => $request->f_name,
                 'm_name' => $request->m_name,
@@ -143,11 +194,42 @@ class TrainingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $certificateRequestsCount = RequestCertificate::where('is_approve',0)->count();
-        $pagination = Training::with('facilitators')->orderBy('date_from', 'desc')->paginate(20);
-        return Inertia::render('Training/Index', ['pagination' => $pagination, 'certificateRequestsCount'=>$certificateRequestsCount]);
+        $user = Auth::user();
+        $search = $request->input('search');
+
+        $certificateRequestsCount = RequestCertificate::where('is_approve', 0)->count();
+
+        $query = Training::with('facilitators')
+            ->withCount('participants') // Add participants count here
+            ->orderBy('date_from', 'desc');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('venue', 'like', "%{$search}%");
+            });
+        }
+
+        if (!$user->hasRole('staff-admin')) {
+            $query->where(function ($q) use ($user) {
+                $q->where('encoded_by', $user->id)
+                ->orWhereHas('facilitators', function ($fq) use ($user) {
+                    $fq->where('user_id', $user->id);
+                });
+            });
+        }
+
+        $pagination = $query->paginate(10)->withQueryString();
+
+        return Inertia::render('Training/Index', [
+            'pagination' => $pagination,
+            'certificateRequestsCount' => $certificateRequestsCount,
+            'filters' => [
+                'search' => $search,
+            ]
+        ]);
     }
 
     /**
@@ -216,9 +298,15 @@ class TrainingController extends Controller
         $training->load('facilitators_');
         $training->load('resourcePersons');
         $users = User::get();
+        $attachments = Attachments::where('training_id', $training->id)->get();
+        // var_dump($attachments);
+        // die();
+        
         return Inertia::render('Training/Edit', 
             [   'training' => $training,
+                'training_id_selected' => $training->id,
                 'users' => $users,
+                'attachments' => $attachments,
                 'listTraining' => KeyTraining::get(),
                 'listLearning' => Learning::get(),
                 'listKeyResourcePerson' => KeyResourcePerson::get(), 
@@ -368,6 +456,7 @@ class TrainingController extends Controller
         $item = Training::where('id', $id)->firstOrFail();
         return Inertia::render('Training/Participants', ['training' => $item, 'people' => $item->participants]);
     }
+
     public function GetEvaluations($id){
         $item = Training::where('id', $id)->firstOrFail();
         $participants = collect($item->evaluations);
@@ -376,6 +465,7 @@ class TrainingController extends Controller
                 return $key->sex != '0' && $key->sex == 'male' ? true : false;
             }));
         $eval = $item->evaluations;
+
         // $item->load('evaluation_status')
         return Inertia::render('Training/Evaluations', ['training' => $item,
             'officeRep' => OfficeRepresentative::get(),
@@ -387,6 +477,7 @@ class TrainingController extends Controller
             'totalFemale' => abs($totalMale - count($eval->filter(function($key){ return $key->sex != '0'; }))),
             'totalPreferNotToSay' => count($participants->filter(function($key){ return $key->sex == '0'; })),
             'overallRating' => $item->evaluation_status,
+            'notEvaluated' =>$item->participants->count() - ($totalMale +  abs($totalMale - count($eval->filter(function($key){ return $key->sex != '0'; }))) + count($participants->filter(function($key){ return $key->sex == '0'; }))),
         ]);
     }
 
@@ -529,10 +620,6 @@ class TrainingController extends Controller
     }
 
     public function SendRPRating(Request $request){
-
-
-        
-
 
         try {
             $results = DB::select('SELECT
@@ -681,4 +768,32 @@ class TrainingController extends Controller
 
         return Inertia::location(route('training.certificate-request'));
     }
+
+    public function SendEvaluation(Request $request)
+    {
+        $training_id = $request->training_id;
+
+        // Get all participants for this training, including their first name and email
+        $participants = TrainingParticipant::where('training_id', $training_id)->get();
+
+     
+
+        foreach ($participants as $participant) {
+            $url = url("/training/{$training_id}/evaluation-response/{$participant->id}/public");
+            $project = [
+                'greeting' => 'Hi ' . $participant->fname . ',',
+                'body' => 'We value your feedback! Please take a moment to complete the evaluation for the training titled "' . $participant->training->title . '". Your insights will help us improve future learning sessions.',
+                'thanks' => 'Thank you, this is from Capacity Building Web Application',
+                'actionText' => 'Open Evaluation',
+                'actionURL' => $url,
+            ];
+
+            // Send notification to each participant
+            Notification::route('mail', $participant->email)
+                ->notify(new \App\Notifications\SendEmailEvaluation($project));
+        }
+
+        return response()->json(['message' => 'Evaluation emails sent successfully']);
+    }
+    
 }

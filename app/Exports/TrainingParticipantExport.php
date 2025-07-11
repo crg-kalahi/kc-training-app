@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\TrainingParticipant;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -10,27 +10,24 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class TrainingParticipantExport implements FromQuery, WithHeadings, WithMapping
 {
     private $id;
-    
+
     public function __construct(string $trainingId)
     {
         $this->id = $trainingId;
     }
-    
-    /**
-    * @return \Illuminate\Support\Collection
-    */
+
     public function query()
     {
-        return DB::table('training_participants')
-            ->select('lname', 'fname', 'mname', 'ext_name', 'pre_test', 'post_test', 'position', 'is_female', 'is_internal', 'email', 'municipality', 'brgy')
+        return TrainingParticipant::query()
             ->where('training_id', $this->id)
             ->whereNull('deleted_at')
-            ->orderBy('lname'); 
+            ->orderBy('lname');
     }
 
     public function headings(): array
     {
         return [
+            'has_evaluated',
             'Last Name',
             'First Name',
             'Middle Name',
@@ -38,29 +35,30 @@ class TrainingParticipantExport implements FromQuery, WithHeadings, WithMapping
             'Municipality',
             'Barangay',
             'Position',
-            'email',
+            'Email',
             'Pre-Test',
             'Post-Test',
             'SEX',
-            'is Internal',
+            'Is Internal',
         ];
     }
 
-    public function map($row): array
+    public function map($participant): array
     {
         return [
-            strtoupper($row->lname),
-            strtoupper($row->fname),
-            $row->mname ? strtoupper($row->mname) : "",
-            $row->ext_name,
-            $row->municipality,
-            $row->brgy,
-            $row->position,
-            $row->email,
-            $row->pre_test,
-            $row->post_test,
-            $row->is_female ? 'Female' : 'Male',
-            $row->is_internal ? 'Internal' : 'External'
+            $participant->has_evaluated ? 'Yes' : 'No',
+            strtoupper($participant->lname),
+            strtoupper($participant->fname),
+            $participant->mname ? strtoupper($participant->mname) : "",
+            $participant->ext_name,
+            $participant->municipality,
+            $participant->brgy,
+            $participant->position,
+            $participant->email,
+            $participant->pre_test,
+            $participant->post_test,
+            $participant->is_female ? 'Female' : 'Male',
+            $participant->is_internal ? 'Internal' : 'External',
         ];
     }
 }

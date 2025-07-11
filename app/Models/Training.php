@@ -48,42 +48,53 @@ class Training extends Model
 
     protected $appends = ['evaluation_status'];
 
-    public function getEvaluationStatusAttribute(){
+    public function getEvaluationStatusAttribute()
+    {
         $eval = $this->evaluations;
-        $trainingKeyId = explode(",",$this->key_trainings);
-        $keyAreas = $this->evaluationKeyTrainings;
-        $status = ['Poor', 'Fair', 'Satisfactory', 'V-Satisfactory', 'Excellent'];
-        $evaluationStats = [1,2,3,4,5];
-        
-        $arrAve = [];
-        if(count($eval)){
-            foreach($trainingKeyId as $key){
-                $filt_by_area = collect($keyAreas)->filter(function($obj) use ($key){
-                    return $obj['area_training_id'] == $key;
-                });
-                $totalCountParticipant = 0;
-                $totalCountParticipantStat = 0;
-                $arr = [0,0,0,0,0];
-                foreach($evaluationStats as $index => $stat){
-                    $filterByStat = $filt_by_area->filter(function($obj) use ($stat){
-                        return $obj['stat'] == $stat;
-                    });
-                    $count = collect(count($filterByStat))->reduce(function($t, $c){ return $t+$c;}, 0);
-                    $totalCountParticipant += $count;
-                    $totalCountParticipantStat += $count * $stat;
-                    $arr[$index] = $totalCountParticipant ? $totalCountParticipantStat / $totalCountParticipant : 0;
-                }
-                $arrAve[] = collect($arr)->max();
-                // Log::info($arr);
-            }
+        if (!count($eval)) {
+            return 'Not Yet Evaluated';
         }
-        // Log::info($arrAve);
-        $avg = collect( $arrAve )->avg();
-        if($avg <= 1.49) return 'Poor';
-        if($avg <= 2.49) return 'Fair';
-        if($avg <= 3.49) return 'Satisfactory';
-        if($avg <= 4.49) return 'Very Satisfactory';
-        if($avg <= 5.00) return 'Outstanding';
+
+        $trainingKeyId = explode(",", $this->key_trainings);
+        $keyAreas = $this->evaluationKeyTrainings;
+        $status = ['Poor', 'Fair', 'Satisfactory', 'Very Satisfactory', 'Outstanding'];
+        $evaluationStats = [1, 2, 3, 4, 5];
+
+        $arrAve = [];
+        foreach ($trainingKeyId as $key) {
+            $filt_by_area = collect($keyAreas)->filter(function ($obj) use ($key) {
+                return $obj['area_training_id'] == $key;
+            });
+
+            $totalCountParticipant = 0;
+            $totalCountParticipantStat = 0;
+            $arr = [0, 0, 0, 0, 0];
+
+            foreach ($evaluationStats as $index => $stat) {
+                $filterByStat = $filt_by_area->filter(function ($obj) use ($stat) {
+                    return $obj['stat'] == $stat;
+                });
+
+                // The count should be just the count of items
+                $count = $filterByStat->count();
+                $totalCountParticipant += $count;
+                $totalCountParticipantStat += $count * $stat;
+
+                // Avoid division by zero
+                $arr[$index] = $totalCountParticipant ? ($totalCountParticipantStat / $totalCountParticipant) : 0;
+            }
+
+            $arrAve[] = collect($arr)->max();
+        }
+
+        $avg = collect($arrAve)->avg();
+
+        if ($avg <= 1.49) return 'Poor';
+        if ($avg <= 2.49) return 'Fair';
+        if ($avg <= 3.49) return 'Satisfactory';
+        if ($avg <= 4.49) return 'Very Satisfactory';
+        if ($avg <= 5.00) return 'Outstanding';
+
         return 'No Evaluation';
     }
 

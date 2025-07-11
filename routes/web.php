@@ -9,9 +9,15 @@ use App\Http\Controllers\OfficeRepresentativeController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\AttachmentsController;
 use App\Http\Controllers\TrainingParticipantController;
 use App\Http\Controllers\TrainingParticipantRegistrationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PdfMailController;
+use App\Http\Controllers\OpenAIController;
+use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\ProfileController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +35,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return redirect('/login');
+    // return redirect('/login');
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -38,15 +44,34 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/test', function(){ return view('emails.cert_participation', [
-    'title' => 'test',
-    'fullname' => 'test',
-    'venue' => 'test',
-]); });
+
+Route::get('/test', function () {
+
+    // $ai = new OpenAIService();
+    // $res = $ai->generateChatResponse("hello?");
+
+    // var_dump($res);
+    // return Inertia::render('Test');
+    // return view('emails.test', [
+    //     'name' => 'Dioame Jade C. Rendon',
+    //     'training' => 'Community Volunteers Training on Project Implementation',
+    //     'date' => 'January 2–3, 2025',
+    //     'venue' => 'Almont Inland Resort, Butuan City',
+    //     'givenDate' => '3rd day of January 2025',
+    // ]);
+});
+
+Route::get('/test-send-pdf-email', [PdfMailController::class, 'send']);
+
+
 Route::get('/thank-you-response', function(){ return view('thanks'); })->name('thanks.response');
 Route::get('training/certificate/participation', [CertificateController::class, 'participation'])->name('public.cert.participant');
+Route::get('training/certificate/generate', [CertificateController::class, 'generate'])->name('public.cert.generate');
+
 Route::post('training/evaluation/public', [TrainingController::class, 'PublicEvaluationFormStore'])->name('public.training.evaluation.post');
 Route::get('training/{id}/evaluation-response/public', [TrainingController::class, 'PublicEvaluationForm'])->name('public.training.evaluation-response');
+
+Route::get('training/{id}/evaluation-response/{participant_id}/public/', [TrainingController::class, 'PublicEvaluationFormSecured'])->name('public.training.evaluation-response.secured');
 
 Route::get('training/{id}/participants/registration', [TrainingParticipantRegistrationController::class, 'index'])->name('training.participants.registration.index');
 Route::post('training/participants/register', [TrainingParticipantRegistrationController::class, 'register'])->name('training.participants.register');
@@ -54,11 +79,21 @@ Route::get('training/participants/register/sent', [TrainingParticipantRegistrati
 Route::get('training/{id}/participants/attendance', [TrainingParticipantController::class, 'attendance'])->name('training.participants.attendance.index');
 
 
+
+Route::get('/2fa/setup', [TwoFactorController::class, 'setup'])->name('mfa.setup');
+Route::post('/2fa/setup', [TwoFactorController::class, 'enable']);
+
+Route::get('/mfa', [TwoFactorController::class, 'showPrompt'])->name('mfa.prompt');
+Route::post('/mfa', [TwoFactorController::class, 'verify']);
+
+Route::get('/cert/verification/{token}/{fullname}', [CertificateController::class, 'verify'])->name('cert.verify');
+
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard')->middleware('check.external');
 
+
     // CAN MANAGE TRAINING
-    Route::group(['middleware' => ['permission:STAFF - Training - Manage']], function() {
+    Route::group(['middleware' => ['role:staff-admin|staff']], function() {
         Route::post('training/evaluation', [TrainingController::class, 'StoreEvaluation'])->name('training.evaluation.post');
         Route::put('training-facilitators', [TrainingController::class, 'facilitateFacilitator'])->name('training.facilitators');
         Route::put('training-key-factors/{id}', [TrainingController::class, 'UpdateKeyFactors'])->name('training.key_factors');
@@ -72,6 +107,8 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
         Route::put('evaluation-response/{id}/update', [TrainingController::class, 'UpdateEvaluationResponse'])->name('training.evaluation-response.update');
         Route::get('evaluation-response/{id}/show', [TrainingController::class, 'ShowEvaluationResponse'])->name('training.evaluation-response.show');
         Route::delete('evaluation-response/{id}/delete', [TrainingController::class, 'RemoveEvaluationResponse'])->name('training.evaluation-response.delete');
+        Route::post('training/evaluation/send', [TrainingController::class, 'SendEvaluation'])->name('training.evaluation.send');
+
         Route::get('training/{id}/export-report', [TrainingController::class, 'ExportTrainingReport'])->name('training.export-report');
         Route::get('training/{id}/export-participants', [TrainingController::class, 'ExportTrainingParticipants'])->name('training.export-participants');
         Route::get('training/{id}/preview-report', [TrainingController::class, 'PreviewTrainingReport'])->name('training.preview-report');
@@ -81,6 +118,11 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
 
         Route::apiResource('training-participant', TrainingParticipantController::class)->names('training.participant');
         Route::resource('training', TrainingController::class)->names('training');
+
+        // Attachments
+        Route::post('attachments-file', [AttachmentsController::class, 'storeUpdate'])->name('attachments.store-update');
+        Route::delete('attachments-file/remove', [AttachmentsController::class, 'removeAttachment'])->name('attachments.desctroy');
+        Route::resource('attachments', AttachmentsController::class)->names('attachments');
     
         Route::group(['prefix' => 'configuration', 'as' => 'conf.'], function(){
             Route::get('/', [ConfigurationsController::class, 'Index'])->name('index');
@@ -97,7 +139,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
     });
 
     // CAN USER MANAGE
-    Route::group(['middleware' => ['permission:STAFF - User - Manage']], function() {
+    Route::group(['middleware' => ['role:staff-admin']], function() {
 
         //Settings
         Route::group(['prefix' => 'settings'], function(){
@@ -107,10 +149,14 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
          //User management
         Route::group(['prefix' => 'user-management'], function(){
             Route::get('/', [UserManagementController::class, 'Index'])->name('user-management');
-            Route::post('/user-management/permissions', [UserManagementController::class, 'userManagementPermissions'])->name('user-management.permissions');
+            Route::post('/user-management/roles', [UserManagementController::class, 'userManagementRoles'])->name('user-management.roles');
         });
     });   
-    
+
+
+    Route::get('/openai/summarize', [OpenAIController::class, 'summarize'])->name('openai.summarize');
+    Route::get('/me/profile', ProfileController::class)->name('me.profile');
+    Route::post('/profile/mfa', [ProfileController::class, 'updateMfa'])->name('profile.mfa');
 });
 
 require __DIR__.'/auth.php';

@@ -65,6 +65,7 @@
                     <span class="flex min-w-0 flex-1 flex-col">
                       <span class="truncate text-sm font-medium text-gray-900">{{ user.full_name }}</span>
                       <span class="truncate text-sm text-gray-500">{{ user.id_number }}</span>
+                     <span class="truncate text-sm text-gray-500">{{ roles }}</span>
                     </span>
                   </span>
                   <ChevronUpDownIcon class="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
@@ -75,13 +76,16 @@
               <MenuItems class="absolute right-0 left-0 z-10 mx-3 mt-1 origin-top divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="py-1">
                   <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">View profile</a>
+                   <a :href="route('me.profile')"  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
+                      View profile
+                    </a>
                   </MenuItem>
+                </div>
+                  <div class="py-1">
                   <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Settings</a>
-                  </MenuItem>
-                  <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Notifications</a>
+                   <a :href="route('external.my-trainings')" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
+                      My Trainings
+                    </a>
                   </MenuItem>
                 </div>
                 <div class="py-1">
@@ -92,16 +96,7 @@
               </MenuItems>
             </transition>
           </Menu>
-          <!-- Sidebar Search -->
-          <div class="mt-5 px-3">
-            <label for="search" class="sr-only">Search</label>
-            <div class="relative mt-1 rounded-md shadow-sm">
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3" aria-hidden="true">
-                <MagnifyingGlassIcon class="h-4 w-4 text-gray-400" aria-hidden="true" />
-              </div>
-              <input type="text" name="search" id="search" class="block w-full rounded-md border-0 py-1.5 pl-9 ring-1 ring-inset ring-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6" placeholder="Search Training" />
-            </div>
-          </div>
+
           <!-- Navigation -->
           <nav class="mt-6 px-3">
             <div class="space-y-1">
@@ -208,27 +203,34 @@
 
 </script>
 <script>
-  export default{
-      computed:{
-          user(){
-              return this.$page.props.auth.user
-          },
-          navigation(){
-            const page = this.$page.url
-            return [
-              { name: 'Dashboard', href: route('dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
-              { name: 'Trainings', href: route('training.index'), icon: Bars4Icon, current: page.startsWith('/training') },
-              { name: 'Training Configurations', href: route('conf.index'), icon: FolderIcon, current: page.startsWith('/configuration') },
-              { name: 'Settings', href: route('settings.index'), icon: Cog6ToothIcon, current: page.startsWith('/settings') },
-            ]
-          }
-      },
-      methods:{
-        logoutWasClicked(){
-          this.$inertia.visit(route('logout'), {
-            method: 'post'
-          })
-        }
-      }
+  export default {
+  computed: {
+    user() {
+      return this.$page.props.auth.user;
+    },
+    roles() {
+      // Return comma-separated role names, or fallback to 'No role'
+      return this.user.roles?.map(role => role.name).join(', ') || 'No role';
+    },
+    navigation() {
+      const page = this.$page.url;
+      return [
+        { name: 'Dashboard', href: route('dashboard'), icon: HomeIcon, current: page.startsWith('/dashboard') },
+        { name: 'Trainings', href: route('training.index'), icon: Bars4Icon, current: page.startsWith('/training') },
+        { name: 'Training Configurations', href: route('conf.index'), icon: FolderIcon, current: page.startsWith('/configuration') },
+        { name: 'Settings', href: route('settings.index'), icon: Cog6ToothIcon, current: page.startsWith('/settings') },
+      ];
+    }
+  },
+  mounted() {
+    console.log(this.$page.props.auth.user);
+  },
+  methods: {
+    logoutWasClicked() {
+      this.$inertia.visit(route('logout'), {
+        method: 'post'
+      });
+    }
   }
+};
 </script>

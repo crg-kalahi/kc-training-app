@@ -1,0 +1,27 @@
+stages:
+  - staging
+
+deploy_job:
+  stage: staging
+  tags: 
+    - staging
+  script:
+    - echo "Running from CI build directory"
+    - git config --global --add safe.directory /opt/apps/train
+    - cd /opt/apps/train
+    - git reset --hard
+    - git pull origin staging
+    
+    # Clear caches and optimize
+    - php artisan optimize
+    - php artisan route:clear
+    - php artisan config:clear
+
+    # 
+    - npx mix
+    - npm run dev
+  
+  after_script:
+    - echo "Cleaning up temporary files..."
+  only:
+    - staging
