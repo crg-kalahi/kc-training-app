@@ -162,7 +162,7 @@ class CertificateController extends Controller
         return Inertia::render('Training/Certificates/CertificateParticipation', [
             'data' => $data,
             'date' => $date,
-            'end_date' => $d_to->format('jS')." day of ".$d_to->format('F, Y'),
+            'end_date' => $d_to->format('jS')." day of ".$d_to->format('F Y'),
             'end_date_raw' => date('Y-m-d', strtotime($end_date_raw)),
             'training_id_enc' =>  strtoupper($request->training_id)
         ]);
