@@ -245,6 +245,7 @@ import {
               <table class="min-w-full divide-y divide-gray-300">
                 <thead class="bg-gray-50">
                   <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Email Sent?</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Evaluated?</th>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Name</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Munis</th>
@@ -266,6 +267,18 @@ import {
                 </thead>
                 <tbody class="bg-white">
                   <tr v-for="(person, personIdx) in filteredPeople" :key="person.email" :class="personIdx % 2 === 0 ? undefined : 'bg-gray-50'">
+
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                      <template v-if="person.evaluation_email_sent_at">
+                        <!-- Heroicon: Check -->
+                        <CheckCircleIcon class="h-5 w-5 text-green-500" />
+                      </template>
+                      <template v-else>
+                        <!-- Heroicon: X -->
+                        <XCircleIcon class="h-5 w-5 text-gray-300" />
+                      </template>
+                    </td>
+
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
                       <template v-if="person.has_evaluated">
                         <!-- Heroicon: Check -->

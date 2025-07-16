@@ -33,6 +33,7 @@ use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\RequestCertificate;
 use App\Models\TrainingParticipant;
+use Illuminate\Support\Carbon;
 
 class TrainingController extends Controller
 {
@@ -773,27 +774,52 @@ class TrainingController extends Controller
     {
         $training_id = $request->training_id;
 
-        // Get all participants for this training, including their first name and email
-        $participants = TrainingParticipant::where('training_id', $training_id)->get();
+        // Only fetch participants who have not received the evaluation email
+        $participants = TrainingParticipant::where('training_id', $training_id)
+            ->whereNull('evaluation_email_sent_at')
+            ->get();
 
-     
+        $successCount = 0;
+        $failures = [];
 
         foreach ($participants as $participant) {
-            $url = url("/training/{$training_id}/evaluation-response/{$participant->id}/public");
-            $project = [
-                'greeting' => 'Hi ' . $participant->fname . ',',
-                'body' => 'We value your feedback! Please take a moment to complete the evaluation for the training titled "' . $participant->training->title . '". Your insights will help us improve future learning sessions.',
-                'thanks' => 'Thank you, this is from Capacity Building Web Application',
-                'actionText' => 'Open Evaluation',
-                'actionURL' => $url,
-            ];
+            try {
+                $url = url("/training/{$training_id}/evaluation-response/{$participant->id}/public");
 
-            // Send notification to each participant
-            Notification::route('mail', $participant->email)
-                ->notify(new \App\Notifications\SendEmailEvaluation($project));
+                $project = [
+                    'greeting' => 'Hi ' . $participant->fname . ',',
+                    'body' => 'We value your feedback! Please take a moment to complete the evaluation for the training titled "' . $participant->training->title . '". Your insights will help us improve future learning sessions.',
+                    'thanks' => 'Thank you, this is from Capacity Building Web Application',
+                    'actionText' => 'Open Evaluation',
+                    'actionURL' => $url,
+                ];
+
+                // 🔔 Attempt to send email
+                Notification::route('mail', $participant->email)
+                    ->notify(new \App\Notifications\SendEmailEvaluation($project));
+
+                // ✅ Email sent — now safely mark as sent
+                $participant->evaluation_email_sent_at = Carbon::now();
+                $participant->save();
+
+                $successCount++;
+            } catch (\Throwable $e) {
+                // ❌ Email failed — do NOT mark as sent
+                $failures[] = [
+                    'participant_id' => $participant->id,
+                    'email' => $participant->email,
+                    'error' => $e->getMessage(),
+                ];
+
+                Log::error("Failed to send evaluation email to {$participant->email}: " . $e->getMessage());
+            }
         }
 
-        return response()->json(['message' => 'Evaluation emails sent successfully']);
+        return response()->json([
+            'message' => 'Evaluation email sending complete.',
+            'sent_count' => $successCount,
+            'failures' => $failures,
+        ]);
     }
     
 }
