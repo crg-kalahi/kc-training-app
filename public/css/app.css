@@ -3697,9 +3697,6 @@ details.collapse summary::-webkit-details-marker {
 .whitespace-pre-line {
   white-space: pre-line;
 }
-.break-all {
-  word-break: break-all;
-}
 .rounded {
   border-radius: 0.25rem;
 }
