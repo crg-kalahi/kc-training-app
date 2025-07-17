@@ -71,7 +71,7 @@ class TrainingController extends Controller
    public function PublicEvaluationForm($id)
     {
 
-        abort(403, "This is a secured evaluation form. Please use the link provided in the email to access it.");
+        // abort(403, "This is a secured evaluation form. Please use the link provided in the email to access it.");
         $item = Training::where('id', $id)->firstOrFail();
 
         $givenDateTime = new DateTime($item->date_to);
@@ -84,10 +84,12 @@ class TrainingController extends Controller
         $currentDateTime->setTime(0, 0, 0);
 
         if ($currentDateTime > $cutoffDate) {
-            abort(403, "Training was already finished on {$givenDateTime->format('F j, Y')} (5 days ago) and can't be evaluated today.");
+            // abort(403, "Training was already finished on {$givenDateTime->format('F j, Y')} (5 days ago) and can't be evaluated today.");
         }
 
+        $participants = TrainingParticipant::where('training_id', $id)->get();
         return Inertia::render('Training/EvaluationPublic', [
+            'participants' => $participants,
             'training' => $item,
             'officeRep' => OfficeRepresentative::get(),
             'keyTraining' => KeyTraining::whereIn('id', explode(',', $item->key_trainings))->orderByRaw("CONVERT(`order`, SIGNED) ASC")->get(),
