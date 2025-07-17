@@ -130,9 +130,11 @@ class CertificateController extends Controller
         //     abort(403, "Training was already finished and can't evaluate today.");
         // }
         
-        $mname = $request->m_name ? " ".$request->m_name[0]."." : "";
-        $extname = $request->ext_name ? ", ".$request->ext_name:"";
-        $fullname = $request->f_name.$mname." ".$request->l_name.$extname;
+
+        $mname = ($request->m_name && strtolower($request->m_name) !== 'n/a') ? " " . strtoupper($request->m_name[0]) . "." : "";
+        $extname = ($request->ext_name && strtolower($request->ext_name) !== 'n/a') ? ", " . ucwords(strtolower($request->ext_name)) : "";
+        $fullname_raw = trim($request->f_name . $mname . " " . $request->l_name . $extname);
+        $fullname = ucwords(strtolower($fullname_raw));
 
         $title = $training->title;
         $venue = $training->venue;
