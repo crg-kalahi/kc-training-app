@@ -131,10 +131,10 @@ class CertificateController extends Controller
         // }
         
 
-        $mname = ($request->m_name && strtolower($request->m_name) !== 'n/a') ? " " . strtoupper($request->m_name[0]) . "." : "";
-        $extname = ($request->ext_name && strtolower($request->ext_name) !== 'n/a') ? ", " . ucwords(strtolower($request->ext_name)) : "";
-        $fullname_raw = trim($request->f_name . $mname . " " . $request->l_name . $extname);
-        $fullname = ucwords(strtolower($fullname_raw));
+    $mname = ($request->m_name && strtolower($request->m_name) !== 'n/a') ? " " . strtoupper($request->m_name[0]) . "." : "";
+$extname = ($request->ext_name && strtolower($request->ext_name) !== 'n/a') ? ", " . strtoupper($request->ext_name) : "";
+$fullname_raw = trim($request->f_name . $mname . " " . $request->l_name . $extname);
+$fullname = strtoupper($fullname_raw);
 
         $title = $training->title;
         $venue = $training->venue;
