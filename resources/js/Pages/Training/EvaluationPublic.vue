@@ -173,6 +173,7 @@ const props = defineProps([
   "training", "officeRep", "keyTraining", "keyRP", "keyLearning", "resourcePerson", "participants"
 ]);
 
+
 const toggleAlert = ref(false);
 const toggleGetName = ref(true);
 const participantError = ref(null);
@@ -247,6 +248,7 @@ watch(() => form.email, (newEmail) => {
     form.ext_name = participant.ext_name;
     form.sex = participant.is_female == 1 ? 'female' : 'male';
     form.participant_id = participant.id; // ✅ Set participant_id
+    participantError.value = ""
   } else {
     form.l_name = "";
     form.f_name = "";
@@ -254,6 +256,7 @@ watch(() => form.email, (newEmail) => {
     form.ext_name = "";
     form.sex = "0";
     form.participant_id = ""; // Clear if not found
+    participantError.value = "Email not registered"
   }
 });
 
