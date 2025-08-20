@@ -169,7 +169,7 @@ return [
     */
 
     // 'secure' => env('SESSION_SECURE_COOKIE', true),
-    'secure' => env('XSESSION_SECURE_COOKIE', true),
+    'secure' => env('SESSION_SECURE_COOKIE', true),
 
     /*
     |--------------------------------------------------------------------------
