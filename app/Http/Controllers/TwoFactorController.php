@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Notification;
 use PragmaRX\Google2FA\Google2FA;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Notifications\MfaQrCodeNotification;
 
 class TwoFactorController extends Controller
 {
@@ -42,19 +46,106 @@ class TwoFactorController extends Controller
             $user->google2fa_secret
         );
 
-        // Generate QR code image using BaconQrCode
-        $renderer = new ImageRenderer(
-            new RendererStyle(200),
-            new SvgImageBackEnd()
-        );
+        // Generate QR code as PNG image for PDF
+        $qrCodeBase64 = null;
+        
+        try {
+            // Try to use Imagick for PNG generation (better quality)
+            if (extension_loaded('imagick') && class_exists('Imagick')) {
+                try {
+                    $renderer = new ImageRenderer(
+                        new RendererStyle(300),
+                        new ImagickImageBackEnd()
+                    );
+                    $writer = new Writer($renderer);
+                    $qrCodePng = $writer->writeString($qrCodeUrl);
+                    $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrCodePng);
+                } catch (\Exception $e) {
+                    \Log::warning('ImagickImageBackEnd failed, trying SVG conversion: ' . $e->getMessage());
+                }
+            }
+            
+            // If PNG generation failed or Imagick not available, generate SVG and convert
+            if (!$qrCodeBase64) {
+                $renderer = new ImageRenderer(
+                    new RendererStyle(300),
+                    new SvgImageBackEnd()
+                );
+                $writer = new Writer($renderer);
+                $qrCodeSvg = $writer->writeString($qrCodeUrl);
+                
+                // Try to convert SVG to PNG using Imagick
+                if (extension_loaded('imagick') && class_exists('Imagick')) {
+                    try {
+                        $im = new \Imagick();
+                        $im->readImageBlob($qrCodeSvg);
+                        $im->setImageFormat('png');
+                        $im->setImageBackgroundColor(new \ImagickPixel('white'));
+                        $im = $im->mergeImageLayers(\Imagick::LAYER_METHOD_FLATTEN);
+                        $qrCodePng = $im->getImageBlob();
+                        $im->clear();
+                        $im->destroy();
+                        $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrCodePng);
+                    } catch (\Exception $e) {
+                        \Log::warning('SVG to PNG conversion failed: ' . $e->getMessage());
+                        // Fallback to SVG base64
+                        $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+                    }
+                } else {
+                    // No Imagick available, use SVG base64
+                    $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to generate QR code image: ' . $e->getMessage());
+            // Final fallback: Generate SVG
+            $renderer = new ImageRenderer(
+                new RendererStyle(300),
+                new SvgImageBackEnd()
+            );
+            $writer = new Writer($renderer);
+            $qrCodeSvg = $writer->writeString($qrCodeUrl);
+            $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+        }
 
-        $writer = new Writer($renderer);
-        $qrCodeSvg = $writer->writeString($qrCodeUrl);
+        // Generate PDF with QR code
+        $pdfData = null;
+        if ($qrCodeBase64) {
+            try {
+                $userName = trim(($user->fname ?? '') . ' ' . ($user->lname ?? '')) ?: $user->username ?? $user->email;
+                $pdf = Pdf::loadView('pdf.mfa_qr_code', [
+                    'qrCodeBase64' => $qrCodeBase64,
+                    'secret' => $user->google2fa_secret,
+                    'userName' => $userName,
+                    'isSetup' => true,
+                ])->setPaper('a4', 'portrait');
+                
+                $pdfData = $pdf->output();
+            } catch (\Exception $e) {
+                \Log::error('Failed to generate PDF: ' . $e->getMessage());
+            }
+        }
 
-        return Inertia::render('Auth/TwoFactorSetup', [
-            'qrCodeSvg' => $qrCodeSvg,
-            'secret' => $user->google2fa_secret,
+        // Send QR code PDF via email
+        if ($user->email && $pdfData) {
+            try {
+                $userName = trim(($user->fname ?? '') . ' ' . ($user->lname ?? '')) ?: $user->username ?? $user->email;
+                Notification::route('mail', $user->email)
+                    ->notify(new MfaQrCodeNotification(
+                        $pdfData,
+                        $user->google2fa_secret,
+                        $userName,
+                        true
+                    ));
+            } catch (\Exception $e) {
+                // Log error but don't fail the request
+                \Log::error('Failed to send MFA QR code email: ' . $e->getMessage());
+            }
+        }
+
+        return Inertia::render('Mfa/Setup', [
             'email' => $user->email,
+            'message' => 'A QR code has been sent to your email address. Please check your inbox to complete the 2FA setup.',
         ]);
     }
 
@@ -111,18 +202,106 @@ class TwoFactorController extends Controller
             $user->google2fa_secret
         );
     
-        // Generate QR code image
-        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
-            new \BaconQrCode\Renderer\RendererStyle\RendererStyle(200),
-            new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
-        );
+        // Generate QR code as PNG image for PDF
+        $qrCodeBase64 = null;
+        
+        try {
+            // Try to use Imagick for PNG generation (better quality)
+            if (extension_loaded('imagick') && class_exists('Imagick')) {
+                try {
+                    $renderer = new ImageRenderer(
+                        new RendererStyle(300),
+                        new ImagickImageBackEnd()
+                    );
+                    $writer = new Writer($renderer);
+                    $qrCodePng = $writer->writeString($qrCodeUrl);
+                    $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrCodePng);
+                } catch (\Exception $e) {
+                    \Log::warning('ImagickImageBackEnd failed, trying SVG conversion: ' . $e->getMessage());
+                }
+            }
+            
+            // If PNG generation failed or Imagick not available, generate SVG and convert
+            if (!$qrCodeBase64) {
+                $renderer = new ImageRenderer(
+                    new RendererStyle(300),
+                    new SvgImageBackEnd()
+                );
+                $writer = new Writer($renderer);
+                $qrCodeSvg = $writer->writeString($qrCodeUrl);
+                
+                // Try to convert SVG to PNG using Imagick
+                if (extension_loaded('imagick') && class_exists('Imagick')) {
+                    try {
+                        $im = new \Imagick();
+                        $im->readImageBlob($qrCodeSvg);
+                        $im->setImageFormat('png');
+                        $im->setImageBackgroundColor(new \ImagickPixel('white'));
+                        $im = $im->mergeImageLayers(\Imagick::LAYER_METHOD_FLATTEN);
+                        $qrCodePng = $im->getImageBlob();
+                        $im->clear();
+                        $im->destroy();
+                        $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrCodePng);
+                    } catch (\Exception $e) {
+                        \Log::warning('SVG to PNG conversion failed: ' . $e->getMessage());
+                        // Fallback to SVG base64
+                        $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+                    }
+                } else {
+                    // No Imagick available, use SVG base64
+                    $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to generate QR code image: ' . $e->getMessage());
+            // Final fallback: Generate SVG
+            $renderer = new ImageRenderer(
+                new RendererStyle(300),
+                new SvgImageBackEnd()
+            );
+            $writer = new Writer($renderer);
+            $qrCodeSvg = $writer->writeString($qrCodeUrl);
+            $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+        }
     
-        $writer = new \BaconQrCode\Writer($renderer);
-        $qrCodeSvg = $writer->writeString($qrCodeUrl);
+        // Generate PDF with QR code
+        $pdfData = null;
+        if ($qrCodeBase64) {
+            try {
+                $userName = trim(($user->fname ?? '') . ' ' . ($user->lname ?? '')) ?: $user->username ?? $user->email;
+                $pdf = Pdf::loadView('pdf.mfa_qr_code', [
+                    'qrCodeBase64' => $qrCodeBase64,
+                    'secret' => $user->google2fa_secret,
+                    'userName' => $userName,
+                    'isSetup' => false,
+                ])->setPaper('a4', 'portrait');
+                
+                $pdfData = $pdf->output();
+            } catch (\Exception $e) {
+                \Log::error('Failed to generate PDF: ' . $e->getMessage());
+            }
+        }
+    
+        // Send QR code PDF via email
+        if ($user->email && $pdfData) {
+            try {
+                $userName = trim(($user->fname ?? '') . ' ' . ($user->lname ?? '')) ?: $user->username ?? $user->email;
+                Notification::route('mail', $user->email)
+                    ->notify(new MfaQrCodeNotification(
+                        $pdfData,
+                        $user->google2fa_secret,
+                        $userName,
+                        false
+                    ));
+            } catch (\Exception $e) {
+                // Log error but don't fail the request
+                \Log::error('Failed to send MFA QR code email: ' . $e->getMessage());
+            }
+        }
     
         return Inertia::render('Mfa/Prompt', [
-            'qrCode' => $qrCodeSvg,
-            'secret' => $user->google2fa_secret,
+            'email' => $user->email,
+            'message' => 'A verification code has been sent to your email address. Please check your inbox and enter the 6-digit code from your authenticator app.',
         ]);
     }
 

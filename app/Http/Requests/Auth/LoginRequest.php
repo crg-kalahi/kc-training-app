@@ -87,13 +87,16 @@ class LoginRequest extends FormRequest
             return; // ✅ login successful, continue
         }
 
+ 
+
         // User not found locally, authenticate with external portal
         $credentials = request()->only('username', 'password');
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . env('CC_TOKEN'),
             'Accept' => 'application/json',
-        ])->post(env('CC_URL') . '/api/v1/staff/portal/login', $credentials);
+        ])->withoutVerifying()->post(env('CC_URL') . '/api/v1/staff/portal/login', $credentials);
+
 
         if ($response->failed()) {
             RateLimiter::hit($this->throttleKey());
@@ -102,7 +105,8 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-   
+ 
+
 
         // External authentication success, register user locally
         $userData = $response->json('data');
@@ -194,7 +198,8 @@ class LoginRequest extends FormRequest
     private function validateRecaptcha()
     {
         $recaptchaSecret = env('GOOGLE_RECAPTCHA_SECRET');
-        $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        
+        $recaptchaResponse = Http::asForm()->withoutVerifying()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => $recaptchaSecret,
             'response' => $this->input('recaptcha_token'),
         ]);

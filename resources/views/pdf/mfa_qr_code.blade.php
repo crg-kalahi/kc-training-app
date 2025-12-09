@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Two-Factor Authentication QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 28px;
+        }
+        .qr-container {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+        .qr-container img {
+            max-width: 300px;
+            height: auto;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .secret-container {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+        }
+        .secret-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .secret-code {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #2c3e50;
+            letter-spacing: 3px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        .instructions ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+        .warning {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            border-radius: 4px;
+            color: #856404;
+        }
+        .warning strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Two-Factor Authentication Setup</h1>
+        </div>
+        
+        <p style="font-size: 16px;">Hello <strong>{{ $userName }}</strong>,</p>
+        
+        <p>Please find your Two-Factor Authentication (2FA) QR code below. Use this to complete your 2FA setup.</p>
+        
+        <div class="qr-container">
+            <h3 style="margin-top: 0; color: #2c3e50;">Scan this QR code with your authenticator app:</h3>
+            <img src="{{ $qrCodeBase64 }}" alt="QR Code" />
+        </div>
+        
+        <div class="secret-container">
+            <div class="secret-label"><strong>Or manually enter this secret code:</strong></div>
+            <div class="secret-code">{{ $secret }}</div>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to set up 2FA:</h3>
+            <ol>
+                <li>Download an authenticator app on your mobile device:
+                    <ul style="margin-top: 5px;">
+                        <li>Google Authenticator (iOS/Android)</li>
+                        <li>Microsoft Authenticator (iOS/Android)</li>
+                        <li>Authy (iOS/Android)</li>
+                    </ul>
+                </li>
+                <li>Open the app and select "Add account" or tap the "+" button.</li>
+                <li>Choose "Scan QR code" and scan the QR code above, or select "Enter a setup key" and manually enter the secret code.</li>
+                <li>Enter the 6-digit code from your authenticator app on the setup page to complete the process.</li>
+            </ol>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Security Notice:</strong>
+            <p style="margin: 0;">Keep this QR code and secret code confidential. Do not share them with anyone. If you did not request this document, please contact support immediately.</p>
+        </div>
+        
+        <div class="footer">
+            <p>This document was generated by {{ config('app.name') }} on {{ now()->format('F d, Y \a\t g:i A') }}</p>
+            <p style="margin-top: 5px;">For security reasons, please delete this PDF after completing your 2FA setup.</p>
+        </div>
+    </div>
+</body>
+</html>
+

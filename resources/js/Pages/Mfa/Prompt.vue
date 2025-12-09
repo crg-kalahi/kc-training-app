@@ -5,9 +5,21 @@
         Two-Factor Authentication
       </h2>
 
-      <div class="text-center space-y-2">
-        <div v-html="qrCode" class="inline-block" />
-        <p class="text-sm text-gray-600">Scan QR using your Google Authenticator App.</p>
+      <div class="text-center space-y-4">
+        <div class="flex justify-center">
+          <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <p class="text-gray-700 font-medium">
+          Verification code sent to your email
+        </p>
+        <p class="text-sm text-gray-600">
+          We've sent a verification code to <strong>{{ email }}</strong>. Please check your inbox and enter the 6-digit code from your authenticator app below.
+        </p>
+        <p class="text-sm text-gray-500 italic">
+          {{ message }}
+        </p>
       </div>
 
       <form @submit.prevent="submit" class="space-y-4">
@@ -15,6 +27,7 @@
           v-model="form.code"
           placeholder="Enter 6-digit code"
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          maxlength="6"
         />
         <button
           type="submit"
@@ -34,7 +47,7 @@
 <script setup>
 import { useForm } from '@inertiajs/inertia-vue3'
 
-const props = defineProps(['qrCode', 'secret'])
+const props = defineProps(['email', 'message'])
 
 const form = useForm({ code: '' })
 
