@@ -11,7 +11,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
-use PragmaRX\Google2FA\Google2FA;
 
 class LoginRequest extends FormRequest
 {
@@ -67,12 +66,10 @@ class LoginRequest extends FormRequest
 
             // Check if MFA is enabled
             if ($user->mfa_enabled) {
-                if (!$user->google2fa_secret) {
-                    session(['2fa_setup:user:id' => $user->id]);
-                    Auth::logout();
-
+                // Check if user has email for OTP
+                if (!$user->email) {
                     throw ValidationException::withMessages([
-                        'setup' => 'You must complete 2FA setup.',
+                        'username' => 'Email is required for MFA. Please contact administrator.',
                     ]);
                 }
 
@@ -132,7 +129,6 @@ class LoginRequest extends FormRequest
                         : $userData['contact']))
                 : null,
             'password' => bcrypt($credentials['password']),
-            'google2fa_secret' => (new Google2FA())->generateSecretKey(),
             'mfa_enabled' => true,
             'mfa_verified' => false,
         ]);
@@ -145,12 +141,13 @@ class LoginRequest extends FormRequest
         Auth::login($user);
 
         // Force MFA setup since this is a new user
-       // Force MFA setup since this is a new user
         session(['2fa_setup:user:id' => $user->id]);
         Auth::logout();
 
-        // Redirect directly instead of throwing
-        return redirect()->route('mfa.setup');
+        // Redirect to MFA setup
+        throw ValidationException::withMessages([
+            'setup' => 'You must complete 2FA setup.',
+        ]);
     }
 
     protected function loginUser(User $user): void
