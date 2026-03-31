@@ -42,12 +42,20 @@ class SendEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
+        $mail = (new MailMessage)
                     ->subject('Certificate of Participation')
                     ->greeting($this->project['greeting'])
-                    ->line($this->project['body'])
-                    ->action($this->project['actionText'], $this->project['actionURL'])
-                    ->line($this->project['thanks']);
+                    ->line($this->project['body']);
+
+        if (! empty($this->project['reminder'] ?? null)) {
+            $mail->line($this->project['reminder']);
+        }
+
+        if (! empty($this->project['actionText']) && ! empty($this->project['actionURL'])) {
+            $mail->action($this->project['actionText'], $this->project['actionURL']);
+        }
+
+        return $mail->line($this->project['thanks']);
     }
 
     /**

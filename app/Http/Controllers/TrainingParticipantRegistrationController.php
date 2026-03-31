@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TrainingParticipant;
 use App\Models\Training;
+use App\Models\TrainingParticipant;
+use App\Notifications\TrainingParticipantRegistered;
+use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 
 class TrainingParticipantRegistrationController extends Controller
@@ -30,15 +31,36 @@ class TrainingParticipantRegistrationController extends Controller
      */
     public function register(Request $request)
     {
+        $request->merge([
+            'email' => strtolower(trim((string) $request->input('email', ''))),
+        ]);
+
         $request->validate([
             'training_id' => 'required|string',
             'lname' => 'required|string|max:50',
             'fname' => 'required|string|max:50',
-            'email' => 'required|email|max:255',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                function (string $attribute, mixed $value, Closure $fail) use ($request) {
+                    $normalized = strtolower(trim((string) $value));
+                    $exists = TrainingParticipant::query()
+                        ->where('training_id', $request->training_id)
+                        ->whereRaw('LOWER(TRIM(COALESCE(email, ""))) = ?', [$normalized])
+                        ->exists();
+
+                    if ($exists) {
+                        $fail(__('This email is already registered for this training.'));
+                    }
+                },
+            ],
             'is_internal' => 'required|boolean',
             'is_female' => 'required|boolean',
         ]);
-        
+
+        $training = Training::query()->where('id', $request->training_id)->firstOrFail();
+
         $p = new TrainingParticipant();
 
         $p->training_id = $request->training_id;
@@ -52,6 +74,14 @@ class TrainingParticipantRegistrationController extends Controller
         $p->is_female = $request->is_female;
 
         $p->save();
+
+        try {
+            Notification::route('mail', $p->email)
+                ->notify(new TrainingParticipantRegistered($p, $training));
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
         return redirect()->back();
     }
 

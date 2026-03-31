@@ -237,7 +237,7 @@ import Button from '@/Components/Button.vue';
               <div>
                 <label for="Sex" class="pl-1 block text-sm font-bold leading-6 text-gray-900">Sex</label>
                 <select v-model="selectedRespondent.sex" id="Sex" name="Sex" class="mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                  <option :value="'0'">Prefer not to say</option>
+                  
                   <option :value="'male'">Male</option>
                   <option :value="'female'">Female</option>
                 </select>

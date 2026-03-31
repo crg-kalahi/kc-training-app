@@ -56,6 +56,7 @@ const submit = () => {
                     <div class="">
                         <BreezeLabel for="email" value="Email" />
                         <BreezeInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autocomplete="username" />
+                        <p class="mt-1 text-xs text-gray-500">This address is also your username for signing in.</p>
                     </div>
 
                     <div class="mt-4">

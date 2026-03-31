@@ -90,6 +90,7 @@ Route::get('/cert/verification/{token}/{fullname}', [CertificateController::clas
 
 Route::group(['middleware' => ['auth', 'verified']], function(){
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard')->middleware('check.external');
+    Route::get('/dashboard/trainings-search', [DashboardController::class, 'searchTrainings'])->name('dashboard.trainings.search');
 
 
     // CAN MANAGE TRAINING
@@ -149,7 +150,9 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
          //User management
         Route::group(['prefix' => 'user-management'], function(){
             Route::get('/', [UserManagementController::class, 'Index'])->name('user-management');
-            Route::post('/user-management/roles', [UserManagementController::class, 'userManagementRoles'])->name('user-management.roles');
+            Route::post('/', [UserManagementController::class, 'store'])->name('user-management.store');
+            Route::put('/{user}', [UserManagementController::class, 'update'])->name('user-management.update');
+            Route::post('/roles', [UserManagementController::class, 'userManagementRoles'])->name('user-management.roles');
         });
     });   
 

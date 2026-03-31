@@ -38,17 +38,16 @@ class TrainingController extends Controller
 
         $user = auth()->user();
 
-        // Redirect if the user does not have the "guest" role
-        if (!$user->hasRole('guest')) {
-       
-            return Inertia::render('Training/Me/Training', [
-                'training' => $training
-            ]);
-        }else{
-                 return Inertia::render('Guest/Training', [
-                'training' => $training
+        // Align with CheckExternalUser / registration (permission without guest role)
+        if ($user->hasPermissionTo('GUEST - Login')) {
+            return Inertia::render('Guest/Training', [
+                'training' => $training,
             ]);
         }
+
+        return Inertia::render('Training/Me/Training', [
+            'training' => $training,
+        ]);
 
      
     }

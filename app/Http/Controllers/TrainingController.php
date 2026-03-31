@@ -173,6 +173,7 @@ class TrainingController extends Controller
         $project = [
             'greeting' => 'Hi '.$request->f_name.',',
             'body' => 'This is the certificate of participation on '. $training->title,
+            'reminder' => 'Please download your certificate using the link below within 5 days. The link will expire after that.',
             'thanks' => 'Thank you this is from Capacity Building Web Application',
             'actionText' => 'Download Certificate',
             'actionURL' => route('public.cert.generate', [
@@ -747,6 +748,7 @@ class TrainingController extends Controller
             $project = [
                 'greeting' => 'Hi '.$requestCert->trainingParticipants->fname.',',
                 'body' => 'This is the certificate of participation on '. $requestCert->training->title,
+                'reminder' => 'Please download your certificate using the link below within 5 days. The link will expire after that.',
                 'thanks' => 'Thank you this is from Capacity Building Web Application',
                 'actionText' => 'Download Certificate',
                 'actionURL' => route('public.cert.participant', [

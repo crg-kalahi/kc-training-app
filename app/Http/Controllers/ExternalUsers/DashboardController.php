@@ -10,8 +10,8 @@ class DashboardController extends Controller
 
         $user = auth()->user();
 
-        // Redirect if the user does not have the "guest" role
-        if (!$user->hasRole('guest')) {
+        // Must match CheckExternalUser: external area uses GUEST - Login permission (role alone can be unset, e.g. self-registration)
+        if (!$user->hasPermissionTo('GUEST - Login')) {
             return redirect('/dashboard');
         }
 

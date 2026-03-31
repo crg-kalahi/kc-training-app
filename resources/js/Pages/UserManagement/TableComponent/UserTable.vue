@@ -1,58 +1,69 @@
 <template>
   <div class="p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-3">List of Users</h2>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b pb-3">
+      <h2 class="text-2xl font-semibold text-gray-800">Users</h2>
+      <button
+        type="button"
+        class="inline-flex justify-center items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        @click="openCreate"
+      >
+        Add user
+      </button>
+    </div>
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50 text-gray-700">
           <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hover:text-indigo-600 transition-colors duration-150 cursor-pointer" @click="sortTable('fname')">
-              First Name
-              <span class="ml-1">
-                <i :class="getSortIcon('fname')"></i>
-              </span>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer hover:text-indigo-600" @click="sortTable('fname')">
+              First name <span class="ml-1"><i :class="getSortIcon('fname')"></i></span>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hover:text-indigo-600 transition-colors duration-150 cursor-pointer" @click="sortTable('lname')">
-              Last Name
-              <span class="ml-1">
-                <i :class="getSortIcon('lname')"></i>
-              </span>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer hover:text-indigo-600" @click="sortTable('lname')">
+              Last name <span class="ml-1"><i :class="getSortIcon('lname')"></i></span>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hover:text-indigo-600 transition-colors duration-150 cursor-pointer" @click="sortTable('roles')">
-              Roles
-              <span class="ml-1">
-                <i :class="getSortIcon('roles')"></i>
-              </span>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+              Email (login)
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer hover:text-indigo-600" @click="sortTable('roles')">
+              Roles <span class="ml-1"><i :class="getSortIcon('roles')"></i></span>
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
           </tr>
           <tr class="bg-white">
-            <td class="px-6 py-2">
-              <input v-model="filters.fname" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Filter by First Name" />
+            <td class="px-4 py-2">
+              <input v-model="filters.fname" class="w-full min-w-[8rem] px-2 py-2 border rounded-lg text-sm" placeholder="First name" />
             </td>
-            <td class="px-6 py-2">
-              <input v-model="filters.lname" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Filter by Last Name" />
+            <td class="px-4 py-2">
+              <input v-model="filters.lname" class="w-full min-w-[8rem] px-2 py-2 border rounded-lg text-sm" placeholder="Last name" />
             </td>
-            <td class="px-6 py-2">
-              <input v-model="filters.roles" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Filter by Roles" />
+            <td class="px-4 py-2">
+              <input v-model="filters.login" class="w-full min-w-[10rem] px-2 py-2 border rounded-lg text-sm" placeholder="Email or username" />
             </td>
-            <td class="px-6 py-2"></td>
+            <td class="px-4 py-2">
+              <input v-model="filters.roles" class="w-full min-w-[8rem] px-2 py-2 border rounded-lg text-sm" placeholder="Roles" />
+            </td>
+            <td class="px-4 py-2"></td>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 transition-colors duration-200">
-            <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ user.fname }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ user.lname }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span 
-                v-for="role in user.roles" 
-                :key="role" 
-                class="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full mr-1 mb-1"
+          <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50">
+            <td class="px-4 py-3 whitespace-nowrap text-gray-800 text-sm">{{ user.fname }}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-800 text-sm">{{ user.lname }}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-700 text-sm">{{ user.email || user.username || '—' }}</td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span
+                v-for="role in user.roles"
+                :key="role"
+                class="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-0.5 rounded-full mr-1 mb-1"
               >
                 {{ role }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap flex space-x-2">
-              <button @click="toggleForm(user)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <td class="px-4 py-3 whitespace-nowrap">
+              <button
+                type="button"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-1.5 rounded-md shadow"
+                @click="openEdit(user)"
+              >
                 Edit
               </button>
             </td>
@@ -61,33 +72,101 @@
       </table>
     </div>
 
-    <!-- Pagination -->
     <div class="mt-6 flex justify-between items-center">
-      <button @click="previousPage" :disabled="currentPage === 1"
-        class="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed shadow">
+      <button
+        type="button"
+        class="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-200 disabled:opacity-50"
+        :disabled="currentPage === 1"
+        @click="previousPage"
+      >
         Previous
       </button>
-      <span class="text-sm text-gray-700 font-medium">Page {{ currentPage }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages"
-        class="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed shadow">
+      <span class="text-sm text-gray-700">Page {{ currentPage }} of {{ totalPages || 1 }}</span>
+      <button
+        type="button"
+        class="px-4 py-2 bg-gray-100 text-sm rounded-lg hover:bg-gray-200 disabled:opacity-50"
+        :disabled="currentPage === totalPages || totalPages === 0"
+        @click="nextPage"
+      >
         Next
       </button>
     </div>
   </div>
 
-  <RightPanel v-model="openForm" title="Edit User" subtitle="" @submit="submitForm">
-    <div class="p-6 space-y-6">
-      <div class="bg-gray-100 p-5 rounded-xl shadow-inner">
-        <h2 class="text-lg font-semibold text-gray-800">User Details</h2>
-        <p class="mt-2 text-gray-600"><strong>ID:</strong> {{ userData.id }}</p>
-        <p class="mt-2 text-gray-600"><strong>First Name:</strong> {{ userData.fname }}</p>
-        <p class="mt-2 text-gray-600"><strong>Last Name:</strong> {{ userData.lname }}</p>
+  <RightPanel v-model="openForm" :title="panelTitle" subtitle="" @submit="submitForm">
+    <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">First name</label>
+          <input v-model="form.fname" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Last name</label>
+          <input v-model="form.lname" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Middle name</label>
+          <input v-model="form.mname" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Extension name</label>
+          <input v-model="form.ext_name" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" placeholder="Jr., III" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">ID number</label>
+          <input v-model="form.id_number" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <input v-model="form.email" type="email" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" autocomplete="email" />
+          <p v-if="form.errors.email" class="mt-1 text-sm text-red-600">{{ form.errors.email }}</p>
+        </div>
+        <div v-if="canEditUsername" class="sm:col-span-2">
+          <label class="block text-sm font-medium text-gray-700">Username (login)</label>
+          <input
+            v-model="form.username"
+            type="text"
+            class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm"
+            autocomplete="username"
+            :placeholder="isCreate ? 'Leave blank to use email as login name' : ''"
+          />
+          <p class="mt-1 text-xs text-gray-500">Used to sign in. Only staff administrators can change this.</p>
+          <p v-if="form.errors.username" class="mt-1 text-sm text-red-600">{{ form.errors.username }}</p>
+        </div>
+        <div v-else class="sm:col-span-2">
+          <label class="block text-sm font-medium text-gray-700">Username (login)</label>
+          <input :value="form.username || form.email" type="text" readonly class="mt-1 w-full cursor-not-allowed rounded-md border-gray-200 bg-gray-50 text-sm text-gray-600" />
+          <p class="mt-1 text-xs text-gray-500">Matches email. Contact a staff administrator to change the login username.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Division</label>
+          <input v-model="form.division" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Section</label>
+          <input v-model="form.section" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-gray-700">Mobile no.</label>
+          <input v-model="form.mobile_no" type="text" class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-gray-700">{{ isCreate ? 'Password' : 'New password (optional)' }}</label>
+          <input
+            v-model="form.password"
+            type="password"
+            class="mt-1 w-full rounded-md border-gray-300 shadow-sm text-sm"
+            autocomplete="new-password"
+            :placeholder="isCreate ? 'Minimum 8 characters' : 'Leave blank to keep current'"
+          />
+          <p v-if="form.errors.password" class="mt-1 text-sm text-red-600">{{ form.errors.password }}</p>
+        </div>
       </div>
 
-      <div class="bg-white p-5 rounded-xl shadow">
-        <h2 class="text-lg font-semibold text-gray-800 mb-2">Edit Roles</h2>
-        <label for="roles" class="block text-sm font-medium text-gray-700 mb-2">Select Role:</label>
-        <AutoComplete :suggestions="roles" @select="handleSelect" />
+      <div class="border-t pt-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Roles</label>
+        <AutoComplete :suggestions="roles" :initial-selected="form.roles" @select="handleSelect" />
+        <p v-if="form.errors.roles" class="mt-1 text-sm text-red-600">{{ form.errors.roles }}</p>
       </div>
     </div>
   </RightPanel>
@@ -99,70 +178,98 @@ import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/20/solid';
 import RightPanel from '@/Components/RightPanel.vue';
 import AutoComplete from '@/Components/AutoComplete.vue';
 import { useForm } from '@inertiajs/inertia-vue3';
-import { Inertia } from '@inertiajs/inertia';
 
 const props = defineProps({
-  users: Array,
-  rolesList: Array
+  users: { type: Array, default: () => [] },
+  rolesList: { type: Array, default: () => [] },
+  canEditUsername: { type: Boolean, default: false },
 });
 
 const users = ref([...props.users]);
 const roles = ref(props.rolesList);
 
-watch(() => props.users, (newUsers) => {
-  users.value = [...newUsers];
-}, { deep: true });
+watch(
+  () => props.users,
+  (newUsers) => {
+    users.value = [...newUsers];
+  },
+  { deep: true }
+);
 
 const currentPage = ref(1);
-const perPage = ref(5);
-const totalPages = computed(() => Math.ceil(filteredUsers.value.length / perPage.value));
-
+const perPage = ref(8);
 const sortBy = ref('');
 const sortDirection = ref('');
 const openForm = ref(false);
-const userData = ref({
+const isCreate = ref(false);
+
+const form = useForm({
+  id: null,
   fname: '',
   lname: '',
-  id: '',
-  role: '',
+  mname: '',
+  ext_name: '',
+  id_number: '',
+  email: '',
+  username: '',
+  division: '',
+  section: '',
+  mobile_no: '',
+  password: '',
+  roles: [],
 });
 
 const filters = ref({
-  id: '',
   fname: '',
   lname: '',
+  login: '',
   roles: '',
 });
 
-const dataForSubmission = useForm({
-  id: '',
-  roles: []
-});
+const panelTitle = computed(() => (isCreate.value ? 'Add user' : 'Edit user'));
 
 const filteredUsers = computed(() => {
-  let filtered = users.value.filter(user => {
-    const matchesId = filters.value.id === '' || user.id.toString().includes(filters.value.id);
-    const matchesFname = filters.value.fname === '' || user.fname.toLowerCase().includes(filters.value.fname.toLowerCase());
-    const matchesLname = filters.value.lname === '' || user.lname.toLowerCase().includes(filters.value.lname.toLowerCase());
-    const matchesRoles = filters.value.roles === '' || user.roles.join(' ').toLowerCase().includes(filters.value.roles.toLowerCase());
-    return matchesId && matchesFname && matchesLname && matchesRoles;
+  let filtered = users.value.filter((user) => {
+    const matchesFname = !filters.value.fname || (user.fname && user.fname.toLowerCase().includes(filters.value.fname.toLowerCase()));
+    const matchesLname = !filters.value.lname || (user.lname && user.lname.toLowerCase().includes(filters.value.lname.toLowerCase()));
+    const loginHay = `${user.email || ''} ${user.username || ''}`.toLowerCase();
+    const matchesLogin =
+      !filters.value.login || loginHay.includes(filters.value.login.toLowerCase());
+    const matchesRoles =
+      !filters.value.roles ||
+      (user.roles && user.roles.join(' ').toLowerCase().includes(filters.value.roles.toLowerCase()));
+    return matchesFname && matchesLname && matchesLogin && matchesRoles;
   });
 
   if (sortBy.value) {
-    filtered.sort((a, b) => {
-      let result = 0;
-      if (a[sortBy.value] < b[sortBy.value]) result = -1;
-      else if (a[sortBy.value] > b[sortBy.value]) result = 1;
-      return sortDirection.value === 'asc' ? result : -result;
+    filtered = [...filtered].sort((a, b) => {
+      let av;
+      let bv;
+      if (sortBy.value === 'roles') {
+        av = (a.roles || []).join(',');
+        bv = (b.roles || []).join(',');
+      } else {
+        av = a[sortBy.value] ?? '';
+        bv = b[sortBy.value] ?? '';
+      }
+      if (av < bv) return sortDirection.value === 'asc' ? -1 : 1;
+      if (av > bv) return sortDirection.value === 'asc' ? 1 : -1;
+      return 0;
     });
   }
 
   return filtered;
 });
 
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredUsers.value.length / perPage.value)));
+
 const paginatedUsers = computed(() => {
   const start = (currentPage.value - 1) * perPage.value;
   return filteredUsers.value.slice(start, start + perPage.value);
+});
+
+watch(filteredUsers, () => {
+  if (currentPage.value > totalPages.value) currentPage.value = totalPages.value;
 });
 
 const nextPage = () => {
@@ -189,27 +296,99 @@ const getSortIcon = (field) => {
   return 'pi pi-sort';
 };
 
-const toggleForm = (data) => {
-  openForm.value = !openForm.value;
-  userData.value = { ...data };
-  dataForSubmission.id = data.id;
-};
+function resetForm() {
+  form.reset();
+  form.clearErrors();
+  form.id = null;
+  form.roles = [];
+  form.password = '';
+}
+
+function openCreate() {
+  isCreate.value = true;
+  resetForm();
+  form.roles = props.rolesList.includes('guest') ? ['guest'] : props.rolesList.length ? [props.rolesList[0]] : [];
+  openForm.value = true;
+}
+
+function openEdit(user) {
+  isCreate.value = false;
+  form.clearErrors();
+  form.id = user.id;
+  form.fname = user.fname || '';
+  form.lname = user.lname || '';
+  form.mname = user.mname || '';
+  form.ext_name = user.ext_name || '';
+  form.id_number = user.id_number || '';
+  form.email = user.email || '';
+  form.username = user.username || '';
+  form.division = user.division || '';
+  form.section = user.section || '';
+  form.mobile_no = user.mobile_no || '';
+  form.password = '';
+  form.roles = [...(user.roles || [])];
+  openForm.value = true;
+}
 
 const handleSelect = (selectedTags) => {
-  dataForSubmission.roles = selectedTags;
+  form.roles = selectedTags;
 };
+
+function closePanel() {
+  openForm.value = false;
+}
 
 const submitForm = () => {
-  dataForSubmission.post(route("user-management.roles"), {
-    preserveScroll: true,
-    onSuccess: () => {
-      const index = users.value.findIndex(user => user.id === dataForSubmission.id);
-      users.value[index].roles = dataForSubmission.roles;
+  const normalizeEmail = (data) => {
+    const out = { ...data };
+    out.email = String(out.email || '').trim().toLowerCase();
+    return out;
+  };
+
+  const applyUsername = (out) => {
+    if (props.canEditUsername) {
+      const u = String(out.username || '').trim().toLowerCase();
+      if (isCreate.value && !u) {
+        out.username = out.email;
+      } else {
+        out.username = u;
+      }
+    } else {
+      out.username = out.email;
     }
-  });
+    return out;
+  };
+
+  if (isCreate.value) {
+    form
+      .transform((data) => {
+        const out = normalizeEmail(data);
+        return applyUsername(out);
+      })
+      .post(route('user-management.store'), {
+        preserveScroll: true,
+        onSuccess: () => {
+          form.transform((d) => d);
+          closePanel();
+        },
+      });
+    return;
+  }
+
+  form
+    .transform((data) => {
+      const out = normalizeEmail(data);
+      applyUsername(out);
+      delete out.id;
+      if (!out.password) delete out.password;
+      return out;
+    })
+    .put(route('user-management.update', form.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        form.transform((d) => d);
+        closePanel();
+      },
+    });
 };
 </script>
-
-<style scoped>
-/* You may add custom animations or override Tailwind here if needed */
-</style>

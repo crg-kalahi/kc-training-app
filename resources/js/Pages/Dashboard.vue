@@ -1,12 +1,14 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import BreezeAuthenticatedGuestLayout from '@/Layouts/AuthenticatedGuest.vue';
 import { Head } from '@inertiajs/inertia-vue3';
+import { Inertia } from '@inertiajs/inertia';
 import { UserIcon } from '@heroicons/vue/20/solid';
 import { Chart, registerables } from "chart.js";
 import { LineChart, BarChart } from 'vue-chart-3';
 import { Qalendar } from "qalendar";
+import DashboardTrainingFilter from '@/Components/DashboardTrainingFilter.vue';
 
 Chart.register(...registerables);
 
@@ -20,22 +22,80 @@ const props = defineProps({
   internalParticipants: Number,
   externalParticipants: Number,
   upcomingTrainingsCount: Number,
-  latestTraining: Object,
+  latestTraining: [Array, Object],
   averageTrainingsPerMonth: Number,
   evaluations: Array,
   officeRepSummary: Array,
+  dashboardFilter: {
+    type: Object,
+    default: () => ({ scope: 'all', value: '', training_label: null }),
+  },
+  filterOptions: {
+    type: Object,
+    default: () => ({ divisions: [], sections: [] }),
+  },
 });
 
-const stats = [
-  { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
-  { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && x.is_internal).length, type: 'Internal', changeType: 'positive' },
-  { icon: UserIcon, name: 'Female', value: props.participants.filter(x => x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
-  { icon: UserIcon, name: 'Male', value: props.participants.filter(x => !x.is_female && !x.is_internal).length, type: 'External', changeType: 'negative' },
-];
+const stats = computed(() => {
+  const list = props.participants || [];
+  const isFemale = (x) => !!x.is_female;
+  return [
+    { icon: UserIcon, name: 'Female', value: list.filter(x => isFemale(x) && x.is_internal).length, type: 'Internal', changeType: 'positive' },
+    { icon: UserIcon, name: 'Male', value: list.filter(x => !isFemale(x) && x.is_internal).length, type: 'Internal', changeType: 'positive' },
+    { icon: UserIcon, name: 'Female', value: list.filter(x => isFemale(x) && !x.is_internal).length, type: 'External', changeType: 'negative' },
+    { icon: UserIcon, name: 'Male', value: list.filter(x => !isFemale(x) && !x.is_internal).length, type: 'External', changeType: 'negative' },
+  ];
+});
 
-const data = ref(props.plByMonth);
-const events = ref(props.events);
-const officeRepSummary = ref(props.officeRepSummary);
+const data = computed(() => props.plByMonth || []);
+const events = computed(() => props.events || []);
+const officeRepSummary = computed(() => props.officeRepSummary || []);
+const latestTraining = computed(() => {
+  const lt = props.latestTraining;
+  if (!lt) return [];
+  return Array.isArray(lt) ? lt : [];
+});
+
+const filterScope = ref(props.dashboardFilter.scope || 'all');
+const filterValue = ref(props.dashboardFilter.value || '');
+
+watch(
+  () => props.dashboardFilter,
+  (f) => {
+    filterScope.value = f?.scope || 'all';
+    filterValue.value = f?.value || '';
+  },
+  { deep: true }
+);
+
+function applyFilter() {
+  const scope = filterScope.value;
+  const value = scope === 'all' ? '' : filterValue.value;
+  if (scope !== 'all' && !value) {
+    return;
+  }
+  Inertia.get(route('dashboard'), { scope, value }, { preserveScroll: true, replace: true });
+}
+
+function onScopeChange() {
+  if (filterScope.value === 'all') {
+    filterValue.value = '';
+    applyFilter();
+  } else {
+    filterValue.value = '';
+  }
+}
+
+function onTrainingSelect(id) {
+  filterValue.value = id;
+  applyFilter();
+}
+
+function onTrainingFilterClear() {
+  filterScope.value = 'all';
+  filterValue.value = '';
+  applyFilter();
+}
 
 const config = {
   week: { startsOn: 'sunday' },
@@ -56,9 +116,51 @@ const currentLayout = computed(() => {
   <Head title="Dashboard" />
   <component :is="currentLayout">
     <!-- Page Title -->
-    <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+    <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:px-6 lg:px-8">
       <div class="min-w-0 flex-1">
         <h1 class="text-2xl font-bold leading-6 text-gray-900">📊 Dashboard</h1>
+        <p class="mt-1 text-sm text-gray-500">
+          Default view shows all data. Narrow by division, section, or a single training using the filters.
+        </p>
+      </div>
+      <div class="mt-4 flex flex-wrap items-center gap-2 sm:mt-0">
+        <label for="dashboard-scope" class="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by</label>
+        <select
+          id="dashboard-scope"
+          v-model="filterScope"
+          class="rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          @change="onScopeChange"
+        >
+          <option value="all">All</option>
+          <option value="division">Division</option>
+          <option value="section">Section</option>
+          <option value="training">Training</option>
+        </select>
+        <select
+          v-if="filterScope === 'division'"
+          v-model="filterValue"
+          class="min-w-[10rem] rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          @change="applyFilter"
+        >
+          <option value="">Select division…</option>
+          <option v-for="d in (filterOptions.divisions || [])" :key="d" :value="d">{{ d }}</option>
+        </select>
+        <select
+          v-if="filterScope === 'section'"
+          v-model="filterValue"
+          class="min-w-[10rem] rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          @change="applyFilter"
+        >
+          <option value="">Select section…</option>
+          <option v-for="s in (filterOptions.sections || [])" :key="s" :value="s">{{ s }}</option>
+        </select>
+        <DashboardTrainingFilter
+          v-if="filterScope === 'training'"
+          :training-id="filterValue"
+          :training-label="dashboardFilter.training_label"
+          @select="onTrainingSelect"
+          @clear="onTrainingFilterClear"
+        />
       </div>
     </div>
 
@@ -184,9 +286,9 @@ const currentLayout = computed(() => {
         <li
           v-for="training in latestTraining"
           :key="training.title + training.date_from"
-          class="border rounded-xl p-4 bg-white shadow hover:shadow-lg transition transform hover:scale-105 border-gray-200"
+          class="min-w-0 border rounded-xl p-4 bg-white shadow hover:shadow-lg transition transform hover:scale-105 border-gray-200"
         >
-          <h5 class="text-md font-semibold text-indigo-600 mb-1 truncate">{{ training.title }}</h5>
+          <h5 class="text-md mb-1 break-words font-semibold leading-snug text-indigo-600">{{ training.title }}</h5>
           <p class="text-sm text-gray-500">
             <time>
               {{ new Date(training.date_from).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) }}

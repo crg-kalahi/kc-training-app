@@ -2,24 +2,16 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 
-import {
-  AcademicCapIcon,
-  BanknotesIcon,
-  BuildingOfficeIcon,
-  CheckBadgeIcon,
-  UserIcon,
-  ReceiptRefundIcon,
-  UsersIcon,
-} from '@heroicons/vue/24/outline'
+import { UsersIcon } from '@heroicons/vue/24/outline'
 
 const actions = [
   {
-    title: 'User Access/Permission: Management',
+    title: 'User management',
     href: route('user-management'),
-    icon: UserIcon,
+    icon: UsersIcon,
     iconForeground: 'text-teal-700',
     iconBackground: 'bg-teal-50',
-		text: "Manage User Access/Permissions"
+    text: 'Add users, edit profile and assignment fields, and assign roles.',
   },
 ]
 </script>
@@ -32,8 +24,7 @@ const actions = [
               <!-- <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">Trainings</h1> -->
               <div class="text-xs lg:text-lg font-medium breadcrumbs">
                   <ul>
-                      <li><Link :href="route('conf.index')">Configuration</Link></li>
-                      <!-- <li>{{ title }}</li> -->
+                      <li><Link :href="route('settings.index')">Settings</Link></li>
                   </ul>
               </div>
           </div>

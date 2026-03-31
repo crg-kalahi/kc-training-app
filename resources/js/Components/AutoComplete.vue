@@ -41,6 +41,11 @@ export default {
     suggestions: {
       type: Array,
       required: true
+    },
+    /** Sync tags from parent (e.g. when opening edit form) */
+    initialSelected: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -49,6 +54,18 @@ export default {
       showDropdown: false,
       selectedTags: []
     };
+  },
+  watch: {
+    initialSelected: {
+      immediate: true,
+      deep: true,
+      handler(val) {
+        const next = Array.isArray(val) ? [...val] : []
+        if (next.length !== this.selectedTags.length || next.some((t, i) => t !== this.selectedTags[i])) {
+          this.selectedTags = next
+        }
+      }
+    }
   },
   computed: {
     filteredSuggestions() {
