@@ -1,5 +1,12 @@
 <template>
   <div class="p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+    <div
+      v-if="deleteError"
+      class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+      role="alert"
+    >
+      {{ deleteError }}
+    </div>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b pb-3">
       <h2 class="text-2xl font-semibold text-gray-800">Users</h2>
       <button
@@ -59,13 +66,24 @@
               </span>
             </td>
             <td class="px-4 py-3 whitespace-nowrap">
-              <button
-                type="button"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-1.5 rounded-md shadow"
-                @click="openEdit(user)"
-              >
-                Edit
-              </button>
+              <div class="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-1.5 rounded-md shadow"
+                  @click="openEdit(user)"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  :disabled="user.id === currentUserId"
+                  :title="user.id === currentUserId ? 'You cannot delete your own account' : ''"
+                  class="bg-white text-red-700 ring-1 ring-red-200 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm"
+                  @click="confirmDelete(user)"
+                >
+                  Delete
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -177,12 +195,21 @@ import { ref, computed, watch, defineProps } from 'vue';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/20/solid';
 import RightPanel from '@/Components/RightPanel.vue';
 import AutoComplete from '@/Components/AutoComplete.vue';
-import { useForm } from '@inertiajs/inertia-vue3';
+import { useForm, usePage } from '@inertiajs/inertia-vue3';
+import { Inertia } from '@inertiajs/inertia';
 
 const props = defineProps({
   users: { type: Array, default: () => [] },
   rolesList: { type: Array, default: () => [] },
   canEditUsername: { type: Boolean, default: false },
+});
+
+const page = usePage();
+const currentUserId = computed(() => page.props.value?.auth?.user?.id ?? null);
+const deleteError = computed(() => {
+  const raw = page.props.value?.errors?.delete;
+  if (raw == null || raw === '') return '';
+  return Array.isArray(raw) ? raw[0] : String(raw);
 });
 
 const users = ref([...props.users]);
@@ -336,6 +363,24 @@ const handleSelect = (selectedTags) => {
 
 function closePanel() {
   openForm.value = false;
+}
+
+function confirmDelete(user) {
+  if (user.id === currentUserId.value) {
+    return;
+  }
+  const label = [user.fname, user.lname].filter(Boolean).join(' ').trim() || user.email || user.username || 'this user';
+  const message =
+    `Remove this user from the system?\n\n` +
+    `${label}\n\n` +
+    `This is a soft delete: they will not be able to sign in. ` +
+    `To fully remove the record or reuse email/username, a database restore or admin action may be needed.`;
+  if (!window.confirm(message)) {
+    return;
+  }
+  Inertia.delete(route('user-management.destroy', user.id), {
+    preserveScroll: true,
+  });
 }
 
 const submitForm = () => {

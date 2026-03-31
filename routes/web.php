@@ -152,6 +152,7 @@ Route::group(['middleware' => ['auth', 'verified']], function(){
             Route::get('/', [UserManagementController::class, 'Index'])->name('user-management');
             Route::post('/', [UserManagementController::class, 'store'])->name('user-management.store');
             Route::put('/{user}', [UserManagementController::class, 'update'])->name('user-management.update');
+            Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
             Route::post('/roles', [UserManagementController::class, 'userManagementRoles'])->name('user-management.roles');
         });
     });   

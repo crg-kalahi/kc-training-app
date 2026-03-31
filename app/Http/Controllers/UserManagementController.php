@@ -166,6 +166,19 @@ class UserManagementController extends Controller
         return redirect()->back();
     }
 
+    public function destroy(Request $request, User $user)
+    {
+        if ($user->id === $request->user()->id) {
+            throw ValidationException::withMessages([
+                'delete' => 'You cannot delete your own account.',
+            ]);
+        }
+
+        $user->delete();
+
+        return redirect()->back();
+    }
+
     public function userManagementRoles(Request $request)
     {
         $data = $request->validate([
